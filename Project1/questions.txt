@@ -20,3 +20,4 @@ Løse variabler i kjørestrukturen
     s', r = game_handler.perform(a)
 - eller vi kan aldri slippe de løs slik at det blir mer som
     acm.get_new_state_reward(game_handler.perform(acm.get_action))
+Kanskje vi kan bruke player-strukturen til dette!
