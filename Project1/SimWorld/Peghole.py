@@ -1,7 +1,7 @@
 class Peghole:
-    def __init__(self, position, filled):
-        self.row = position[0]
-        self.column = position[1]
+    def __init__(self, row, column, filled):
+        self.row = row
+        self.column = column
         self.filled = filled
         self.neighbours = {}
 
@@ -11,13 +11,13 @@ class Peghole:
     def find_neighbour_direction(self, neighbour_row, neighbour_column):
         direction = ""
         if neighbour_column - self.column == -1:
-            direction += "right"
-        elif neighbour_column[1] - self.column[1] == 1:
             direction += "left"
+        elif neighbour_column - self.column == 1:
+            direction += "right"
 
-        if neighbour_row[0] - self.row[0] == -1:
+        if neighbour_row - self.row == -1:
             direction += "up"
-        elif neighbour_row[0] - self.row[0] == 1:
+        elif neighbour_row - self.row == 1:
             direction += "down"
 
         return direction

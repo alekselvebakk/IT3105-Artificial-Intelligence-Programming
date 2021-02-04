@@ -4,7 +4,8 @@ class Board:
     def __init__(self, size, empty, ):
         self.size = size
         self.empty = empty
-        self.board = self.create_board(size, empty)
+        self.board = []
+        self.create_board(size, empty)
 
     def create_board(self, size, empty):
         return []
