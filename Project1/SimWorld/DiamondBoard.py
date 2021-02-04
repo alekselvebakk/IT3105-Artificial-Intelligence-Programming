@@ -31,12 +31,3 @@ class DiamondBoard(Board):
 
         # Checks only for these neighbours as the last three neighbours have not been added yet
         # and will be updated later if they are added
-
-def main():
-    db = DiamondBoard(5, [[2,2]])
-    print(db.board)
-
-    print(db.board[1][1].neighbours)
-
-if __name__ == '__main__':
-    main()

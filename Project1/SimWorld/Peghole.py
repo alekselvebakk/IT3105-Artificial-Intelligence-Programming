@@ -30,8 +30,10 @@ class Peghole:
 
     def get_actions(self):
         actions = []
-        for direction, peghole in self.neighbours.items():
-            if peghole.filled and not peghole.neighbours[direction].filled:
-                actions.append([[self.row, self.column], [peghole.row, peghole.column]])
+        if self.filled:
+            for direction, neighbour in self.neighbours.items():
+                if direction in neighbour.neighbours.keys():
+                    if neighbour.filled and not neighbour.neighbours[direction].filled:
+                        actions.append([[self.row, self.column], [neighbour.neighbours[direction].row, neighbour.neighbours[direction].column]]) #Bad??
         return actions
 
