@@ -12,14 +12,12 @@ class GameHandler():
         self.current_actions = []
         self.new_actions = []
 
-
     def get_actions(self):
         actions = []
         for peghole in self.board:
             if peghole.filled:
                 actions += peghole.get_actions()
         return actions
-
 
     def move_peg(self, start_pos, end_pos): # TODO: How will the actions be represented?
         self.board[start_pos[0]][start_pos[1]].remove_peg()
@@ -32,8 +30,6 @@ class GameHandler():
 
 
     def check_if_final_state(self):
-        if self.get_actions() == []: # or only one peg filled
+        if self.get_actions() == []:  # or only one peg filled
             return True
         return False
-
-

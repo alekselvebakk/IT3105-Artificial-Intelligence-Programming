@@ -2,8 +2,8 @@ from Project1.SimWorld.Peghole import Peghole
 
 class Board:
     def __init__(self, size, empty):
-        self.size = size
-        self.empty = empty
+        self.size = size  # do we need these?
+        self.empty = empty  # ^
         self.board = []
         self.create_board(size, empty)
 

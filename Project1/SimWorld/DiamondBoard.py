@@ -15,17 +15,16 @@ class DiamondBoard(Board):
                 self.connect_diamond_neighbours(peghole)
                 self.board[row].append(peghole)
 
-
     def connect_diamond_neighbours(self, peghole):
-        if peghole.column-1 >= 0: #Checks for left neighbour
+        if peghole.column-1 >= 0:  # Checks for left neighbour
             neighbour = self.board[peghole.row][peghole.column-1]
             self.connect_neighbours(peghole, neighbour)
 
-        if peghole.row - 1 >= 0: #Checks for up neighbour
+        if peghole.row - 1 >= 0:  # Checks for up neighbour
             neighbour = self.board[peghole.row-1][peghole.column]
             self.connect_neighbours(peghole, neighbour)
 
-            if peghole.column+1 < self.size: # Checks for rightup neighbour
+            if peghole.column+1 < self.size:  # Checks for rightup neighbour
                 neighbour = self.board[peghole.row-1][peghole.column+1]
                 self.connect_neighbours(peghole, neighbour)
 

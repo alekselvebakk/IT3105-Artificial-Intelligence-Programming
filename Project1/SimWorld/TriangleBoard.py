@@ -18,18 +18,17 @@ class TriangleBoard(Board):
             column_len += 1
 
     def connect_triangle_neighbours(self, peghole):
-        if peghole.column-1 >= 0: #Checks for left neighbour
+        if peghole.column-1 >= 0:  # Checks for left neighbour
             neighbour = self.board[peghole.row][peghole.column-1]
             self.connect_neighbours(peghole, neighbour)
 
-            if peghole.row - 1 >= 0: #Checks for upleft neighbour
+            if peghole.row - 1 >= 0:  # Checks for upleft neighbour
                 neighbour = self.board[peghole.row-1][peghole.column-1]
                 self.connect_neighbours(peghole, neighbour)
 
         if peghole.row - 1 >= 0 and len(self.board[peghole.row-1]) > peghole.column:  # Checks for up neighbour
             neighbour = self.board[peghole.row - 1][peghole.column]
             self.connect_neighbours(peghole, neighbour)
-
 
         # Checks only for these neighbours as the last three neighbours have not been added yet
         # and will be updated later if they are added
