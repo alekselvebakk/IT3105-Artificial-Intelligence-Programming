@@ -57,10 +57,12 @@ class Actor:
         #Check if SAP already in eligibility-table
         if state not in self.elig:
             self.elig[state] = dict()
-        self.elig[action][state] = 1
+        self.elig[state][action] = 1
 
 
     def episode_reset(self):
         for state in self.elig:
             for action in self.elig[state]:
                 self.elig[state][action] = 0
+
+                
