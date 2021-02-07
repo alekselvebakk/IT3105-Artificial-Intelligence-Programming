@@ -6,7 +6,6 @@ class GameHandler:
     def __init__(self, board_type, size, empty):
         self.board = DiamondBoard(size, empty) if board_type == "diamond" else TriangleBoard(size, empty)
 
-        # TODO: find out how A wants to ML to get states
         self.current_state = ""
         self.new_state = ""
         self.current_actions = []
@@ -14,7 +13,7 @@ class GameHandler:
 
     def get_actions(self):
         actions = []
-        for peghole in self.board.board:
+        for peghole in self.board.table:
             if peghole.filled:
                 actions += peghole.get_actions()
         return actions
