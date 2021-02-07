@@ -1,3 +1,5 @@
+
+
 class TableCritic:
     def __init__(self, gamma, alpha, elig_decay):
         #Mappings
