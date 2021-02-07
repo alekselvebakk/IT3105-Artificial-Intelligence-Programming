@@ -39,28 +39,51 @@ class LearningModule:
         self.action = self.actor.get_action(self.state, 
                                             self.actions,
                                             self.epsilon)
-        self.current_episode = [{self.state: self.action}]
+        self.current_episode = [[self.state, self.action]]
         return self.action
+    
     def episode_step(   self, 
                         next_state, 
                         next_possible_actions, 
                         reward):
+        #Check if next step is final step
         if next_possible_actions == []:
             self.episode_finished = True
-            self.current_episode.append({next_state: []})
         else:
-            next_action = self.actor.get_action(   next_state, 
-                                                        next_possible_actions, 
-                                                        self.epsilon)
-            self.current_episode.append({next_state: next_action})
-        self.actor.set_unit_eligibility(self.state,
-                                        self.action)
+            next_action = self.actor.get_action(next_state, 
+                                                next_possible_actions, 
+                                                self.epsilon)
+        
+        #Set eligibilities for current states to 1
+        #CRITIC                                
+        self.critic.set_unit_eligibility(self.state)
+        #ACTOR
+        self.actor.set_unit_eligibility(self.state, self.action)
+
+        #Calculate delta
         delta = self.critic.get_delta(  self.state,
                                         next_state,
                                         reward)
-        self.critic.set_unit_eligibility(self.state)
-        for step current_episode:
-            
+
+        #Update for all states and actions in current epsisode
+        for i in self.current_episode:
+            state = self.current_episode[i][0]
+            action = self.current_episode[i][1]
+            #CRITIC update
+            self.critic.update_value_function(state, delta)
+            #ACTOR update
+            self.actor.update_policy_table( state, 
+                                            action,
+                                            delta)
+
+
+        if self.episode_finished == True:
+            return True, []
+        else:
+            self.state = next_state
+            self.action = next_action
+            self.current_episode.append([next_state, next_action])
+            return False, next_action
 
 
         
