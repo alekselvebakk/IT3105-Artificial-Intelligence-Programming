@@ -10,14 +10,14 @@ class Peghole:
 
     def find_neighbour_direction(self, neighbour_row, neighbour_column):
         direction = ""
-        if neighbour_column - self.column == -1:
+        if neighbour_column - self.column <= -1:
             direction += "left"
-        elif neighbour_column - self.column == 1:
+        elif neighbour_column - self.column >= 1:
             direction += "right"
 
-        if neighbour_row - self.row == -1:
+        if neighbour_row - self.row <= -1:
             direction += "up"
-        elif neighbour_row - self.row == 1:
+        elif neighbour_row - self.row >= 1:
             direction += "down"
 
         return direction
@@ -36,4 +36,6 @@ class Peghole:
                     if neighbour.filled and not neighbour.neighbours[direction].filled:
                         actions.append([[self.row, self.column], [neighbour.neighbours[direction].row, neighbour.neighbours[direction].column]])  # Bad??
         return actions
+
+
 

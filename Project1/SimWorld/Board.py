@@ -4,7 +4,8 @@ class Board:
     def __init__(self, size, empty):
         self.size = size  # do we need these?
         self.empty = empty  # ^
-        self.board = []
+        self.table = []
+        self.num_pegs = 0
         self.create_board(size, empty)
 
     def create_board(self, size, empty):
