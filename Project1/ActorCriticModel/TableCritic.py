@@ -1,7 +1,7 @@
 
 
 class TableCritic:
-    def __init__(self, gamma, alpha, elig_decay):
+    def __init__(self, alpha, gamma, elig_decay):
         #Mappings
         self.V = dict()
         self.elig = dict()
