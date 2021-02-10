@@ -19,14 +19,14 @@ class LearningModule:
                             elig_decay)
         #Initialize Critic Object
         if neural_net_critic:
-            self.critic = NetCritic()
+            self.critic = NetCritic(    alpha_critic)
         else:
-            self.critic = TableCritic(gamma, 
-                                      alpha_critic,
-                                      elig_decay)
+            self.critic = TableCritic(  alpha_critic,
+                                        gamma,
+                                        elig_decay)
         #Set constants
         self.epsilon = epsilon
-        self.current_episode = [dict()]
+        self.current_episode = [[]]
 
     def initialize_episode( self, 
                             initial_state, 
@@ -44,8 +44,14 @@ class LearningModule:
     
     def episode_step(   self, 
                         next_state, 
-                        next_possible_actions, 
+                        next_possible_actions,
+                        next_state_is_final = False, 
                         reward):
+
+
+        # TODO: Må endre logikk slik at vi ikke sjekker om det er final i actorcritic
+
+
         #Check if next step is final step
         if next_possible_actions == []:
             self.episode_finished = True
