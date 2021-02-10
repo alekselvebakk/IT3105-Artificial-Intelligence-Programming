@@ -1,0 +1,5 @@
+player.action = learningmodule.initialize_episode(state, possible_actions)
+
+reward, next_possible_actions, next_state = player.perform_action()
+
+learningmodule.episode_step(reward, next_state, possible_actions)
