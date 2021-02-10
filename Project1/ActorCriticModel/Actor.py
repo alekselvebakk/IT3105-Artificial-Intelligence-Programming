@@ -8,12 +8,14 @@ class Actor:
     # using an epsilon-greedy method
 
     #Initialization function
-    def __init__(self, alpha, gamma, elig_decay):
+    def __init__(   self, 
+                    alpha, #Learning rate
+                    gamma, #Discount factor
+                    elig_decay): #Eligibility decay
 
         #Mappings
         self.table = dict()
         self.elig = dict()
-        self.current_episode = dict()
 
         #Constants
         self.alpha = alpha
