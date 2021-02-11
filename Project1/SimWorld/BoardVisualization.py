@@ -10,8 +10,10 @@ class BoardVisualization:
         self.board = board
         self.G = nx.Graph()
         self.node_pos = []
-        self.node_color = []
+        self.node_color = {}
         self.board_type = 'triangle' if board.__class__.__name__ == 'TriangleBoard' else 'diamond'
+
+        self.create_board_graph()
 
     def create_board_graph(self):
         # Information for the top node
@@ -22,8 +24,6 @@ class BoardVisualization:
         self.add_node_with_properties(top_node, (col_pos, row_pos))  # Adds the first/top noe
         self.add_down_neighbour_nodes(top_node, col_pos, row_pos)  # Function to recursively adds the other nodes
 
-
-
     def add_neighbour_edges(self, peghole):
         for neighbour in peghole.neighbours.values():
             if neighbour in self.G.nodes:
@@ -32,7 +32,7 @@ class BoardVisualization:
     # adds the node with right position, color and edges to each of its existing neighbours
     def add_node_with_properties(self, peghole, pos):
         self.G.add_node(peghole, pos=pos)
-        self.node_color.append('blue') if peghole.filled else self.node_color.append('black')
+        self.node_color[peghole] = 'blue' if peghole.filled else 'black'
         self.add_neighbour_edges(peghole)
 
     def add_down_neighbour_nodes(self, peghole, row_pos, col_pos):
@@ -47,14 +47,19 @@ class BoardVisualization:
                 self.add_node_with_properties(neighbour_peghole, (col, row))
                 self.add_down_neighbour_nodes(neighbour_peghole, row, col)
 
+    def draw_graph(self):
+        pos = nx.get_node_attributes(self.G, 'pos')
+        nx.draw(self.G, node_color=self.node_color.values(), pos=pos)
+        plt.show()
+
+    def change_node_color(self, peghole):
+        self.node_color[peghole] = 'blue' if peghole.filled else 'black'
+
 def main():
-    db = DiamondBoard(5, [[0, 0], [0, 2]])
+    db = DiamondBoard(4, [[0, 0], [0, 2]])
     tb = TriangleBoard(8, [[0, 0], [1,1]])
     bv = BoardVisualization(db)
-    bv.create_board_graph()
-    pos = nx.get_node_attributes(bv.G, 'pos')
-    nx.draw(bv.G, node_color=bv.node_color, pos=pos)
-    plt.show()
+    bv.draw_graph()
 
 
 if __name__ == '__main__':
