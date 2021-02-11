@@ -7,19 +7,22 @@ from TableCritic import TableCritic
 
 class LearningModule:
     def __init__(   self,
-                    neural_net_critic = False, 
+                    neural_net_critic = True, 
                     epsilon = 0.1, 
                     alpha_actor = 0.1,
                     alpha_critic = 0.1,
                     gamma = 0.1,
-                    elig_decay = 0.1):
+                    elig_decay = 0.1,
+                    layers = [20, 30, 50, 1]):
         #Initialize Actor Object
         self.actor = Actor( alpha_actor, 
                             gamma, 
                             elig_decay)
         #Initialize Critic Object
         if neural_net_critic:
-            self.critic = NetCritic(    alpha_critic)
+            self.critic = NetCritic(    alpha_critic,
+                                        layers,
+                                        )
         else:
             self.critic = TableCritic(  alpha_critic,
                                         gamma,
