@@ -42,26 +42,27 @@ class LearningModule:
         self.action = self.actor.get_action(self.state, 
                                             self.actions,
                                             self.epsilon)
+        
+
         self.current_episode = [[self.state, self.action]]
         return self.action
     
     def episode_step(   self, 
                         next_state, 
                         next_possible_actions,
-                        next_state_is_final = False, 
-                        reward):
+                        reward,
+                        next_state_is_final = False):
 
 
-        # TODO: Må endre logikk slik at vi ikke sjekker om det er final i actorcritic
 
 
         #Check if next step is final step
-        if next_possible_actions == []:
-            self.episode_finished = True
-        else:
+        if next_state_is_final == False:
             next_action = self.actor.get_action(next_state, 
                                                 next_possible_actions, 
                                                 self.epsilon)
+        else:
+            next_action = []
         
         #Set eligibilities for current states to 1
         #CRITIC                                
@@ -85,14 +86,11 @@ class LearningModule:
                                             action,
                                             delta)
 
-
-        if self.episode_finished == True:
-            return True, []
-        else:
+        if next_state_is_final == False:
             self.state = next_state
             self.action = next_action
             self.current_episode.append([next_state, next_action])
-            return False, next_action
+        return next_action
 
 
         
