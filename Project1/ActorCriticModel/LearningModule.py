@@ -1,13 +1,13 @@
-from Actor import Actor
-from NetCritic import NetCritic
-from TableCritic import TableCritic
+from Project1.ActorCriticModel.Actor import Actor
+from Project1.ActorCriticModel.NetCritic import NetCritic
+from Project1.ActorCriticModel.TableCritic import TableCritic
 
 
 
 
 class LearningModule:
     def __init__(   self,
-                    neural_net_critic = True, 
+                    neural_net_critic = True,
                     epsilon = 0.1, 
                     alpha_actor = 0.1,
                     alpha_critic = 0.1,
@@ -91,6 +91,3 @@ class LearningModule:
             self.action = next_action
             self.current_episode.append([next_state, next_action])
         return next_action
-
-
-        

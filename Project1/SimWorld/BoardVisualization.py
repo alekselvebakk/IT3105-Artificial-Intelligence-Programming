@@ -38,7 +38,6 @@ class BoardVisualization:
     def add_down_neighbour_nodes(self, peghole, row_pos, col_pos):
         down_neighbours = ["right", "down"] if self.board_type == 'diamond' else ["down", "rightdown"]
         row = row_pos - 1
-        print("PEGHOLE", peghole)
         for neighbour in peghole.neighbours:
             neighbour_peghole = peghole.neighbours[neighbour]
             print(neighbour)
@@ -54,13 +53,3 @@ class BoardVisualization:
 
     def change_node_color(self, peghole):
         self.node_color[peghole] = 'blue' if peghole.filled else 'black'
-
-def main():
-    db = DiamondBoard(4, [[0, 0], [0, 2]])
-    tb = TriangleBoard(8, [[0, 0], [1,1]])
-    bv = BoardVisualization(db)
-    bv.draw_graph()
-
-
-if __name__ == '__main__':
-    main()

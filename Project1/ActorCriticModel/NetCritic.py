@@ -1,6 +1,6 @@
 import tensorflow as tf 
 from tensorflow import keras
-from splitgd import SplitGD
+from Project1.ActorCriticModel.splitgd import SplitGD
 
 class NetCritic:
     def __init__(self, alpha, layers):
@@ -17,8 +17,8 @@ class NetCritic:
 
         #Add hidden dense layers
         #dense layers are just "every neuron connected to every other neuron"-layers
-        for i in len(layers)-1:
-            name = "layer"+i
+        for i in range(len(layers)-1):
+            name = "layer"+str(i)
             current_layer = keras.layers.Dense(layers[i],activation='relu', name = name)
             self.model.add(current_layer)
             self.model.summary()

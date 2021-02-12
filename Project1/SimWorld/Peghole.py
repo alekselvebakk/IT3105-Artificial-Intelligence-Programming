@@ -35,7 +35,7 @@ class Peghole:
                 if direction in neighbour.neighbours.keys():
                     if neighbour.filled and not neighbour.neighbours[direction].filled:
                         start = str(self.row)+str(self.column)
-                        end = str(neighbour.neighbours[direction].row) + str(neighbour.neighbours[direction.column])
+                        end = str(neighbour.neighbours[direction].row) + str(neighbour.neighbours[direction].column)
                         actions.append(start + end)
         return actions
 

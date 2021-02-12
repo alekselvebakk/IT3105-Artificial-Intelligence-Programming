@@ -12,9 +12,10 @@ class GameHandler:
 
     def get_actions(self):
         actions = []
-        for peghole in self.board.table:
-            if peghole.filled:
-                actions += peghole.get_actions()
+        for row in self.board.table:
+            for peghole in row:
+                if peghole.filled:
+                    actions += peghole.get_actions()
         return actions
 
     def perform_action(self, action):
