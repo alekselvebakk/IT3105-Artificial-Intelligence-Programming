@@ -1,6 +1,6 @@
-from Actor import Actor
-from NetCritic import NetCritic
-from TableCritic import TableCritic
+from Project1.ActorCriticModel.Actor import Actor
+from Project1.ActorCriticModel.NetCritic import NetCritic
+from Project1.ActorCriticModel.TableCritic import TableCritic
 
 
 
@@ -13,7 +13,7 @@ class LearningModule:
                     alpha_critic = 0.1,
                     gamma = 0.1,
                     elig_decay = 0.1,
-                    layers = [20, 30, 50, 1]):
+                    hidden_layers = [20, 30, 50]):
         #Initialize Actor Object
         self.actor = Actor( alpha_actor, 
                             gamma, 
@@ -21,7 +21,7 @@ class LearningModule:
         #Initialize Critic Object
         if neural_net_critic:
             self.critic = NetCritic(    alpha_critic,
-                                        layers,
+                                        hidden_layers,
                                         )
         else:
             self.critic = TableCritic(  alpha_critic,
