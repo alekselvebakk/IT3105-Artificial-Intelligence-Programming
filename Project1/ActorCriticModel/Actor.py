@@ -27,11 +27,11 @@ class Actor:
 
     @staticmethod
     def epsilon_greedy_policy(action_value_pairs, epsilon, rng):
-        decision = rng.uniform([0, 1, 1])
+        decision = rng.uniform(0, 1)
         if decision > epsilon:
-            action = max(action_value_pairs, key = action_value_pairs.get)
+            action = max(action_value_pairs, key=action_value_pairs.get)
         else:
-            action = random.choice(action_value_pairs.key)
+            action = random.choice(list(action_value_pairs.keys()))
         return action
     
 
@@ -41,7 +41,7 @@ class Actor:
             self.table[state] = dict()
         for action in possible_actions:
             if action not in self.table[state]:
-                self.table[action][state] = 0
+                self.table[state][action] = 0
 
         #Epsilon-Greedy Policy
         action = self.epsilon_greedy_policy(self.table[state], epsilon, self.rng)
@@ -66,5 +66,3 @@ class Actor:
         for state in self.elig:
             for action in self.elig[state]:
                 self.elig[state][action] = 0
-
-                

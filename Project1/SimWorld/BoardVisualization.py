@@ -14,6 +14,7 @@ class BoardVisualization:
         self.board_type = 'triangle' if board.__class__.__name__ == 'TriangleBoard' else 'diamond'
 
         self.create_board_graph()
+        self.draw_graph()
 
     def create_board_graph(self):
         # Information for the top node
@@ -40,7 +41,6 @@ class BoardVisualization:
         row = row_pos - 1
         for neighbour in peghole.neighbours:
             neighbour_peghole = peghole.neighbours[neighbour]
-            print(neighbour)
             if neighbour in down_neighbours and neighbour_peghole not in self.G.nodes:
                 col = col_pos-1 if neighbour == "down" else col_pos+1
                 self.add_node_with_properties(neighbour_peghole, (col, row))

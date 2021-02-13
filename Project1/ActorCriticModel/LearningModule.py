@@ -75,10 +75,10 @@ class LearningModule:
                                         next_state,
                                         reward)
 
-        #Update for all states and actions in current epsisode
-        for i in self.current_episode:
-            state = self.current_episode[i][0]
-            action = self.current_episode[i][1]
+        #Update for all states and actions in current epsisode TODO: Check with Aleks that this change is OK
+        for SAP in self.current_episode:
+            state = SAP[0]
+            action = SAP[1]
             #CRITIC update
             self.critic.update_value_function(state, delta)
             #ACTOR update
