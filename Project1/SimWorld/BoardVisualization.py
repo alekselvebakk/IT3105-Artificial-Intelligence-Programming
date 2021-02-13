@@ -1,8 +1,6 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import matplotlib.animation
-from TriangleBoard import TriangleBoard
-from DiamondBoard import DiamondBoard
 
 
 class BoardVisualization:

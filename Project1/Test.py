@@ -18,7 +18,7 @@ def main():
     decays = 0
 
     for i in range(episodes):
-        gh = GameHandler('diamond', 4, [[2, 1]], visualization=False)
+        gh = GameHandler('diamond', 4, [[2, 1]],5, visualization=False)
         action = lm.initialize_episode(gh.get_board_state(), gh.get_actions())
         while not gh.check_if_final_state()[0]:
             gh.perform_action(action)
@@ -34,7 +34,7 @@ def main():
     print("number of decays: ", decays)
     lm.decay_epsilon(zero = True)
 
-    gh = GameHandler('diamond', 4, [[2, 1]], visualization=False)
+    gh = GameHandler('diamond', 4, [[2, 1]],5,  visualization=True)
     action = lm.initialize_episode(gh.get_board_state(), gh.get_actions())   
     while not gh.check_if_final_state()[0]:
         gh.perform_action(action)
@@ -43,7 +43,6 @@ def main():
                                     gh.calculate_reward(), 
                                     next_state_is_final=gh.check_if_final_state()[0])
     print("number of pegs after greedy run: ",gh.board.num_pegs)
-    lm.actor.print_table()
     plt.plot(performance)
     plt.show()
 

@@ -57,7 +57,7 @@ class GameHandler:
 
     def check_if_final_state(self):
         if not self.get_actions():
-            self.vis_graph.show_graph_animation()
+            if self.visualization: self.vis_graph.show_graph_animation()
             return True, "Win" if self.board.num_pegs == 1 else True, "Lose"
         return False, None
 
