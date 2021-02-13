@@ -19,6 +19,7 @@ class LearningModule:
         self.epsilon = epsilon
         self.neural_net_critic = neural_net_critic
         self.current_episode = [[]]
+        self.epsilon_decay = epsilon_decay
         
         
         
@@ -55,8 +56,11 @@ class LearningModule:
 
         self.current_episode = [[self.state, self.action]]
         return self.action
-    def decay_epsilon(self):
-        self.epsilon = self.epsilon*self.decay_epsilon
+    def decay_epsilon(self, zero = False):
+        if zero:
+            self.epsilon = 0
+        else:
+            self.epsilon = self.epsilon*self.epsilon_decay
     def episode_step(   self, 
                         next_state, 
                         next_possible_actions,
