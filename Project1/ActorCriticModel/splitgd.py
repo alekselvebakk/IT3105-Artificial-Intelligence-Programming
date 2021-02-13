@@ -39,12 +39,14 @@ class SplitGD():
     def fit(self, features, targets, epochs=1, mbs=1,vfrac=0.1,verbosity=1,callbacks=[]):
         params = self.model.trainable_weights
         train_ins, train_targs, val_ins, val_targs = split_training_data(features,targets,vfrac=vfrac)
+        #den over her utgår
         for cb in callbacks:    cb.on_train_begin()
         for epoch in range(epochs):
             for cb in callbacks:    cb.on_epoch_begin(epoch)
             for _ in range(math.floor(len(train_ins) / mbs)):
                 with tf.GradientTape() as tape:  # Read up on tf.GradientTape !!
                     feaset,tarset = gen_random_minibatch(train_ins,train_targs,mbs=mbs)
+                    #utgår også over her
                     loss = self.gen_loss(feaset,tarset,avg=False)
                     gradients = tape.gradient(loss,params)
                     gradients = self.modify_gradients(gradients)

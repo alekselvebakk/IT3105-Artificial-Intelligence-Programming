@@ -13,23 +13,31 @@ class LearningModule:
                     alpha_critic = 0.1,
                     gamma = 0.1,
                     elig_decay = 0.1,
-                    layers = [20, 30, 50, 1]):
+                    hidden_layers = [20, 30, 50]):
+        #Set constants and flags
+        self.epsilon = epsilon
+        self.neural_net_critic = neural_net_critic
+        self.current_episode = [[]]
+        
+        
+        
+        
+        
         #Initialize Actor Object
         self.actor = Actor( alpha_actor, 
                             gamma, 
                             elig_decay)
         #Initialize Critic Object
-        if neural_net_critic:
+        if self.neural_net_critic:
             self.critic = NetCritic(    alpha_critic,
-                                        layers,
-                                        )
+                                        gamma,
+                                        elig_decay,
+                                        hidden_layers)
         else:
             self.critic = TableCritic(  alpha_critic,
                                         gamma,
                                         elig_decay)
-        #Set constants
-        self.epsilon = epsilon
-        self.current_episode = [[]]
+        
 
     def initialize_episode( self, 
                             initial_state, 
@@ -53,9 +61,6 @@ class LearningModule:
                         reward,
                         next_state_is_final = False):
 
-
-
-
         #Check if next step is final step
         if next_state_is_final == False:
             next_action = self.actor.get_action(next_state, 
@@ -65,8 +70,9 @@ class LearningModule:
             next_action = []
         
         #Set eligibilities for current states to 1
-        #CRITIC                                
-        self.critic.set_unit_eligibility(self.state)
+        #CRITIC
+        if self.neural_net_critic == False:                                
+            self.critic.set_unit_eligibility(self.state)
         #ACTOR
         self.actor.set_unit_eligibility(self.state, self.action)
 
