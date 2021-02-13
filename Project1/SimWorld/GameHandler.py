@@ -3,10 +3,10 @@ from SimWorld.TriangleBoard import TriangleBoard
 from SimWorld.BoardVisualization import BoardVisualization
 
 class GameHandler:
-    def __init__(self, board_type, size, empty, visualization=False):
+    def __init__(self, board_type, size, empty, fps, visualization=False):
         self.board = DiamondBoard(size, empty) if board_type == "diamond" else TriangleBoard(size, empty)
         self.visualization = visualization
-        self.vis_graph = BoardVisualization(self.board) if visualization else None
+        self.vis_graph = BoardVisualization(self.board, fps) if visualization else None
 
 
 
@@ -20,7 +20,6 @@ class GameHandler:
 
     def perform_action(self, action):
         self.move_peg(action)
-        if self.visualization: self.vis_graph.draw_graph()
         return self.calculate_reward(), self.get_board_state(), self.get_actions()
 
     def move_peg(self, action):
@@ -31,7 +30,7 @@ class GameHandler:
         end.add_peg()
         middle = self.remove_middle_peg(start, end)
 
-        if self.visualization: self.update_node_colors([start, end, middle])
+        if self.visualization: self.update_node_colors([start, middle, end])
 
     def remove_middle_peg(self, start, end):
         self.board.num_pegs -= 1
@@ -58,9 +57,12 @@ class GameHandler:
 
     def check_if_final_state(self):
         if not self.get_actions():
+            self.vis_graph.show_graph_animation()
             return True, "Win" if self.board.num_pegs == 1 else True, "Lose"
         return False, None
 
     def update_node_colors(self, peghole_list):
-        for peghole in peghole_list:
-            self.vis_graph.change_node_color(peghole)
+        color = ['yellow', 'red', 'yellow']
+        for i in range(len(peghole_list)):
+            self.vis_graph.change_node_color(peghole_list[i], color[i])
+        self.vis_graph.update_color_combo()

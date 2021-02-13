@@ -3,7 +3,7 @@ from SimWorld.GameHandler import GameHandler
 
 
 def main():
-    gh = GameHandler('diamond', 4, [[2, 2]], visualization=True)
+    gh = GameHandler('diamond', 4, [[2, 2]], 5, visualization=True)
     lm = LearningModule(neural_net_critic=False)
     lm.initialize_episode(gh.get_board_state(), gh.get_actions())
 

@@ -1,20 +1,25 @@
 import networkx as nx
 import matplotlib.pyplot as plt
-from SimWorld.DiamondBoard import DiamondBoard
-from SimWorld.TriangleBoard import TriangleBoard
+import matplotlib.animation
+from TriangleBoard import TriangleBoard
+from DiamondBoard import DiamondBoard
 
 
 class BoardVisualization:
 
-    def __init__(self, board):
+    def __init__(self, board, fps):
         self.board = board
         self.G = nx.Graph()
         self.node_pos = []
         self.node_color = {}
         self.board_type = 'triangle' if board.__class__.__name__ == 'TriangleBoard' else 'diamond'
 
+        self.color_combo = []
+        self.fps = fps # Changes s to ms to fit the animation method
+        self.fig, self.ax = plt.subplots(figsize=(6,4))
         self.create_board_graph()
         self.draw_graph()
+        self.color_combo.append(dict(self.node_color).values())
 
     def create_board_graph(self):
         # Information for the top node
@@ -51,5 +56,30 @@ class BoardVisualization:
         nx.draw(self.G, node_color=self.node_color.values(), pos=pos)
         plt.show()
 
-    def change_node_color(self, peghole):
+    def show_graph_animation(self):
+        self.ax.clear()
+        interval = 60*len(self.color_combo)/self.fps
+        anim = matplotlib.animation.FuncAnimation(self.fig, self.animate, frames=len(self.color_combo), interval=interval, repeat=True)
+        anim.save('animation_board3.gif', writer='pillow')
+        plt.show()
+
+    def change_node_color(self, peghole, color):
+        self.node_color[peghole] = color
+        self.update_color_combo()
         self.node_color[peghole] = 'blue' if peghole.filled else 'black'
+
+
+    def update_color_combo(self):
+        copy_dict = self.node_color.copy()
+        colors = copy_dict.values()
+        self.color_combo.append(colors)
+
+    def animate(self, i):
+        colors = self.color_combo[i]
+        pos = nx.get_node_attributes(self.G, 'pos')
+        nx.draw(self.G, node_color=colors, pos=pos, ax=self.ax)
+
+
+
+
+

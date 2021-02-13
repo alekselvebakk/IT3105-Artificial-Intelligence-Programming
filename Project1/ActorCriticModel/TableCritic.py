@@ -29,4 +29,3 @@ class TableCritic:
     def episode_reset(self):
         for state in self.elig:
             self.elig[state] = 0
-        
