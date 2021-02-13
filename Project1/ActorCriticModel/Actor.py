@@ -23,7 +23,9 @@ class Actor:
         self.elig_decay = elig_decay
 
         #Random Number Generator
-        self.rng = default_rng()
+        seed = 1337
+        self.rng = default_rng(seed)
+        random.seed(seed)
 
     @staticmethod
     def epsilon_greedy_policy(action_value_pairs, epsilon, rng):
@@ -66,3 +68,6 @@ class Actor:
         for state in self.elig:
             for action in self.elig[state]:
                 self.elig[state][action] = 0
+
+    def print_table(self):
+        print(self.table)
