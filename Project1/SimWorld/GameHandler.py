@@ -49,11 +49,11 @@ class GameHandler:
     def calculate_reward(self):
         state_status = self.check_if_final_state()
         if state_status == "Win":
-            return 10
+            return 15
         elif state_status == "Lose":
-            return -10
+            return -15
         else:
-            return 0
+            return 1
 
     def check_if_final_state(self):
         if not self.get_actions():
