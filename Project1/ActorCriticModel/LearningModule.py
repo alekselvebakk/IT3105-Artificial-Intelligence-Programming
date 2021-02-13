@@ -13,6 +13,7 @@ class LearningModule:
                     alpha_critic = 0.1,
                     gamma = 0.1,
                     elig_decay = 0.1,
+                    epsilon_decay = 0.9,
                     hidden_layers = [20, 30, 50]):
         #Set constants and flags
         self.epsilon = epsilon
@@ -54,7 +55,8 @@ class LearningModule:
 
         self.current_episode = [[self.state, self.action]]
         return self.action
-    
+    def decay_epsilon(self):
+        self.epsilon = self.epsilon*self.decay_epsilon
     def episode_step(   self, 
                         next_state, 
                         next_possible_actions,
