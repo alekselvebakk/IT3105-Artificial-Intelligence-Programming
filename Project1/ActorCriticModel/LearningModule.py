@@ -7,17 +7,18 @@ from ActorCriticModel.TableCritic import TableCritic
 
 class LearningModule:
     def __init__(   self,
-                    neural_net_critic = True,
+                    NNCriticBool = True,
                     epsilon = 0.1, 
                     alpha_actor = 0.1,
                     alpha_critic = 0.1,
                     gamma = 0.1,
                     elig_decay = 0.1,
                     epsilon_decay = 0.9,
-                    hidden_layers = [20, 30, 50]):
+                    hidden_layers = [20, 30, 50],
+                    input_size = 16):
         #Set constants and flags
         self.epsilon = epsilon
-        self.neural_net_critic = neural_net_critic
+        self.NNCriticBool = NNCriticBool
         self.current_episode = [[]]
         self.epsilon_decay = epsilon_decay
         
@@ -30,11 +31,12 @@ class LearningModule:
                             gamma, 
                             elig_decay)
         #Initialize Critic Object
-        if self.neural_net_critic:
+        if self.NNCriticBool:
             self.critic = NetCritic(    alpha_critic,
                                         gamma,
                                         elig_decay,
-                                        hidden_layers)
+                                        hidden_layers,
+                                        input_size)
         else:
             self.critic = TableCritic(  alpha_critic,
                                         gamma,
@@ -77,7 +79,7 @@ class LearningModule:
         
         #Set eligibilities for current states to 1
         #CRITIC
-        if self.neural_net_critic == False:                                
+        if self.NNCriticBool == False:                                
             self.critic.set_unit_eligibility(self.state)
         #ACTOR
         self.actor.set_unit_eligibility(self.state, self.action)
