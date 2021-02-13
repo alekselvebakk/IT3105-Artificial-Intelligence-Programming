@@ -1,7 +1,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
-from Project1.SimWorld.DiamondBoard import DiamondBoard
-from Project1.SimWorld.TriangleBoard import TriangleBoard
+from SimWorld.DiamondBoard import DiamondBoard
+from SimWorld.TriangleBoard import TriangleBoard
 
 
 class BoardVisualization:

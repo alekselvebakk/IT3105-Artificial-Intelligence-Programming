@@ -1,6 +1,6 @@
-from Project1.SimWorld.DiamondBoard import DiamondBoard
-from Project1.SimWorld.TriangleBoard import TriangleBoard
-from Project1.SimWorld.BoardVisualization import BoardVisualization
+from SimWorld.DiamondBoard import DiamondBoard
+from SimWorld.TriangleBoard import TriangleBoard
+from SimWorld.BoardVisualization import BoardVisualization
 
 class GameHandler:
     def __init__(self, board_type, size, empty, visualization=False):

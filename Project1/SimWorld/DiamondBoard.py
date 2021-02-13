@@ -1,5 +1,5 @@
-from Project1.SimWorld.Board import Board
-from Project1.SimWorld.Peghole import Peghole
+from SimWorld.Board import Board
+from SimWorld.Peghole import Peghole
 
 
 class DiamondBoard(Board):

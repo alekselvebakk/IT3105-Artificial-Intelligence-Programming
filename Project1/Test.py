@@ -1,5 +1,5 @@
-from Project1.ActorCriticModel.LearningModule import LearningModule
-from Project1.SimWorld.GameHandler import GameHandler
+from ActorCriticModel.LearningModule import LearningModule
+from SimWorld.GameHandler import GameHandler
 
 
 def main():

@@ -1,6 +1,6 @@
-from Project1.ActorCriticModel.Actor import Actor
-from Project1.ActorCriticModel.NetCritic import NetCritic
-from Project1.ActorCriticModel.TableCritic import TableCritic
+from ActorCriticModel.Actor import Actor
+from ActorCriticModel.NetCritic import NetCritic
+from ActorCriticModel.TableCritic import TableCritic
 
 
 

@@ -1,4 +1,4 @@
-from Project1.SimWorld.Peghole import Peghole
+from SimWorld.Peghole import Peghole
 
 class Board:
     # TODO: vizulise = True/False, tid per frame
