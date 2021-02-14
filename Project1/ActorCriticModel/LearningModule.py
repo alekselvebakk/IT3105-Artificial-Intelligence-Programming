@@ -23,7 +23,7 @@ class LearningModule:
         self.NNCriticBool = NNCriticBool
         self.current_episode = [[]]
         self.epsilon_decay = epsilon_decay
-        
+        hidden_layers = [int(x) for x in hidden_layers.split(",")]
         
         
         

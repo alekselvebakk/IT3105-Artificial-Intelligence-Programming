@@ -11,7 +11,6 @@ def main():
     config = ConfigParser()
     config_path = str(pathlib.Path(__file__).parent.absolute())+"/config.ini"
     config.read(config_path)
-    print(config['board']['board_gif_name'])
     game_handler = GameHandler(config['board']['type'],
                                config.getint('board', 'size'),
                                ast.literal_eval(config['board']['open_cells']),
@@ -21,6 +20,8 @@ def main():
 
     input_size = game_handler.board.num_pegs+len(game_handler.board.empty)
 
+
+    
     learning_module = LearningModule(NNCriticBool=config.getboolean('learning_module', 'nn_critic'),
                                      epsilon=config.getfloat('actor', 'epsilon'),
                                      alpha_actor=config.getfloat('actor', 'learning_rate'),
@@ -30,6 +31,7 @@ def main():
                                      elig_decay_actor=config.getfloat('critic', 'eligibility_factor'),
                                      elig_decay_critic=config.getfloat('critic', 'eligibility_factor'),
                                      epsilon_decay=config.getfloat('actor', 'epsilon_decay'),
+                                     hidden_layers=config['learning_module']['hidden_layers'],
                                      input_size=input_size)
 
 
