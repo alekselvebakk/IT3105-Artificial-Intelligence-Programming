@@ -1,5 +1,9 @@
+
 import tensorflow as tf 
 from tensorflow import keras
+config = tf.compat.v1.ConfigProto()
+config.gpu_options.allow_growth = True
+session = tf.compat.v1.Session(config=config)
 import numpy as np
 
 class NetCritic:
@@ -48,7 +52,7 @@ class NetCritic:
 
     @staticmethod
     def string_to_tensor(string_variable):
-        variable = np.array(list(string_variable), dtype=int)
+        variable = np.array([list(string_variable)], dtype=int)
         #variable = variable.reshape(len(variable),1)
         #variable = tf.Variable(tf.constant(variable), shape = tf.TensorShape([len(variable),1]))
         return variable
@@ -61,7 +65,7 @@ class NetCritic:
     def get_delta(self, state, next_state, reward):
         state = self.string_to_tensor(state)
         print("****", state.shape)
-        V_s = self.model(state, batch_size = 1)
+        V_s = self.model(state)
         next_state = self.string_to_tensor(next_state)
         V_s_next = self.model(next_state)
         delta = reward + self.gamma*V_s_next-V_s

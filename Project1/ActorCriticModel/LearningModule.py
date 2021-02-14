@@ -37,7 +37,8 @@ class LearningModule:
             self.critic = NetCritic(    alpha_critic,
                                         gamma_critic,
                                         elig_decay_critic,
-                                        hidden_layers)
+                                        hidden_layers,
+                                        input_size)
         else:
             self.critic = TableCritic(  alpha_critic,
                                         gamma_critic,
