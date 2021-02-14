@@ -66,3 +66,7 @@ class GameHandler:
         for i in range(len(peghole_list)):
             self.vis_graph.change_node_color(peghole_list[i], color[i])
         self.vis_graph.update_color_combo()
+
+    def reset_board(self):
+        self.board.reset_board()
+        if self.visualization: self.vis_graph.reset_board()

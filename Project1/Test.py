@@ -34,7 +34,7 @@ def main():
     print("number of decays: ", decays)
     lm.decay_epsilon(zero = True)
 
-    gh = GameHandler('diamond', 4, [[2, 1]],5,  visualization=True)
+    gh = GameHandler('diamond', 4, [[2, 1]], 5,  visualization=True)
     action = lm.initialize_episode(gh.get_board_state(), gh.get_actions())   
     while not gh.check_if_final_state()[0]:
         gh.perform_action(action)

@@ -77,7 +77,8 @@ class BoardVisualization:
         pos = nx.get_node_attributes(self.G, 'pos')
         nx.draw(self.G, node_color=colors, pos=pos, ax=self.ax)
 
-
-
-
-
+    def reset_board(self):
+        for peghole in self.node_color:
+            self.node_color[peghole] = 'blue' if peghole.filled else 'black'
+        self.color_combo.clear()
+        self.update_color_combo()
