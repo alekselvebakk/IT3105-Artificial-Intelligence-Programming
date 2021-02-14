@@ -3,10 +3,10 @@ from SimWorld.TriangleBoard import TriangleBoard
 from SimWorld.BoardVisualization import BoardVisualization
 
 class GameHandler:
-    def __init__(self, board_type, size, empty, fps, visualization=False):
+    def __init__(self, board_type, size, empty, fps, visualization=False, board_gif_name=None):
         self.board = DiamondBoard(size, empty) if board_type == "diamond" else TriangleBoard(size, empty)
         self.visualization = visualization
-        self.vis_graph = BoardVisualization(self.board, fps) if visualization else None
+        self.vis_graph = BoardVisualization(self.board, fps, board_gif_name) if visualization else None
 
 
 

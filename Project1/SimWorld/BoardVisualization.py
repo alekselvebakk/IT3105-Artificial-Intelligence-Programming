@@ -2,11 +2,11 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import matplotlib.animation
 from configparser import ConfigParser
-
+import pathlib
 
 class BoardVisualization:
 
-    def __init__(self, board, interval):
+    def __init__(self, board, interval, board_gif_name):
         self.board = board
         self.G = nx.Graph()
         self.node_pos = []
@@ -19,15 +19,19 @@ class BoardVisualization:
         self.create_board_graph()
         self.draw_graph()
         self.color_combo.append(dict(self.node_color).values())
+        self.board_gif_name = board_gif_name
 
     def create_board_graph(self):
         # Information for the top node
         row_pos = self.board.size
         col_pos = self.board.size
         top_node = self.board.table[0][0]
+        
+        # Adds the first/top node
+        self.add_node_with_properties(top_node, (col_pos, row_pos))
 
-        self.add_node_with_properties(top_node, (col_pos, row_pos))  # Adds the first/top noe
-        self.add_down_neighbour_nodes(top_node, col_pos, row_pos)  # Function to recursively adds the other nodes
+        # Function to recursively adds the other nodes  
+        self.add_down_neighbour_nodes(top_node, col_pos, row_pos)  
 
     def add_neighbour_edges(self, peghole):
         for neighbour in peghole.neighbours.values():
@@ -56,12 +60,14 @@ class BoardVisualization:
         plt.show()
 
     def show_graph_animation(self):
-        config = ConfigParser()
-        config.read('config.ini')
 
         self.ax.clear()
-        anim = matplotlib.animation.FuncAnimation(self.fig, self.animate, frames=len(self.color_combo), interval=self.interval, repeat=True)
-        anim.save(config['board']['board_gif_name'], writer='pillow')
+        anim = matplotlib.animation.FuncAnimation(  self.fig, 
+                                                    self.animate, 
+                                                    frames=len(self.color_combo), 
+                                                    interval=self.interval, 
+                                                    repeat=True)
+        anim.save(self.board_gif_name, writer='pillow')
         plt.show()
 
     def change_node_color(self, peghole, color):
