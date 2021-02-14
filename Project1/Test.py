@@ -1,4 +1,4 @@
-from ActorCriticModel.LearningModule import LearningModule
+'''from ActorCriticModel.LearningModule import LearningModule
 from SimWorld.GameHandler import GameHandler
 import numpy as np
 from matplotlib import pyplot as plt
@@ -9,13 +9,16 @@ def main():
                         epsilon = 0.9,
                         alpha_actor = 0.6,
                         alpha_critic = 0.6,
-                        gamma = 0.99,
-                        elig_decay = 0.99,
+                        gamma_actor = 0.99,
+                        gamma_critic= 0.99,
+                        elig_decay_actor = 0.99,
+                        elig_decay_critic=0.99,
                         epsilon_decay = 0.65)
     episodes = 200
 
     performance = np.zeros([episodes,1])
     decays = 0
+
 
     for i in range(episodes):
         gh = GameHandler('diamond', 4, [[2, 1]],5, visualization=False)
@@ -47,4 +50,4 @@ def main():
     plt.show()
 
 if __name__ == '__main__':
-    main()
+    main()'''

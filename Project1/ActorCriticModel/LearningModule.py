@@ -11,8 +11,10 @@ class LearningModule:
                     epsilon = 0.1, 
                     alpha_actor = 0.1,
                     alpha_critic = 0.1,
-                    gamma = 0.1,
-                    elig_decay = 0.1,
+                    gamma_actor = 0.1,
+                    gamma_critic = 0.1,
+                    elig_decay_actor = 0.1,
+                    elig_decay_critic = 0.1,
                     epsilon_decay = 0.9,
                     hidden_layers = [20, 30, 50]):
         #Set constants and flags
@@ -27,18 +29,18 @@ class LearningModule:
         
         #Initialize Actor Object
         self.actor = Actor( alpha_actor, 
-                            gamma, 
-                            elig_decay)
+                            gamma_actor,
+                            elig_decay_actor)
         #Initialize Critic Object
         if self.neural_net_critic:
             self.critic = NetCritic(    alpha_critic,
-                                        gamma,
-                                        elig_decay,
+                                        gamma_critic,
+                                        elig_decay_critic,
                                         hidden_layers)
         else:
             self.critic = TableCritic(  alpha_critic,
-                                        gamma,
-                                        elig_decay)
+                                        gamma_critic,
+                                        elig_decay_critic)
         
 
     def initialize_episode( self, 

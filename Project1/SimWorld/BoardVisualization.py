@@ -1,11 +1,12 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import matplotlib.animation
+from configparser import ConfigParser
 
 
 class BoardVisualization:
 
-    def __init__(self, board, fps):
+    def __init__(self, board, interval):
         self.board = board
         self.G = nx.Graph()
         self.node_pos = []
@@ -13,7 +14,7 @@ class BoardVisualization:
         self.board_type = 'triangle' if board.__class__.__name__ == 'TriangleBoard' else 'diamond'
 
         self.color_combo = []
-        self.fps = fps # Changes s to ms to fit the animation method
+        self.interval = interval
         self.fig, self.ax = plt.subplots(figsize=(6,4))
         self.create_board_graph()
         self.draw_graph()
@@ -55,10 +56,12 @@ class BoardVisualization:
         plt.show()
 
     def show_graph_animation(self):
+        config = ConfigParser()
+        config.read('config.ini')
+
         self.ax.clear()
-        interval = 60*len(self.color_combo)/self.fps
-        anim = matplotlib.animation.FuncAnimation(self.fig, self.animate, frames=len(self.color_combo), interval=interval, repeat=True)
-        anim.save('animation_board3.gif', writer='pillow')
+        anim = matplotlib.animation.FuncAnimation(self.fig, self.animate, frames=len(self.color_combo), interval=self.interval, repeat=True)
+        anim.save(config['board']['board_gif_name'], writer='pillow')
         plt.show()
 
     def change_node_color(self, peghole, color):
