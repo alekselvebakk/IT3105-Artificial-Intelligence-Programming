@@ -18,11 +18,9 @@ class NetCritic:
 
         ##### MODEL aka NEURAL NET CREATION #####
         #Initialize model
-        
         self.model = keras.models.Sequential(name = 'SequentialCriticModel')
 
-        #Input layers
-        print(layers[0])
+        #First layer with input specified
         input_layer = keras.layers.Dense(   self.layers[0], 
                                             input_shape=(input_size,),
                                             name = 'hidden_layer0')
@@ -39,55 +37,56 @@ class NetCritic:
         output_layer = keras.layers.Dense(  1, 
                                             activation = 'sigmoid', 
                                             name = "outputlayer")
-        #self.model.add(output_layer)
+        self.model.add(output_layer)
         self.model.summary()
 
-        optim = keras.optimizers.SGD(learning_rate=self.alpha)
+        optim = keras.optimizers.Adam(learning_rate=self.alpha)   #SGD(learning_rate=self.alpha)
         self.model.compile(optimizer = optim)
-        config = self.model.get_config()
-        print(config["layers"][0]["config"]["batch_input_shape"])
+
+
         #Set initial eligibilities
-        weights = self.model.trainable_weights
+        vars = self.model.trainable_variables
         self.elig =[]
-        for i in range(len(weights)):
-            self.elig.append(tf.zeros_like(weights[i]))
-        print(weights)
-        print(self.elig)
+        for var in vars:
+            self.elig.append(tf.zeros_like(var))
 
     @staticmethod
     def string_to_tensor(string_variable):
         content = list(string_variable)
-        print(content)
         variable = np.array([content], dtype=int)
         #variable = variable.reshape(len(variable),1)
         #variable = tf.Variable(tf.constant(variable), shape = tf.TensorShape([len(variable),1]))
         return variable
 
     def episode_reset(self):
-        a = 1#tf.math.scalar_mul(0, self.elig)
+        for i in range(len(self.elig)):
+            self.elig[i] = tf.math.scalar_mul(0, self.elig[i])
 
     def get_delta(self, state, next_state, reward):
         state = self.string_to_tensor(state)
-        print("*******delta func: ",state)
         V_s = self.model(state)
         next_state = self.string_to_tensor(next_state)
         V_s_next = self.model(next_state)
         delta = reward + self.gamma*V_s_next-V_s
-        return delta
+        return delta.numpy()[0][0]
+
+    def decay_elibilities(self):
+        for i in range(len(self.elig)):
+            self.elig[i] = tf.math.scalar_mul(self.elig_decay, self.elig[i])
+
 
     def update_value_function(self, state, delta):
         #This is the custom fit-function
         state = self.string_to_tensor(state)
-        params = self.model.trainable_weights
+        params = self.model.trainable_variables
         with tf.GradientTape() as tape:
             V_s = self.model(state)
-            print("----------", V_s)
-            print("*********", params)
-            dV_dw = tape.gradient(V_s, params)
-            print("................", dV_dw)
-            self.elig = self.elig + dV_dw
-            update = tf.math.scalar_mul(delta,self.elig)
-            self.model.optimizer.apply_gradients(   update, 
-                                                    self.model.trainable_weights)
-        self.elig = self.elig*self.elig_decay
+            gradient_update = tape.gradient(V_s, params)
+            for i in range(len(self.elig)):
+                self.elig[i] = self.elig[i] + gradient_update[i]
+            for i in range(len(self.elig)):
+                gradient_update[i] = delta*self.elig[i]
+            self.model.optimizer.apply_gradients(zip(   gradient_update,
+                                                        self.model.trainable_variables))
+        self.decay_elibilities()
         
