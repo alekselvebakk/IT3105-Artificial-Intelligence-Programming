@@ -6,7 +6,6 @@ from configparser import ConfigParser
 import ast
 import pathlib
 
-
 def main():
     config = ConfigParser()
     config_path = str(pathlib.Path(__file__).parent.absolute())+"/config.ini"
@@ -48,9 +47,9 @@ def main():
     decays = 0
 
     for i in range(episodes):
-        if float(i)/episodes*100%1==0:
-            pros = float(i)/episodes*100
-            print(pros, "% ferdig")
+        pros = float(i)/episodes*100
+        if pros%5==0:
+            print(int(pros), "% ferdig")
         run_learning_episode(learning_module, game_handler)
         performance[i] = game_handler.board.num_pegs
         if i > 0 and performance[i] < performance[i - 1]:
@@ -59,12 +58,13 @@ def main():
     print(100, "% ferdig")
     plt.plot(performance)
     plt.show()
-  
 
+    run_basic_episode(learning_module, last_game_handler)
 
 def run_learning_episode(learning_module, game_handler):
     game_handler.reset_board()
-    action = learning_module.initialize_episode(game_handler.get_board_state(), game_handler.get_actions())
+    action = learning_module.initialize_episode(game_handler.get_board_state(), 
+                                                game_handler.get_actions())
     while not game_handler.check_if_final_state()[0]:
         game_handler.perform_action(action)
         reward = game_handler.calculate_reward()
@@ -74,19 +74,16 @@ def run_learning_episode(learning_module, game_handler):
                                               next_state_is_final=game_handler.check_if_final_state()[0])
     game_handler.visualize_board()
 
-
 def run_basic_episode(learning_module, game_handler):
     game_handler.reset_board()
-    action = learning_module.initialize_episode(game_handler.get_board_state(), game_handler.get_actions())
+    action = learning_module.initialize_episode(game_handler.get_board_state(), 
+                                                game_handler.get_actions())
     game_handler.perform_action(action)
     while not game_handler.check_if_final_state()[0]:
-        action = learning_module.basic_step(game_handler.get_board_state(), game_handler.get_actions())
+        action = learning_module.basic_step(game_handler.get_board_state(), 
+                                            game_handler.get_actions())
         game_handler.perform_action(action)
     game_handler.visualize_board()
 
 if __name__ == '__main__':
     main()
-
-
-
-
