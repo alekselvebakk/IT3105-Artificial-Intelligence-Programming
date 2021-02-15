@@ -4,10 +4,18 @@ from SimWorld.BoardVisualization import BoardVisualization
 import time
 
 class GameHandler:
-    def __init__(self, board_type, size, empty, fps, visualization=False, board_gif_name=None):
+    def __init__(   self, 
+                    board_type, 
+                    size, 
+                    empty, 
+                    fps, 
+                    visualization=False, 
+                    board_gif_name=None):
         self.board = DiamondBoard(size, empty) if board_type == "diamond" else TriangleBoard(size, empty)
         self.visualization = visualization
-        self.vis_graph = BoardVisualization(self.board, fps, board_gif_name) if visualization else None
+        self.vis_graph = BoardVisualization(self.board, 
+                                            fps, 
+                                            board_gif_name) if visualization else None
 
 
     def get_actions(self):
@@ -47,13 +55,22 @@ class GameHandler:
         return bn
 
     def calculate_reward(self):
+        winning_reward = 15
+        losing_reward = -15
         state_status = self.check_if_final_state()
         if state_status == "Win":
-            return 15
+            return winning_reward
         elif state_status == "Lose":
-            return -15
-        else:
-            return 1
+            return losing_reward
+        
+        """
+        ## Begynt å tenkte på reward-opplegg
+        num_pegs = self.board.num_pegs
+        empty_holes = 
+        total_peg_holes 
+        """
+
+        return 1
 
     def check_if_final_state(self):
         if not self.get_actions():
