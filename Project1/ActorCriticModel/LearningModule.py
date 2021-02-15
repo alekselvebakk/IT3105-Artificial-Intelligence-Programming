@@ -1,6 +1,7 @@
 from ActorCriticModel.Actor import Actor
 from ActorCriticModel.NetCritic import NetCritic
 from ActorCriticModel.TableCritic import TableCritic
+import time
 
 
 
@@ -95,15 +96,22 @@ class LearningModule:
         for SAP in self.current_episode:
             state = SAP[0]
             action = SAP[1]
-            #CRITIC update
-            self.critic.update_value_function(state, delta)
             #ACTOR update
             self.actor.update_policy_table( state, 
                                             action,
                                             delta)
+
+        for SAP in self.current_episode:
+            state = SAP[0]
+            #CRITIC update
+            self.critic.update_value_function(state, delta)
 
         if next_state_is_final == False:
             self.state = next_state
             self.action = next_action
             self.current_episode.append([next_state, next_action])
         return next_action
+    
+    def basic_step(self, state, possible_actions):
+        action = self.actor.get_action(state, possible_actions, 0)
+        return action
