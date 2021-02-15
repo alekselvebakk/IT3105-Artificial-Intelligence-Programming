@@ -1,8 +1,6 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import matplotlib.animation
-from configparser import ConfigParser
-import pathlib
 
 class BoardVisualization:
 
@@ -60,7 +58,6 @@ class BoardVisualization:
         plt.show()
 
     def show_graph_animation(self):
-
         self.ax.clear()
         anim = matplotlib.animation.FuncAnimation(  self.fig, 
                                                     self.animate, 
