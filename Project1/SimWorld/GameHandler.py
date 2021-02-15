@@ -1,13 +1,13 @@
 from SimWorld.DiamondBoard import DiamondBoard
 from SimWorld.TriangleBoard import TriangleBoard
 from SimWorld.BoardVisualization import BoardVisualization
+import time
 
 class GameHandler:
     def __init__(self, board_type, size, empty, fps, visualization=False, board_gif_name=None):
         self.board = DiamondBoard(size, empty) if board_type == "diamond" else TriangleBoard(size, empty)
         self.visualization = visualization
         self.vis_graph = BoardVisualization(self.board, fps, board_gif_name) if visualization else None
-
 
 
     def get_actions(self):
@@ -57,9 +57,11 @@ class GameHandler:
 
     def check_if_final_state(self):
         if not self.get_actions():
-            if self.visualization: self.vis_graph.show_graph_animation()
             return True, "Win" if self.board.num_pegs == 1 else True, "Lose"
         return False, None
+
+    def visualize_board(self):
+        if self.visualization: self.vis_graph.show_graph_animation()
 
     def update_node_colors(self, peghole_list):
         color = ['yellow', 'red', 'yellow']
