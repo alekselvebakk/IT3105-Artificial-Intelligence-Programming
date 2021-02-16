@@ -65,7 +65,6 @@ class GameHandler:
         if finished:
             result = self.check_result()
             if result == "Win":
-                print("win yay")
                 return winning_reward
             elif result == "Lose":
                 return losing_reward
