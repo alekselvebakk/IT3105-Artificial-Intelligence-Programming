@@ -11,7 +11,11 @@ class TriangleBoard(Board):
         for row in range(size):
             self.table.append([])
             for column in range(column_len):
-                filled = False if [row, column] in empty else True
+                if [row, column] in empty:
+                    filled = False  
+                else:
+                    filled = True
+                    self.num_pegs += 1
                 peghole = Peghole(row, column, filled)
                 self.connect_triangle_neighbours(peghole)
                 self.table[row].append(peghole)

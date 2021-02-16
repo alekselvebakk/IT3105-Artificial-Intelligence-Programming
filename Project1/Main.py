@@ -56,9 +56,7 @@ def main():
             print(int(pros), "% ferdig")
         run_learning_episode(learning_module, game_handler)
         performance[i] = game_handler.board.num_pegs
-        if i > 0 and performance[i] < performance[i - 1]:
-            decays = decays + 1
-            learning_module.decay_epsilon()
+        learning_module.decay_epsilon()    
     print(100, "% ferdig")
     print(time.time()-current, " sekunder brukt")
     plt.plot(performance)
@@ -73,7 +71,8 @@ def run_learning_episode(learning_module, game_handler):
     while not game_handler.check_if_final_state()[0]:
         game_handler.perform_action(action)
         reward = game_handler.calculate_reward()
-        action = learning_module.episode_step(game_handler.get_board_state(),
+        state = game_handler.get_board_state()
+        action = learning_module.episode_step(state,
                                               game_handler.get_actions(),
                                               reward,
                                               next_state_is_final=game_handler.check_if_final_state()[0])
