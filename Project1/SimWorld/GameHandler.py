@@ -10,13 +10,16 @@ class GameHandler:
                     empty, 
                     fps, 
                     visualization=False, 
-                    board_gif_name=None):
+                    board_gif_name=None,
+                    winning_reward = 15,
+                    losing_reward = -15):
         self.board = DiamondBoard(size, empty) if board_type == "diamond" else TriangleBoard(size, empty)
         self.visualization = visualization
         self.vis_graph = BoardVisualization(self.board, 
                                             fps, 
                                             board_gif_name) if visualization else None
-
+        self.winning_reward = winning_reward
+        self.losing_reward = losing_reward
 
     def get_actions(self):
         actions = []
@@ -55,9 +58,11 @@ class GameHandler:
         return bn
 
     def calculate_reward(self):
-        winning_reward = 15
-        losing_reward = -15
+        winning_reward = self.winning_reward
+        losing_reward = self.losing_reward
         state_status = self.check_if_final_state()
+
+        
         if state_status == "Win":
             return winning_reward
         elif state_status == "Lose":

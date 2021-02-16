@@ -5,6 +5,7 @@ from matplotlib import pyplot as plt
 from configparser import ConfigParser
 import ast
 import pathlib
+import time
 
 def main():
     config = ConfigParser()
@@ -39,13 +40,16 @@ def main():
                                     ast.literal_eval(config['board']['open_cells']),
                                     config.getint('board', 'interval'),
                                     visualization=config.getboolean('board', 'last_visualization'),
-                                    board_gif_name=config['board']['board_gif_name'])
+                                    board_gif_name=config['board']['board_gif_name'],
+                                    winning_reward = config.getint('board','winning_reward'),
+                                    losing_reward = config.getint('board','losing_reward'))
 
     episodes = config.getint('learning_module', 'episodes')
 
     performance = np.zeros([episodes,1])
     decays = 0
 
+    current = time.time()
     for i in range(episodes):
         pros = float(i)/episodes*100
         if pros%5==0:
@@ -56,6 +60,7 @@ def main():
             decays = decays + 1
             learning_module.decay_epsilon()
     print(100, "% ferdig")
+    print(time.time()-current, " sekunder brukt")
     plt.plot(performance)
     plt.show()
 
