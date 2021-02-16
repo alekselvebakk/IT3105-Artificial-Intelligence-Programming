@@ -1,10 +1,12 @@
 
 import tensorflow as tf 
 from tensorflow import keras
+import numpy as np
+#Settings for bugfixes
 config = tf.compat.v1.ConfigProto()
 config.gpu_options.allow_growth = True
 session = tf.compat.v1.Session(config=config)
-import numpy as np
+
 
 class NetCritic:
     def __init__(self, alpha, gamma, elig_decay, layers, input_size):
@@ -40,7 +42,7 @@ class NetCritic:
         self.model.add(output_layer)
         self.model.summary()
 
-        optim = keras.optimizers.Adam(learning_rate=self.alpha)   #SGD(learning_rate=self.alpha)
+        optim = keras.optimizers.SGD(learning_rate=self.alpha)#Adam(learning_rate=self.alpha)  
         self.model.compile(optimizer = optim)
 
 
@@ -52,11 +54,9 @@ class NetCritic:
 
     @staticmethod
     def string_to_tensor(string_variable):
-        content = list(string_variable)
-        variable = np.array([content], dtype=int)
-        #variable = variable.reshape(len(variable),1)
-        #variable = tf.Variable(tf.constant(variable), shape = tf.TensorShape([len(variable),1]))
-        return variable
+        converted_to_list = list(string_variable)
+        numpy_variable = np.array([converted_to_list], dtype=int)
+        return numpy_variable
 
     def episode_reset(self):
         for i in range(len(self.elig)):
