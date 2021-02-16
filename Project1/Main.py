@@ -68,14 +68,14 @@ def run_learning_episode(learning_module, game_handler):
     game_handler.reset_board()
     action = learning_module.initialize_episode(game_handler.get_board_state(), 
                                                 game_handler.get_actions())
-    while not game_handler.check_if_final_state()[0]:
+    while not game_handler.check_if_final_state():
         game_handler.perform_action(action)
         reward = game_handler.calculate_reward()
         state = game_handler.get_board_state()
         action = learning_module.episode_step(state,
                                               game_handler.get_actions(),
                                               reward,
-                                              next_state_is_final=game_handler.check_if_final_state()[0])
+                                              next_state_is_final=game_handler.check_if_final_state())
     game_handler.visualize_board()
 
 def run_basic_episode(learning_module, game_handler):
@@ -83,7 +83,7 @@ def run_basic_episode(learning_module, game_handler):
     action = learning_module.initialize_episode(game_handler.get_board_state(), 
                                                 game_handler.get_actions())
     game_handler.perform_action(action)
-    while not game_handler.check_if_final_state()[0]:
+    while not game_handler.check_if_final_state():
         action = learning_module.basic_step(game_handler.get_board_state(), 
                                             game_handler.get_actions())
         game_handler.perform_action(action)

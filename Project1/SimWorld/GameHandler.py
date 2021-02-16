@@ -60,13 +60,15 @@ class GameHandler:
     def calculate_reward(self):
         winning_reward = self.winning_reward
         losing_reward = self.losing_reward
-        state_status = self.check_if_final_state()
+        finished = self.check_if_final_state()
 
-        
-        if state_status == "Win":
-            return winning_reward
-        elif state_status == "Lose":
-            return losing_reward
+        if finished:
+            result = self.check_result()
+            if result == "Win":
+                print("win yay")
+                return winning_reward
+            elif result == "Lose":
+                return losing_reward
         
         """
         ## Begynt å tenkte på reward-opplegg
@@ -79,8 +81,15 @@ class GameHandler:
 
     def check_if_final_state(self):
         if not self.get_actions():
-            return True, "Win" if self.board.num_pegs == 1 else True, "Lose"
-        return False, None
+            return True
+        else:
+            return False
+
+    def check_result(self):
+        if self.board.num_pegs == 1: 
+            return "Win" 
+        else: 
+            return "Lose"
 
     def visualize_board(self):
         if self.visualization: self.vis_graph.show_graph_animation()
