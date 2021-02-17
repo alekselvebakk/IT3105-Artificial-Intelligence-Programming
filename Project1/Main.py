@@ -19,18 +19,20 @@ def main():
                                board_gif_name=config['board']['board_gif_name'])
 
     input_size = game_handler.board.num_pegs+len(game_handler.board.empty)
-
+    episodes = config.getint('learning_module', 'episodes')
+    epsilon =config.getfloat('actor', 'epsilon') 
+    epsilon_decay = np.exp((np.log(0.01/epsilon))/episodes)
 
     
     learning_module = LearningModule(NNCriticBool=config.getboolean('learning_module', 'nn_critic'),
-                                     epsilon=config.getfloat('actor', 'epsilon'),
+                                     epsilon=epsilon,
                                      alpha_actor=config.getfloat('actor', 'learning_rate'),
                                      alpha_critic=config.getfloat('critic', 'learning_rate'),
                                      gamma_actor=config.getfloat('actor', 'discount_factor'),
                                      gamma_critic=config.getfloat('critic', 'discount_factor'),
                                      elig_decay_actor=config.getfloat('critic', 'eligibility_factor'),
                                      elig_decay_critic=config.getfloat('critic', 'eligibility_factor'),
-                                     epsilon_decay=config.getfloat('actor', 'epsilon_decay'),
+                                     epsilon_decay=epsilon_decay,
                                      hidden_layers=config['learning_module']['hidden_layers'],
                                      input_size=input_size)
 
