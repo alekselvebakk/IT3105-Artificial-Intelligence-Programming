@@ -11,12 +11,14 @@ def main():
     config = ConfigParser()
     config_path = str(pathlib.Path(__file__).parent.absolute())+"/config.ini"
     config.read(config_path)
-    game_handler = GameHandler(config['board']['type'],
-                               config.getint('board', 'size'),
-                               ast.literal_eval(config['board']['open_cells']),
-                               config.getint('board', 'interval'),
-                               visualization=config.getboolean('board', 'visualization'),
-                               board_gif_name=config['board']['board_gif_name'])
+    game_handler = GameHandler( config['board']['type'],
+                                config.getint('board', 'size'),
+                                ast.literal_eval(config['board']['open_cells']),
+                                config.getint('board', 'interval'),
+                                visualization=config.getboolean('board', 'visualization'),
+                                board_gif_name=config['board']['board_gif_name'],
+                                winning_reward = config.getint('board','winning_reward'),
+                                losing_reward = config.getint('board','losing_reward'))
 
     input_size = game_handler.board.num_pegs+len(game_handler.board.empty)
     episodes = config.getint('learning_module', 'episodes')

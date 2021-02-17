@@ -10,12 +10,10 @@ class BoardVisualization:
         self.node_pos = []
         self.node_color = {}
         self.board_type = 'triangle' if board.__class__.__name__ == 'TriangleBoard' else 'diamond'
-
         self.color_combo = []
         self.interval = interval
         self.fig, self.ax = plt.subplots(figsize=(6,4))
         self.create_board_graph()
-        self.draw_graph()
         self.color_combo.append(dict(self.node_color).values())
         self.board_gif_name = board_gif_name
 
