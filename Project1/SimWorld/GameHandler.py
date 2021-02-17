@@ -13,7 +13,7 @@ class GameHandler:
                     board_gif_name=None,
                     winning_reward = 15,
                     losing_reward = -15):
-        self.board = DiamondBoard(size, empty) if board_type == "diamond" else TriangleBoard(size, empty)
+        self.board = DiamondBoard(size, empty) if board_type.lower() == "diamond" else TriangleBoard(size, empty)
         self.visualization = visualization
         self.vis_graph = BoardVisualization(self.board, 
                                             fps, 
@@ -68,13 +68,6 @@ class GameHandler:
                 return winning_reward
             elif result == "Lose":
                 return losing_reward
-        
-        """
-        ## Begynt å tenkte på reward-opplegg
-        num_pegs = self.board.num_pegs
-        empty_holes = 
-        total_peg_holes 
-        """
 
         return 1
 
