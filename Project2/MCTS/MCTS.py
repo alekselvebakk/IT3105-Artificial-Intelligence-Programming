@@ -6,4 +6,5 @@ class MCTS():
         self.number_search_games = number_search_games
 
     def perform_search_game():
-        
+        possible_actions = GameHandler.get_actions()
+        action = self.tree.get_action()
