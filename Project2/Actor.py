@@ -26,16 +26,33 @@ class Actor:
 
     # TODO: Initialize values
     # TODO: Train method
+    # TODO: save net
 
-    def get_net(self):
+    def get_net(self):  # Not finished version, will checkout CNN
         input = keras.layers.Input(shape=(self.input_size,), name='input_layer')
         x = input
         for i in range(len(self.layers)):
             x = keras.layers.Dense(self.layers[i], activation=self.act)(x)
         output = keras.layers.Dense(self.output_size, activation=self.last_act, name='output_layer')(x)
         model = keras.models.Model(input, output)
-        model.compile(optimizer=self.opt(lr=self.alpha))
+        model.compile(optimizer=self.opt(lr=self.alpha), loss=self.cross_entropy)
         return model
+
+    @staticmethod  # TODO
+    def save_net(self, name):
+        self.model.save('Saved_models/'+name)
+
+    #loss function from Keith, but TODO: what does it mean?
+    def cross_entropy(self, targets, outputs):
+        return tf.reduce_mean(tf.reduce_sum(-1*targets*self.safelog(outputs), axis=1))
+
+    def safelog(self, tensor, base=0.0001):
+        return tf.math.log(tf.math.maximum(tensor, base))
+
+    def train(self, test_data, train_data):
+        noe = 0
+
+
 
     @staticmethod
     def string_to_tensor(string_variable):
@@ -58,7 +75,8 @@ class Actor:
 
         return prediction
 
-    def get_action(self, state, epsilon):  # TODO: Discuss: should actions be 'calculated' in a game handler? for moduality? Should prob just send probabiities
+    # TODO: Discuss: should actions be 'calculated' in a game handler? for moduality? Should prob just send probabiities
+    def get_action(self, state, epsilon):
         decision = random.uniform(0, 1)
         if decision > epsilon:
             index = np.argmax(self.get_probabilities(state))
@@ -83,7 +101,7 @@ class Actor:
 def main():
     a = Actor()
     #a.model('12345678901234567890123456', training=False)
-    print(a.get_action('21201201201201201201201201', 1))
+    print(a.get_probabilities('21201201201201201201201201'))
 
 
 if __name__ == '__main__':
