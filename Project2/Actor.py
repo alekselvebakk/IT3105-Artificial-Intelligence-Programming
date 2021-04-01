@@ -13,7 +13,6 @@ class Actor:
                  last_act='softmax',
                  board_size=25):
 
-        # TODO: Loss?
         self.alpha = learning_rate
         self.layers = layers
         self.opt = eval('keras.optimizers.' + opt)
@@ -35,7 +34,7 @@ class Actor:
             x = keras.layers.Dense(self.layers[i], activation=self.act)(x)
         output = keras.layers.Dense(self.output_size, activation=self.last_act, name='output_layer')(x)
         model = keras.models.Model(input, output)
-        model.compile(optimizer=self.opt(lr=self.alpha), loss=self.cross_entropy)
+        model.compile(optimizer=self.opt(lr=self.alpha), loss=self.cross_entropy)  # TODO: metrics
         return model
 
     @staticmethod  # TODO
@@ -46,11 +45,12 @@ class Actor:
     def cross_entropy(self, targets, outputs):
         return tf.reduce_mean(tf.reduce_sum(-1*targets*self.safelog(outputs), axis=1))
 
+    @staticmethod
     def safelog(self, tensor, base=0.0001):
         return tf.math.log(tf.math.maximum(tensor, base))
 
-    def train(self, test_data, train_data):
-        noe = 0
+    def train(self, inputs, targets, batch_size, epochs):
+        self.model.fit(inputs, targets, batch_size, epochs, verbose=1, validation_split=0.1)
 
 
 
