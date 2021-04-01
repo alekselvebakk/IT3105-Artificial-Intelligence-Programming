@@ -11,7 +11,9 @@ class Actor:
                  opt='SGD',
                  act='relu',
                  last_act='softmax',
-                 board_size=25):
+                 board_size=25,
+                 reload_model=False,
+                 reload_name=None):
 
         self.alpha = learning_rate
         self.layers = layers
@@ -21,7 +23,8 @@ class Actor:
         self.input_size = 1 + board_size #The state will be playerID + board
         self.output_size = board_size
 
-        self.model = self.get_net()
+        # makes a new NN or reloads from earlier trained model
+        self.model = self.get_net() if not reload_model else keras.models.load_model(reload_name)
 
     # TODO: Initialize values: skjer ikke det automatisk? satt dem til 0 nå, men vet ikke om det er det beste
     def get_net(self):  # Not finished version, will TODO: checkout CNN
@@ -37,12 +40,9 @@ class Actor:
         print(model.trainable_weights)
         return model
 
-    @staticmethod  # TODO: save and reload
+    # TODO: save and reload
     def save_net(self, net_name):
-        self.model.save('Saved_models/'+net_name)
-
-    def reload_net(self, net_name):
-        noe = 1
+        self.model.save('Saved_models/' + net_name)
 
     # loss function from Keith, but TODO: what does it mean?
     def cross_entropy(self, targets, outputs):
@@ -73,7 +73,7 @@ class Actor:
 
         # Scaling of the remaining numbers to the sum of 1
         prediction = prediction/prediction.sum()
-        print('PRED_NORM:', prediction)
+       # print('PRED_NORM:', prediction)
 
         return prediction
 
@@ -103,7 +103,7 @@ class Actor:
 def main():
     a = Actor()
     #a.model('12345678901234567890123456', training=False)
-    print(a.get_probabilities('21201201201201201201201201'))
+    a.get_probabilities('21201201201201201201201201')
 
 
 if __name__ == '__main__':
