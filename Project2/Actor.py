@@ -23,25 +23,28 @@ class Actor:
 
         self.model = self.get_net()
 
-    # TODO: Initialize values
-    # TODO: Train method
-    # TODO: save net
-
-    def get_net(self):  # Not finished version, will checkout CNN
+    # TODO: Initialize values: skjer ikke det automatisk? satt dem til 0 nå, men vet ikke om det er det beste
+    def get_net(self):  # Not finished version, will TODO: checkout CNN
         input = keras.layers.Input(shape=(self.input_size,), name='input_layer')
         x = input
         for i in range(len(self.layers)):
-            x = keras.layers.Dense(self.layers[i], activation=self.act)(x)
-        output = keras.layers.Dense(self.output_size, activation=self.last_act, name='output_layer')(x)
+            x = keras.layers.Dense(self.layers[i], activation=self.act, kernel_initializer='zeros', bias_initializer='zeros')(x)
+        output = keras.layers.Dense(self.output_size, activation=self.last_act, name='output_layer',
+                                    kernel_initializer='zeros', bias_initializer='zeros')(x)
         model = keras.models.Model(input, output)
         model.compile(optimizer=self.opt(lr=self.alpha), loss=self.cross_entropy)  # TODO: metrics
+
+        print(model.trainable_weights)
         return model
 
-    @staticmethod  # TODO
-    def save_net(self, name):
-        self.model.save('Saved_models/'+name)
+    @staticmethod  # TODO: save and reload
+    def save_net(self, net_name):
+        self.model.save('Saved_models/'+net_name)
 
-    #loss function from Keith, but TODO: what does it mean?
+    def reload_net(self, net_name):
+        noe = 1
+
+    # loss function from Keith, but TODO: what does it mean?
     def cross_entropy(self, targets, outputs):
         return tf.reduce_mean(tf.reduce_sum(-1*targets*self.safelog(outputs), axis=1))
 
@@ -49,10 +52,9 @@ class Actor:
     def safelog(self, tensor, base=0.0001):
         return tf.math.log(tf.math.maximum(tensor, base))
 
+    # TODO: test train method
     def train(self, inputs, targets, batch_size, epochs):
         self.model.fit(inputs, targets, batch_size, epochs, verbose=1, validation_split=0.1)
-
-
 
     @staticmethod
     def string_to_tensor(string_variable):
