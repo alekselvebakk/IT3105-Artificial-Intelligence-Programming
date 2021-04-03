@@ -19,7 +19,6 @@ class Peghole:
             direction += "up"
         elif neighbour_row - self.row >= 1:
             direction += "down"
-
         return direction
 
     def remove_peg(self):
@@ -27,3 +26,10 @@ class Peghole:
 
     def add_peg(self, player):
         self.filled = player
+
+    def get_not_up_neighbours(self):
+        nu_neighbours = []
+        for peghole in self.neighbours:
+            if 'up' not in self.neighbours[peghole]:
+                nu_neighbours.append(peghole)
+        return nu_neighbours
