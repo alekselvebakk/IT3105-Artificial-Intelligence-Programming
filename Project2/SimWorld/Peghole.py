@@ -22,7 +22,7 @@ class Peghole:
         return direction
 
     def remove_peg(self):
-        self.filled = None
+        self.filled = 0
 
     def add_peg(self, player):
         self.filled = player

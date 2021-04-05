@@ -11,7 +11,7 @@ class Board:
         for row in range(size):
             self.table.append([])
             for column in range(size):
-                peghole = Peghole(row, column, None)  # Filled = none/player1/player2
+                peghole = Peghole(row, column, 0)  # Filled = 0/1/2
                 self.connect_diamond_neighbours(peghole)
                 self.table[row].append(peghole)
 
@@ -36,4 +36,4 @@ class Board:
         self.num_pegs = 0
         for row in self.table:
             for peghole in row:
-                peghole.filled = None
+                peghole.filled = 0
