@@ -7,7 +7,7 @@ class MCTS_Node():
         self.state = state
         """
         logikk for å bestemme  hvilken spiller man er
-        -> player = 0 eller 1 
+        -> player = 1 eller 2 
         """
         self.player = 0
         self.N_s = 0
