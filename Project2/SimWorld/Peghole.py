@@ -27,9 +27,11 @@ class Peghole:
     def add_peg(self, player):
         self.filled = player
 
-    def get_not_up_neighbours(self):
-        nu_neighbours = []
-        for peghole in self.neighbours:
-            if 'up' not in self.neighbours[peghole]:
-                nu_neighbours.append(peghole)
-        return nu_neighbours
+    def get_players_neighbours(self, player):
+        player_neighbours = []
+        for peghole in self.neighbours.values():
+            if peghole.filled == player:
+                player_neighbours.append(peghole)
+        return player_neighbours
+
+
