@@ -20,7 +20,7 @@ class Actor:
         self.opt = eval('keras.optimizers.' + opt)
         self.act = act
         self.last_act = last_act
-        self.input_size = 1 + board_size # The state will be playerID + board
+        self.input_size = 1 + board_size  # The state will be playerID + board
         self.output_size = board_size
 
         # makes a new NN or reloads from earlier trained model
@@ -31,14 +31,11 @@ class Actor:
         input = keras.layers.Input(shape=(self.input_size,), name='input_layer')
         x = input
         for i in range(len(self.layers)):
-            x = keras.layers.Dense(self.layers[i], activation=self.act, name='hidden_'+str(i),
-                                   kernel_initializer='zeros', bias_initializer='zeros')(x)
-        output = keras.layers.Dense(self.output_size, activation=self.last_act, name='output_layer',
-                                    kernel_initializer='zeros', bias_initializer='zeros')(x)
+            x = keras.layers.Dense(self.layers[i], activation=self.act, name='hidden_'+str(i))(x)
+        output = keras.layers.Dense(self.output_size, activation=self.last_act, name='output_layer')(x)
         model = keras.models.Model(input, output)
         model.compile(optimizer=self.opt(lr=self.alpha), loss=self.cross_entropy)  # TODO: metrics
 
-        print(model.trainable_weights)
         return model
 
     def save_net(self, net_name):
