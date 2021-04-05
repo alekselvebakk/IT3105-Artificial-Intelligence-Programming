@@ -1,15 +1,26 @@
 from Project2.SimWorld.Board import Board
+from Project2.SimWorld.BoardVisualization import BoardVisualization
 import numpy as np
 
 class StateManager:
 
-    def __init__(self, size):
+    def __init__(self, size, visualization=False):
         self.board = Board(size)
+        self.visualization = visualization
+        self.graph = BoardVisualization if visualization else None
 
-    # TODO: GET_ACTIONS: do we use probabilities to find action? Or do we find them on our own?
+    def get_board_state(self):
+        state = ""
+        for row in self.board.table:
+            for peghole in row:
+                state += str(peghole.filled)
+        return state
 
     def perform_action(self, player, action):
-        self.board[action[0]][action[1]].add_peg(player)
+        peghole = self.board[action[0]][action[1]]
+        peghole.add_peg(player)
+
+        if self.visualization: self.graph.change_node_color(peghole)
 
     def check_if_final_state(self):
         if self.check_player1_win(): return 1
@@ -71,3 +82,11 @@ class StateManager:
                 furthest = possible_furthest if possible_furthest > furthest else furthest
 
         return furthest, visited_nodes
+
+    def show_animation(self):
+        if self.visualization: self.graph.show_graph_animation()
+
+    def reset_board(self):
+        self.board.reset_board()
+
+        if self.visualization: self.graph.reset_board()

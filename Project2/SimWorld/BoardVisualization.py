@@ -1,6 +1,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import matplotlib.animation
+from Project2.SimWorld.Board import Board
 
 
 class BoardVisualization:
@@ -66,11 +67,11 @@ class BoardVisualization:
         anim.save(self.board_gif_name, writer='pillow')
         plt.show()
 
-    # TODO: Change all the functions below
-    def change_node_color(self, peghole, color):
-        self.node_color[peghole] = color
+    def change_node_color(self, peghole):
+        self.node_color[peghole] = 'dark' + self.peghole_colors.get(peghole.filled)
         self.update_color_combo()
-        self.node_color[peghole] = 'blue' if peghole.filled else 'black'
+        self.node_color[peghole] = self.peghole_colors.get(peghole.filled)
+        self.update_color_combo()
 
     def update_color_combo(self):
         copy_dict = self.node_color.copy()
