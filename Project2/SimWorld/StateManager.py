@@ -8,6 +8,7 @@ class StateManager:
         self.board = Board(size)
         self.visualization = visualization
         self.graph = BoardVisualization if visualization else None
+        self.current_player = 1
 
     def get_board_state(self):
         state = ""
@@ -16,9 +17,16 @@ class StateManager:
                 state += str(peghole.filled)
         return state
 
+    def change_player(self):
+        self.current_player = 1 if self.current_player == 2 else 2
+
+    def get_current_player(self):
+        return self.current_player
+
     def perform_action(self, player, action):
         peghole = self.board[action[0]][action[1]]
         peghole.add_peg(player)
+        self.change_player()
 
         if self.visualization: self.graph.change_node_color(peghole)
 
