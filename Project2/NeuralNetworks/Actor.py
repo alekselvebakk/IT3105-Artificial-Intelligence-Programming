@@ -75,7 +75,7 @@ class Actor:
         return prediction
 
     # TODO: Discuss: should actions be 'calculated' in a game handler? for moduality? Should prob just send probabiities
-    def get_action(self, state, epsilon):
+    def get_action(self, state, epsilon = 0):
         decision = random.uniform(0, 1)
         if decision > epsilon:
             index = np.argmax(self.get_probabilities(state))
