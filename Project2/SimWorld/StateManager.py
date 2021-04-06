@@ -2,12 +2,13 @@ from Project2.SimWorld.Board import Board
 from Project2.SimWorld.BoardVisualization import BoardVisualization
 import numpy as np
 
+
 class StateManager:
 
-    def __init__(self, size, visualization=False):
+    def __init__(self, size, visualization=False, gif_name='testing'):
         self.board = Board(size)
         self.visualization = visualization
-        self.graph = BoardVisualization if visualization else None
+        self.graph = BoardVisualization(self.board, 1000, gif_name+'.gif') if visualization else None
         self.current_player = 1
 
     def get_board_state(self):
@@ -24,7 +25,7 @@ class StateManager:
         return self.current_player
 
     def perform_action(self, player, action):
-        peghole = self.board[action[0]][action[1]]
+        peghole = self.board.table[action[0]][action[1]]
         peghole.add_peg(player)
         self.change_player()
 
@@ -38,15 +39,15 @@ class StateManager:
     def check_player1_win(self):  # player1 = red, owns northeast and southwest (top and bottom in table)
         visited_nodes = []
         furthest = 0
-        ne_row = [peghole for peghole in self.board[0] if peghole.filled == 1]
+        ne_row = [peghole for peghole in self.board.table[0] if peghole.filled == 1]
         for peghole in ne_row:
             if peghole not in visited_nodes:
                 visited_nodes.append(peghole)
                 possible_furthest, visited_nodes = self.check_furthest_neighbour_row(peghole, visited_nodes)
                 furthest = possible_furthest if possible_furthest > furthest else furthest
-            if furthest == int(np.sqrt(self.board.size))-1: break
+            if furthest == self.board.size-1: break
 
-        return furthest == int(np.sqrt(self.board.size))-1
+        return furthest == self.board.size-1
 
     def check_player2_win(self):  # player2 = black, owns northwest and southeast (the sides in table)
         visited_nodes = []
@@ -57,19 +58,19 @@ class StateManager:
                 visited_nodes.append(peghole)
                 possible_furthest, visited_nodes = self.check_furthest_neighbour_col(peghole, visited_nodes)
                 furthest = possible_furthest if possible_furthest > furthest else furthest
-            if furthest == int(np.sqrt(self.board.size)): break
+            if furthest == self.board.size-1: break
 
-            return furthest == int(np.sqrt(self.board.size))
+            return furthest == self.board.size-1
 
     def get_north_west_col(self):
         nw = []
-        for i in range(len(self.board)):
-            nw.append(self.board[i][0])
+        for i in range(len(self.board.table)):
+            nw.append(self.board.table[i][0])
         return nw
 
     def check_furthest_neighbour_row(self, peghole, visited_nodes):
         furthest = peghole.row
-        if peghole.row == int(np.sqrt(self.board.size))-1: return peghole.row, visited_nodes
+        if peghole.row == self.board.size-1: return peghole.row, visited_nodes
 
         for neighbour in peghole.get_players_neighbours(1):
             if neighbour not in visited_nodes:
@@ -80,8 +81,8 @@ class StateManager:
         return furthest, visited_nodes
 
     def check_furthest_neighbour_col(self, peghole, visited_nodes):
-        furthest = peghole.col
-        if peghole.col == int(np.sqrt(self.board.size))-1: return peghole.col
+        furthest = peghole.column
+        if peghole.column == self.board.size-1: return peghole.column, visited_nodes
 
         for neighbour in peghole.get_players_neighbours(2):
             if neighbour not in visited_nodes:

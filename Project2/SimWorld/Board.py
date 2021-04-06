@@ -4,7 +4,7 @@ class Board:
     def __init__(self, size):
         self.table = []
         self.size = size
-        self.num_pegs = 0
+        self.num_pegs = 0  # May not be needed
         self.create_board(size)
 
     def create_board(self, size):
@@ -12,7 +12,7 @@ class Board:
             self.table.append([])
             for column in range(size):
                 peghole = Peghole(row, column, filled=0)  # Filled = 0/1/2
-                self.connect_diamond_neighbours(peghole)
+                self.connect_neighbours(peghole)
                 self.table[row].append(peghole)
 
     def connect_neighbours(self, peghole):
@@ -33,7 +33,7 @@ class Board:
         peghole_2.add_neighbour(peghole_2.find_neighbour_direction(peghole_1.row, peghole_1.column), peghole_1)
 
     def reset_board(self):
-        self.num_pegs = 0
+        # self.num_pegs = 0
         for row in self.table:
             for peghole in row:
                 peghole.filled = 0

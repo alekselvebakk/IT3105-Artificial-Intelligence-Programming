@@ -25,7 +25,7 @@ class Peghole:
         self.filled = 0
 
     def add_peg(self, player):
-        self.filled = player
+        self.filled = player  # 1 or 2
 
     def get_players_neighbours(self, player):
         player_neighbours = []
