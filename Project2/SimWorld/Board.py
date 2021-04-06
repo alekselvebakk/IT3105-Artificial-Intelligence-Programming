@@ -32,6 +32,13 @@ class Board:
         peghole_1.add_neighbour(peghole_1.find_neighbour_direction(peghole_2.row, peghole_2.column), peghole_2)
         peghole_2.add_neighbour(peghole_2.find_neighbour_direction(peghole_1.row, peghole_1.column), peghole_1)
 
+    def get_board_state(self):
+        state = ""
+        for row in self.table:
+            for peghole in row:
+                state += str(peghole.filled)
+        return state
+
     def reset_board(self):
         # self.num_pegs = 0
         for row in self.table:

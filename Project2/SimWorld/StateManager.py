@@ -1,6 +1,7 @@
 from Project2.SimWorld.Board import Board
 from Project2.SimWorld.BoardVisualization import BoardVisualization
 import numpy as np
+import copy
 
 
 class StateManager:
@@ -11,61 +12,68 @@ class StateManager:
         self.graph = BoardVisualization(self.board, 1000, gif_name+'.gif') if visualization else None
         self.current_player = 1
 
+        self.sim_board = None
+        self.current_sim_player = None
+
+    # ---- Real Game Moves ----
     def get_board_state(self):
-        state = ""
-        for row in self.board.table:
-            for peghole in row:
-                state += str(peghole.filled)
-        return state
+        return self.board.get_board_state()
 
-    def change_player(self):
-        self.current_player = 1 if self.current_player == 2 else 2
+    # ---- Functions for both real game and roll out ----
 
-    def get_current_player(self):
-        return self.current_player
+    def get_current_player(self, rollout=False):
+        return self.current_player if not rollout else self.current_sim_player
 
-    def perform_action(self, player, action):
-        peghole = self.board.table[action[0]][action[1]]
+    def change_player(self, rollout=False):
+        if not rollout:
+            self.current_player = 1 if self.current_player == 2 else 2
+        else:
+            self.current_sim_player = 1 if self.current_sim_player == 2 else 2
+
+    def perform_action(self, player, action, rollout=False):
+        board = self.board if not rollout else self.sim_board
+        peghole = board.table[action[0]][action[1]]
         peghole.add_peg(player)
         self.change_player()
 
-        if self.visualization: self.graph.change_node_color(peghole)
+        if self.visualization and not rollout: self.graph.change_node_color(peghole)
 
-    def check_if_final_state(self):
-        if self.check_player1_win(): return 1
-        if self.check_player2_win(): return 2
+    def check_if_final_state(self, rollout=False):
+        board = self.board if not rollout else self.sim_board
+        if self.check_player1_win(board): return 1
+        if self.check_player2_win(board): return 2
         return 0
 
-    def check_player1_win(self):  # player1 = red, owns northeast and southwest (top and bottom in table)
+    def check_player1_win(self, board):  # player1 = red, owns northeast and southwest (top and bottom in table)
         visited_nodes = []
         furthest = 0
-        ne_row = [peghole for peghole in self.board.table[0] if peghole.filled == 1]
+        ne_row = [peghole for peghole in board.table[0] if peghole.filled == 1]
         for peghole in ne_row:
             if peghole not in visited_nodes:
                 visited_nodes.append(peghole)
                 possible_furthest, visited_nodes = self.check_furthest_neighbour_row(peghole, visited_nodes)
                 furthest = possible_furthest if possible_furthest > furthest else furthest
-            if furthest == self.board.size-1: break
+            if furthest == board.size-1: break
 
-        return furthest == self.board.size-1
+        return furthest == board.size-1
 
-    def check_player2_win(self):  # player2 = black, owns northwest and southeast (the sides in table)
+    def check_player2_win(self, board):  # player2 = black, owns northwest and southeast (the sides in table)
         visited_nodes = []
         furthest = 0
-        nw_col = [peghole for peghole in self.get_north_west_col() if peghole.filled == 2]
+        nw_col = [peghole for peghole in self.get_north_west_col(board) if peghole.filled == 2]
         for peghole in nw_col:
             if peghole not in visited_nodes:
                 visited_nodes.append(peghole)
                 possible_furthest, visited_nodes = self.check_furthest_neighbour_col(peghole, visited_nodes)
                 furthest = possible_furthest if possible_furthest > furthest else furthest
-            if furthest == self.board.size-1: break
+            if furthest == board.size-1: break
 
-            return furthest == self.board.size-1
+        return furthest == board.size-1
 
-    def get_north_west_col(self):
+    def get_north_west_col(self, board):
         nw = []
-        for i in range(len(self.board.table)):
-            nw.append(self.board.table[i][0])
+        for i in range(len(board.table)):
+            nw.append(board.table[i][0])
         return nw
 
     def check_furthest_neighbour_row(self, peghole, visited_nodes):
@@ -99,3 +107,15 @@ class StateManager:
         self.board.reset_board()
 
         if self.visualization: self.graph.reset_board()
+
+    # ------ SIMULATED MOVES -------
+    def init_roll_out_game(self):
+        self.sim_board = copy.deepcopy(self.board)
+        self.current_sim_player = self.get_current_player()
+
+    def get_roll_out_state(self):
+        self.sim_state.get_board_state()
+
+
+
+
