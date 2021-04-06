@@ -9,7 +9,7 @@ class BoardVisualization:
     def __init__(self, board, interval, board_gif_name):
         self.board = board
         self.G = nx.Graph()
-        self.peghole_colors = {0: '#0000ff', 1: '#ff0000', 2: '#000000', 3: '#FFCCCB', 4: '#606060'}
+        self.peghole_colors = {0: '#0000ff', 1: '#ff0000', 2: '#000000', 3: '#FFCCCB', 4: '#606060'}  # 3 and 4 are used for enhancing when player 1 and 2 makes a move
         self.node_pos = []
         self.node_color = {}
         self.color_combo = []
@@ -18,7 +18,6 @@ class BoardVisualization:
         self.create_board_graph()
         self.color_combo.append(dict(self.node_color).values())
         self.board_gif_name = board_gif_name
-        self.draw_graph()
 
     def create_board_graph(self):
         # Information for the top node

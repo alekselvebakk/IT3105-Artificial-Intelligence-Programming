@@ -13,7 +13,7 @@ def main():
     sm.perform_action(2, [0, 3])
     sm.perform_action(2, [3, 2])
     sm.perform_action(2, [1, 0])
-    sm.graph.draw_graph()
+    sm.show_animation()
     print(sm.check_if_final_state())
 
 

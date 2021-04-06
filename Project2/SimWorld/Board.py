@@ -4,7 +4,6 @@ class Board:
     def __init__(self, size):
         self.table = []
         self.size = size
-        self.num_pegs = 0  # May not be needed
         self.create_board(size)
 
     def create_board(self, size):
@@ -40,7 +39,6 @@ class Board:
         return state
 
     def reset_board(self):
-        # self.num_pegs = 0
         for row in self.table:
             for peghole in row:
                 peghole.filled = 0
