@@ -13,7 +13,8 @@ class Actor:
                  last_act='softmax',
                  board_size=25,
                  reload_model=False,
-                 reload_name=None):
+                 reload_name=None,
+                 minibatch_size=350):
 
         self.alpha = learning_rate
         self.layers = layers
@@ -22,6 +23,7 @@ class Actor:
         self.last_act = last_act
         self.input_size = 1 + board_size  # The state will be playerID + board
         self.output_size = board_size
+        self.minibatch_size = minibatch_size
 
         # makes a new NN or reloads from earlier trained model
         self.model = self.get_net() if not reload_model else keras.models.load_model(reload_name)
@@ -94,6 +96,23 @@ class Actor:
         row = int(index // table_root)
         col = int(index % table_root)
         return [row, col]
+
+    def train_from_RBUF(self, RBUF):
+        if self.minibatch_size <= len(RBUF):
+            minibatch = random.sample(RBUF, self.minibatch_size)
+        else:
+            minibatch = RBUF
+        inputs = [0]*len(minibatch)
+        targets = inputs
+        for i in range(len(minibatch)):
+            inputs[i] = minibatch[i][0]
+            targets[i] = minibatch[i][1]
+    
+        epochs = 50
+        batch_size = int(len(inputs)/epochs)
+        
+        self.train(inputs, targets, batch_size, epochs-1)
+        
 
 
 
