@@ -4,12 +4,16 @@ class MCTS:
     def __init__(self, GameHandler, root):
         #Setting root state
         self.root = root
+
         #Copying GameHandler into object memory, setting its state and getting its action possibilities
-        self.GameHandler = GameHandler
+        self.GameHandler = GameHandler  #   Her skal det initialiseres ny GameHandler med 
+                                        #   samme settings som GameHandler
         self.GameHandler.set_state(self.root)
         actions = self.GameHandler.get_actions()
+        
         #Initializing root node for tree
         root_node = MCTS_Node(state = self.root, actions = actions)
+        
         #Creating tree
         self.tree = dict()
         self.tree[self.root] = root_node
@@ -50,7 +54,8 @@ class MCTS:
 
     def update_and_reset_tree(self, new_root_state):
         self.simulation_history = dict()
-        self.root = new_root_state
+        if not new_root_state == self.root:
+            self.root = new_root_state
     
     def get_root_distribution(self):
         #Getting distribution of all actions
