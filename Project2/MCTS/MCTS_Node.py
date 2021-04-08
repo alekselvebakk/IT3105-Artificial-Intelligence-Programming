@@ -5,19 +5,25 @@ import random
 class MCTS_Node:
     def __init__(self, state = state, actions = actions):
         self.state = state
-        """
-        logikk for å bestemme  hvilken spiller man er
-        -> player = 1 eller 2 
-        """
-        self.player = 1
+        self.player = int(state[0])
         self.N_s = 0
         self.N_s_a = dict()
         self.Q_s_a = dict()
+
         self.actions = actions
-        self.unexplored_actions = actions
-        for action in self.actions:
-            self.N_s_a[action] = 0
-            self.Q_s_a[action] = 0
+        #makes this as a lookup-table to store indices of actions that can be done
+        self.available_actions = dict()
+        
+        
+
+        #Adds elements that is not "False" in the unexplored_action-list
+        #And gives them a Value
+        for x in range(len(self.actions)):
+            self.N_s_a[self.actions[x]] = 0
+            self.Q_s_a[self.actions[x]] = 0
+            if self.actions[x] != False:
+                self.unexplored_actions.append(self.actions[x])
+                self.available_action[x] = self.actions[x]
     
     def increment_N_s(self):
         self.N_s = self.N_s + 1
@@ -49,24 +55,33 @@ class MCTS_Node:
     def score_for_minimizing(self, action, c):
         to_be_minimized = self.Q_s_a[action]-self.numeric_exploration_score(action, c)
         return to_be_minimized
-    
-    def get_action_score(self, action, c):
-        if self.player == 1:
-                score = self.score_for_maximizing(action, c)
-        else:
-                score = self.score_for_minimizing(action, c)
-        return score
 
-    
+    def get_minimizing_action(self, c):
+        min_score = 10000
+        argmin = 0
+        for i in self.available_actions:
+            current_score = self.score_for_minimizing(self.actions[i], c)
+            if current_score < min_score:
+                min_score = current_score
+                argmin = i
+        return self.actions[argmin]
+
+    def get_maximixing_action(self, c):
+        max_score = 0
+        argmax = 0
+        for i in self.available_actions:
+            current_score = self.score_for_maximizing(self.actions[i], c)
+            if current_score > max_score:
+                max_score = current_score
+                argmax = i
+        return self.actions[argmax]
+
     def get_action(self, c):
         if not self.unexplored_actions: #Enters this for-loop if there are no unexplored actions
-            action_scores = np.zeros_like(self.actions)
-            for i in len(action_scores):
-                action_scores[i] = self.get_action_score(self.actions[i], c)
-            if self.player == 0:
-                action = self.actions[np.argmax(action_scores)]
-            else:
-                action = self.actions[np.argmin(action_scores)]
+            if self.player == 1:
+                action = self.get_minimizing_action(c)
+            elif self.player == 2:
+                action = self.get_maximixing_action(c)        
         else:
             action = random.choice(self.unexplored_actions)
             self.unexplored_actions.remove(action)
