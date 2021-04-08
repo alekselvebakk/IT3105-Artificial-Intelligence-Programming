@@ -1,15 +1,13 @@
-import MCTS_Node 
+import MCTS_Node
 
 class MCTS:
-    def __init__(self, GameHandler, root):
+    def __init__(self, GameHandler, GameBoard):
         #Setting root state
-        self.root = root
+        self.root = GameHandler.get_state(GameBoard)
 
         #Copying GameHandler into object memory, setting its state and getting its action possibilities
-        self.GameHandler = GameHandler  #   Her skal det initialiseres ny GameHandler med 
-                                        #   samme settings som GameHandler
-        self.GameHandler.set_state(self.root)
-        actions = self.GameHandler.get_actions()
+        self.GameHandler = GameHandler
+        actions = self.GameHandler.get_actions(GameBoard)
         
         #Initializing root node for tree
         root_node = MCTS_Node(state = self.root, actions = actions)
@@ -20,32 +18,30 @@ class MCTS:
         self.simulation_history = dict()
 
 
-    def insert_new_node(self, state):
-        if not self.GameHandler.get_state == state:
-            self.GameHandler.set_state(state)
-        actions = self.GameHandler.get_actions()
+    def insert_new_node(self, state, actions):
         new_node = MCTS_Node(state = state, actions = actions)
         self.tree[state] = new_node
     
     
-    def tree_simulation(self, c):
+    def tree_simulation(self, GameBoard, c):
 
-        self.GameHandler.set_state(self.root)
+        self.GameHandler.set_state(GameBoard, self.root)
 
-        while not self.GameHandler.state_is_final():
+        while not self.GameHandler.state_is_final(GameBoard):
             
-            s_t = self.GameHandler.get_state()
+            s_t = self.GameHandler.get_state(GameBoard)
             if s_t not in self.tree:
-                self.insert_new_node(s_t)
+                actions_for_node = self.GameHandler.get_actions(GameBoard)
+                self.insert_new_node(s_t, actions_for_node)
                 action = self.tree[s_t].get_action(c)
                 self.simulation_history[s_t] = action
                 return s_t, action, False
             else:
                 action = self.tree[s_t].get_action(c)
                 self.simulation_history[s_t] = action       
-            self.GameHandler.perform_action(action)
+            self.GameHandler.perform_action(GameBoard, action)
 
-        s_finished = self.GameHandler.get_state()
+        s_finished = self.GameHandler.get_state(GameBoard)
         return s_finished, None, True
 
     def backprop_tree(self, z):
