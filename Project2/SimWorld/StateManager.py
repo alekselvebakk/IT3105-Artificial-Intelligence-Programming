@@ -15,11 +15,11 @@ class StateManager:
         self.sim_board = None
         self.current_sim_player = None
 
-    # ---- Real Game Moves ----
+    # ---- REAL GAME ----
     def get_board_state(self):
         return self.board.get_board_state()
 
-    # ---- Functions for both real game and roll out ----
+    # ---- Methods for both REAL GAME and ROLL OUT GAMES ----
 
     def get_current_player(self, rollout=False):
         return self.current_player if not rollout else self.current_sim_player
@@ -34,7 +34,7 @@ class StateManager:
         board = self.board if not rollout else self.sim_board
         peghole = board.table[action[0]][action[1]]
         peghole.add_peg(player)
-        self.change_player()
+        self.change_player(rollout=rollout)
 
         if self.visualization and not rollout: self.graph.change_node_color(peghole)
 
@@ -108,7 +108,7 @@ class StateManager:
 
         if self.visualization: self.graph.reset_board()
 
-    # ------ SIMULATED MOVES -------
+    # ------ ROLL OUT GAMES -------
     def init_roll_out_game(self):
         self.sim_board = copy.deepcopy(self.board)
         self.current_sim_player = self.get_current_player()
