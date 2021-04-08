@@ -6,10 +6,6 @@ import copy
 
 class StateManager:
 
-    def __init__(self, size, visualization=False, gif_name='testing'):
-
-    # TODO: hva skal man gjøre med vis?
-
     def get_state(self, board):
         return board.get_board_state()
 
