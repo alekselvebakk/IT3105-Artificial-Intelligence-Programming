@@ -6,8 +6,8 @@ from Project2.SimWorld.Board import Board
 
 class BoardVisualization:
 
-    def __init__(self, board, interval, board_gif_name):
-        self.board = board
+    def __init__(self, table, interval, board_gif_name):
+        self.table = table
         self.G = nx.Graph()
         self.peghole_colors = {0: '#0000ff', 1: '#ff0000', 2: '#000000', 3: '#FFCCCB', 4: '#606060'}  # 3 and 4 are used for enhancing when player 1 and 2 makes a move
         self.node_pos = []
@@ -21,9 +21,9 @@ class BoardVisualization:
 
     def create_board_graph(self):
         # Information for the top node
-        row_pos = self.board.size
-        col_pos = self.board.size
-        top_node = self.board.table[0][0]
+        row_pos = 0
+        col_pos = 0
+        top_node = self.table[0][0]
 
         # Adds the first/top node
         self.add_node_with_properties(top_node, (col_pos, row_pos))

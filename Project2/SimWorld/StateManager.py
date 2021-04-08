@@ -7,39 +7,41 @@ import copy
 class StateManager:
 
     def __init__(self, size, visualization=False, gif_name='testing'):
-        self.board = Board(size)
-        self.visualization = visualization
-        self.graph = BoardVisualization(self.board, 1000, gif_name+'.gif') if visualization else None
-        self.current_player = 1
 
-        self.sim_board = None
-        self.current_sim_player = None
+    # TODO: hva skal man gjøre med vis?
 
-    # ---- REAL GAME ----
-    def get_board_state(self):
-        return self.board.get_board_state()
+    def get_state(self, board):
+        return board.get_board_state()
 
-    # ---- Methods for both REAL GAME and ROLL OUT GAMES ----
+    def set_state(self, board, state):
+        board.set_player(state[0])
+        board.update_board(state[1:])
 
-    def get_current_player(self, rollout=False):
-        return self.current_player if not rollout else self.current_sim_player
+    def change_player(self, board):  # may not be needed no more
+        player = 1 if board.player == 2 else 2
+        board.set_player(player)
 
-    def change_player(self, rollout=False):
-        if not rollout:
-            self.current_player = 1 if self.current_player == 2 else 2
-        else:
-            self.current_sim_player = 1 if self.current_sim_player == 2 else 2
+    def get_actions(self, board):
+        actions = [0]*(board.size*board.size)
+        for row in board.table:
+            for peghole in row:
+                if peghole.filled == 0:
+                    action = str(peghole.row)+str(peghole.column)
+                else: action = False
+                actions[peghole.row*board.size + peghole.column] = action
+        return actions
 
-    def perform_action(self, player, action, rollout=False):
-        board = self.board if not rollout else self.sim_board
-        peghole = board.table[action[0]][action[1]]
-        peghole.add_peg(player)
-        self.change_player(rollout=rollout)
+    def perform_action(self, board, action):
+        peghole = board.table[action[1]][action[2]]
+        peghole.add_peg(action[0])
+        self.change_player(board)
 
-        if self.visualization and not rollout: self.graph.change_node_color(peghole)
+        if board.visualize: board.graph.change_node_color(peghole)
 
-    def check_if_final_state(self, rollout=False):
-        board = self.board if not rollout else self.sim_board
+    def state_is_final(self, board):
+        return self.find_winner != 0
+
+    def find_winner(self, board):
         if self.check_player1_win(board): return 1
         if self.check_player2_win(board): return 2
         return 0
@@ -78,8 +80,6 @@ class StateManager:
 
     def check_furthest_neighbour_row(self, peghole, visited_nodes):
         furthest = peghole.row
-        if peghole.row == self.board.size-1: return peghole.row, visited_nodes
-
         for neighbour in peghole.get_players_neighbours(1):
             if neighbour not in visited_nodes:
                 visited_nodes.append(neighbour)
@@ -90,8 +90,6 @@ class StateManager:
 
     def check_furthest_neighbour_col(self, peghole, visited_nodes):
         furthest = peghole.column
-        if peghole.column == self.board.size-1: return peghole.column, visited_nodes
-
         for neighbour in peghole.get_players_neighbours(2):
             if neighbour not in visited_nodes:
                 visited_nodes.append(neighbour)
@@ -100,21 +98,14 @@ class StateManager:
 
         return furthest, visited_nodes
 
-    def show_animation(self):
-        if self.visualization: self.graph.show_graph_animation()
+    def show_animation(self, board):
+        if board.visualize: board.graph.show_graph_animation()
+        else: print("This board do not have an animated gif of the game.")
 
-    def reset_board(self):
-        self.board.reset_board()
+    def reset_board(self, board):
+        board.reset_board()
 
-        if self.visualization: self.graph.reset_board()
-
-    # ------ ROLL OUT GAMES -------
-    def init_roll_out_game(self):
-        self.sim_board = copy.deepcopy(self.board)
-        self.current_sim_player = self.get_current_player()
-
-    def get_roll_out_state(self):
-        self.sim_state.get_board_state()
+        if board.visualize: board.graph.reset_board()
 
 
 

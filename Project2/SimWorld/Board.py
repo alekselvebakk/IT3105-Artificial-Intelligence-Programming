@@ -1,10 +1,16 @@
 from Project2.SimWorld.Peghole import Peghole
+from Project2.SimWorld.BoardVisualization import BoardVisualization
 
 class Board:
-    def __init__(self, size):
+
+    def __init__(self, size, visualization=False, board_gif_name='board.gif'):
         self.table = []
         self.size = size
         self.create_board(size)
+        self.player = 1
+
+        self.visualize = visualization
+        self.graph = BoardVisualization(self.table, 1000, board_gif_name) if visualization else None
 
     def create_board(self, size):
         for row in range(size):
@@ -36,7 +42,17 @@ class Board:
         for row in self.table:
             for peghole in row:
                 state += str(peghole.filled)
-        return state
+        return str(self.player)+state
+
+    def set_player(self, player):
+        self.player = player
+
+    def update_board(self, state):
+        for char in state():
+            fill = int(char)
+            row = fill // self.size
+            col = fill % self.size
+            self.table[row][col].filled = fill
 
     def reset_board(self):
         for row in self.table:
