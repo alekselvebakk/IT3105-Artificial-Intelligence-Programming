@@ -2,14 +2,14 @@ import math
 import numpy as np
 import random
 
-class MCTS_Node():
+class MCTS_Node:
     def __init__(self, state = state, actions = actions):
         self.state = state
         """
         logikk for å bestemme  hvilken spiller man er
         -> player = 1 eller 2 
         """
-        self.player = 0
+        self.player = 1
         self.N_s = 0
         self.N_s_a = dict()
         self.Q_s_a = dict()
@@ -51,7 +51,7 @@ class MCTS_Node():
         return to_be_minimized
     
     def get_action_score(self, action, c):
-        if self.player == 0:
+        if self.player == 1:
                 score = self.score_for_maximizing(action, c)
         else:
                 score = self.score_for_minimizing(action, c)
@@ -71,3 +71,17 @@ class MCTS_Node():
             action = random.choice(self.unexplored_actions)
             self.unexplored_actions.remove(action)
         return action
+
+    def get_action_distribution(self):
+        action_distribution = np.zeros_like(self.actions, dtype = "int")
+        for i in range(len(self.actions)):
+            action_distribution[i] = self.N_s_a[self.actions[i]]/self.N_s
+        return action_distribution
+    
+    def get_most_frequent_action(self):
+        action_visits = 0
+        for i in range(len(self.actions)):
+            if self.N_s_a[self.actions[i]] > action_visits:
+                best_action = self.action[i]
+                action_visits = self.N_s_a[self.actions[i]]
+        return best_action
