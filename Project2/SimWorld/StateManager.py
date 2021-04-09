@@ -104,7 +104,6 @@ class StateManager:
 
     def reset_board(self, board):
         board.reset_board()
-
         if board.visualize: board.graph.reset_board()
 
 

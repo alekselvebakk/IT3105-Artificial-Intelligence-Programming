@@ -10,6 +10,7 @@ class Board:
         self.player = 1
 
         self.visualize = visualization
+        self.gif_name = board_gif_name
         self.graph = BoardVisualization(self.table, 1000, board_gif_name) if visualization else None
 
     def create_board(self, size):
@@ -57,3 +58,12 @@ class Board:
         for row in self.table:
             for peghole in row:
                 peghole.filled = 0
+        self.set_player(1)
+
+    def start_visualisation(self):
+        self.visualize = True
+        self.graph = BoardVisualization(self.table, 1000, self.gif_name)
+
+    def stop_visualization(self):
+        self.visualize = False
+        self.graph = None
