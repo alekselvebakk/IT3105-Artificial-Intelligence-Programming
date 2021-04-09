@@ -50,7 +50,7 @@ class Actor:
         return model
 
     def save_net(self, net_name):
-        self.model.save('Saved_models/' + net_name)
+        self.model.save(net_name)
 
     # loss function from Keith, but TODO: what does it mean? and does it work?
     def cross_entropy(self, targets, outputs):
