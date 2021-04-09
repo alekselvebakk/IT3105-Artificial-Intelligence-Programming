@@ -1,5 +1,5 @@
-from Project2.SimWorld.Peghole import Peghole
-from Project2.SimWorld.BoardVisualization import BoardVisualization
+from SimWorld.Peghole import Peghole
+from SimWorld.BoardVisualization import BoardVisualization
 
 class Board:
 

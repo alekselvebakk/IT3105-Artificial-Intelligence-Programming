@@ -25,7 +25,7 @@ def main():
     config.read(config_path)
 
 
-    actor = Actor(learning_rate=config.getint('actor','learning_rate'),
+    actor = Actor(learning_rate=config.getfloat('actor','learning_rate'),
                   layers=ast.literal_eval(config['actor']['hidden_layers']),
                   opt=config['actor']['optimizer'],
                   act=config['actor']['activation'],

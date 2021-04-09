@@ -1,4 +1,4 @@
-import MCTS_Node
+from MCTS.MCTS_Node import MCTS_Node
 
 class MCTS:
     def __init__(self, GameHandler, GameBoard):
@@ -10,7 +10,7 @@ class MCTS:
         actions = self.GameHandler.get_actions(GameBoard)
         
         #Initializing root node for tree
-        root_node = MCTS_Node(state = self.root, actions = actions)
+        root_node = MCTS_Node(self.root, actions)
         
         #Creating tree
         self.tree = dict()
@@ -19,7 +19,7 @@ class MCTS:
 
 
     def insert_new_node(self, state, actions):
-        new_node = MCTS_Node(state = state, actions = actions)
+        new_node = MCTS_Node(state, actions)
         self.tree[state] = new_node
     
     

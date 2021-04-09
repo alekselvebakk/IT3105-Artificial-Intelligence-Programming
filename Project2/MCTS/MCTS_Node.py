@@ -3,7 +3,7 @@ import numpy as np
 import random
 
 class MCTS_Node:
-    def __init__(self, state = state, actions = actions):
+    def __init__(self, state, actions):
         self.state = state
         self.player = int(state[0])
         self.N_s = 0
@@ -12,8 +12,8 @@ class MCTS_Node:
 
         self.actions = actions
         #makes this as a lookup-table to store indices of actions that can be done
-        self.available_actions = dict()
-        
+        self.available_actions = {}
+        self.unexplored_actions = []
         
 
         #Adds elements that is not "False" in the unexplored_action-list
@@ -23,7 +23,7 @@ class MCTS_Node:
             self.Q_s_a[self.actions[x]] = 0
             if self.actions[x] != False:
                 self.unexplored_actions.append(self.actions[x])
-                self.available_action[x] = self.actions[x]
+                self.available_actions[x] = self.actions[x]
     
     def increment_N_s(self):
         self.N_s = self.N_s + 1

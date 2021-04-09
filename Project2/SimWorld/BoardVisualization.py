@@ -1,7 +1,6 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import matplotlib.animation
-from Project2.SimWorld.Board import Board
 
 
 class BoardVisualization:
