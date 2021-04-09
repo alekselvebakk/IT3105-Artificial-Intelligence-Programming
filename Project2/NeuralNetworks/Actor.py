@@ -11,7 +11,7 @@ class Actor:
                  opt='SGD',
                  act='relu',
                  last_act='softmax',
-                 board_size=25,
+                 input_size=25+1,
                  reload_model=False,
                  reload_name=None,
                  minibatch_size=350):
@@ -21,8 +21,8 @@ class Actor:
         self.opt = eval('keras.optimizers.' + opt)
         self.act = act
         self.last_act = last_act
-        self.input_size = 1 + board_size  # The state will be playerID + board
-        self.output_size = board_size
+        self.input_size = input_size  # The state will be playerID + board
+        self.output_size = input_size - 1  # Board of actions (minus player)
         self.minibatch_size = minibatch_size
 
         # makes a new NN or reloads from earlier trained model

@@ -1,9 +1,3 @@
-from Project2.SimWorld.Board import Board
-from Project2.SimWorld.BoardVisualization import BoardVisualization
-import numpy as np
-import copy
-
-
 class StateManager:
 
     def get_state(self, board):
