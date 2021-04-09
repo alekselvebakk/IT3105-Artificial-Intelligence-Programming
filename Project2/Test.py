@@ -1,20 +1,12 @@
 from Project2.SimWorld.Board import Board
-from Project2.SimWorld.BoardVisualization import Board
 from Project2.SimWorld.StateManager import StateManager
 
 def main():
-    sm = StateManager(4, True)
-    sm.perform_action(1, [1, 2])
-    sm.perform_action(1, [0, 0])
-    sm.perform_action(1, [2, 2])
-    sm.perform_action(2, [0, 1])
-    sm.perform_action(1, [3, 1])
-    sm.perform_action(2, [0, 2])
-    sm.perform_action(2, [0, 3])
-    sm.perform_action(2, [3, 2])
-    sm.perform_action(2, [1, 0])
-    sm.show_animation()
-    print(sm.check_if_final_state())
+    sm = StateManager()
+    b = Board(size=5)
+    test = '22122211120212112211212121'
+    sm.set_state(b, test)
+    print(sm.get_result(b))
 
 
 if __name__ == '__main__':
