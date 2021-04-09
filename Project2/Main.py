@@ -74,7 +74,7 @@ def main():
                 z = state_manager.get_result(Board_MC)
                 MCTS_tree.backprop_tree(z)
                 MCTS_tree.update_and_reset_tree(current_state)
-                state_manager.set_state(Board_MC, current_state)
+                state_manager.set_state(Board_MC, MCTS_tree.root)
                 print("ferdig etter resetting:",state_manager.state_is_final(Board_MC))
                 print("current_state: ", current_state)
 
