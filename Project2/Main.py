@@ -33,7 +33,10 @@ def main():
                   last_act=config['actor']['last_activation'],
                   input_size=config.getint('board', 'size')*config.getint('board', 'size')+1,
                   minibatch_size=config.getint('actor', 'minibatch'),
-                  epochs=config.getint('actor', 'epochs')
+                  epochs=config.getint('actor', 'epochs'),
+                  batch_size=config.getint('actor', 'batch_size'),
+                  validation_split=config.getfloat('actor','validation_split'),
+                  verbosity = config.getint('actor','verbosity')
                   )
     c = config.getfloat('MCTS', 'exploration_weight')
     tree_games = config.getint('MCTS', 'tree_games')
@@ -104,8 +107,8 @@ def main():
             state_manager.perform_action(Board_A, action)
 
         #Train actor after actual game is finished
-        if j > 5:
-            print("training starts")  
+        if j > 10:
+            print("training starts, RBUF has",len(RBUF),"samples")  
             actor.train_from_RBUF(RBUF)
         progress = float(j)/number_actual_games *100
         print(str(progress)+"%")
