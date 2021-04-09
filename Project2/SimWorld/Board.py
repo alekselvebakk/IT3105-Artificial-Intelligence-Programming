@@ -49,8 +49,8 @@ class Board:
 
     def update_board(self, state):
         for i in range(len(state)):
-            row = index // self.size
-            col = index % self.size
+            row = i // self.size
+            col = i % self.size
             self.table[row][col].filled = int(state[i])
 
     def reset_board(self):

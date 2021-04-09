@@ -70,7 +70,6 @@ class StateManager:
     def get_north_west_col(self, board):
         nw = []
         for i in range(len(board.table)):
-            print(board.table[i][0].filled)
             nw.append(board.table[i][0])
         return nw
 
