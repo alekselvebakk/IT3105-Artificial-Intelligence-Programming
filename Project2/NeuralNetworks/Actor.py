@@ -71,8 +71,10 @@ class Actor:
                 prediction[i-1] = 0
 
         # Scaling of the remaining numbers to the sum of 1
-        prediction = prediction/prediction.sum()
-        # print('PRED_NORM:', prediction)
+        sum = prediction.sum()
+        if sum == 0:
+            sum = 0.00000001
+        prediction = prediction/sum
 
         return prediction
 
@@ -102,24 +104,16 @@ class Actor:
             minibatch = random.sample(RBUF, self.minibatch_size)
         else:
             minibatch = RBUF
-        inputs = [0]*len(minibatch)
-        targets = inputs
+
+        print("minibatch",minibatch)
+        inputs = np.zeros((len(minibatch), len(minibatch[0][0])))
+        targets = np.zeros((len(minibatch), len(minibatch[0][1])))
         for i in range(len(minibatch)):
-            inputs[i] = minibatch[i][0]
+            inputs[i] = self.string_to_tensor(minibatch[i][0])
             targets[i] = minibatch[i][1]
-    
         epochs = 50
         batch_size = int(len(inputs)/epochs)
-        
         self.train(inputs, targets, batch_size, epochs-1)
         
 
 
-
-def main():
-    a = Actor()
-    a.get_probabilities('21201201201201201201201201')
-
-
-if __name__ == '__main__':
-    main()

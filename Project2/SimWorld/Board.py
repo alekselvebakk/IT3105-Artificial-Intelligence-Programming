@@ -48,7 +48,7 @@ class Board:
         self.player = player
 
     def update_board(self, state):
-        for char in state():
+        for char in state:
             fill = int(char)
             row = fill // self.size
             col = fill % self.size

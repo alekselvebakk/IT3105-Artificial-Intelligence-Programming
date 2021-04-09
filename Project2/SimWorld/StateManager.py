@@ -1,3 +1,6 @@
+from SimWorld.Peghole import Peghole
+
+
 class StateManager:
 
     def get_state(self, board):
@@ -22,16 +25,18 @@ class StateManager:
         return actions
 
     def perform_action(self, board, action):
-        peghole = board.table[action[1]][action[2]]
-        peghole.add_peg(action[0])
+        peghole = board.table[int(action[0])][int(action[1])]
+        peghole.add_peg(board.player)
         self.change_player(board)
+        print(board.get_board_state())
 
         if board.visualize: board.graph.change_node_color(peghole)
 
     def state_is_final(self, board):
-        return self.find_winner != 0
+        state_is_final = self.get_result(board) != 0
+        return state_is_final
 
-    def find_winner(self, board):
+    def get_result(self, board):
         if self.check_player1_win(board): return 1
         if self.check_player2_win(board): return 2
         return 0

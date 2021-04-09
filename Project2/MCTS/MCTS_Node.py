@@ -88,7 +88,7 @@ class MCTS_Node:
         return action
 
     def get_action_distribution(self):
-        action_distribution = np.zeros_like(self.actions, dtype = "int")
+        action_distribution = np.zeros_like(self.actions, dtype = "float")
         for i in range(len(self.actions)):
             action_distribution[i] = self.N_s_a[self.actions[i]]/self.N_s
         return action_distribution
@@ -97,6 +97,6 @@ class MCTS_Node:
         action_visits = 0
         for i in range(len(self.actions)):
             if self.N_s_a[self.actions[i]] > action_visits:
-                best_action = self.action[i]
+                best_action = self.actions[i]
                 action_visits = self.N_s_a[self.actions[i]]
         return best_action
