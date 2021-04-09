@@ -9,7 +9,7 @@ import pathlib
 import time
 
 
-def training_main():
+def main():
     config = ConfigParser()
     config_path = str(pathlib.Path(__file__).parent.absolute()) + "/config.ini"
     config.read(config_path)
@@ -34,12 +34,14 @@ def training_main():
     c = config.getfloat('MCTS', 'exploration_weight')
     tree_games = config.getint('MCTS', 'tree_games')
     number_actual_games = config.getint('MCTS', 'actual_games')
+    
 
     #Extract TOPP settings
     games_between_nets = config.getint('TOPP', 'games_between_nets')
     number_of_nets = config.getint('TOPP', 'number_of_nets')
     run_tournament = config.getboolean('TOPP', 'run_tournament')
-
+    training_saving_step = number_actual_games/number_of_nets
+    current_step = 0
 
     state_manager = StateManager()
     RBUF = []
@@ -55,8 +57,6 @@ def training_main():
                 current_state = state_manager.get_state(Board_A)
                 state_manager.set_state(Board_MC, current_state)
                 MCTS_tree.update_and_reset_tree(current_state)
-                
-                print(MCTS_tree.root)
                 for i in range(tree_games):
                     
                     #Tree simulation
@@ -111,13 +111,15 @@ def training_main():
                 actor.train_from_RBUF(RBUF)
 
             #Save ANET every x games to file
-            if j % number_actual_games/(number_of_nets-1) == 0:
+            if j == current_step:
                 NeuralNetName = str(pathlib.Path(__file__).parent.absolute()) + "/Saved_Nets/ANET"+str(j)
                 actor.save_net(NeuralNetName)
+                current_step = current_step+training_saving_step
 
 
             #Print progress
-            print(str(float(j)/number_actual_games *100)+"%")
+            progress = str(float(j)/number_actual_games *100)+"%"
+            print(progress)
 
         #Save final net  
         NeuralNetName = str(pathlib.Path(__file__).parent.absolute()) + "/Saved_Nets/ANET"+str(number_actual_games)
@@ -125,11 +127,11 @@ def training_main():
 
 
     if run_tournament:
-        Tournament = TOPP(number_of_nets, games_between_nets, StateManager(), Board_A)
+        Tournament = TOPP(number_of_nets, games_between_nets, StateManager(), Board(size=config.getint('board', 'size')))
         actor_list = []
         for i in range(number_of_nets):
-            actor_number = number_actual_games/(number_of_nets-1)*i
-            actor_name = str(pathlib.Path(__file__).parent.absolute()) + "/Saved_Nets/ANET"+str(actor_number)
+            actor_number = number_actual_games/(number_of_nets)*i
+            actor_name = pathlib.Path(str(pathlib.Path(__file__).parent.absolute()) + "/Saved_Nets/ANET"+str(int(actor_number)))
             actor_list.append(  Actor(learning_rate=config.getfloat('actor','learning_rate'),
                                 layers=ast.literal_eval(config['actor']['hidden_layers']),
                                 opt=config['actor']['optimizer'],

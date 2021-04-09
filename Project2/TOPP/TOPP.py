@@ -10,7 +10,7 @@ class TOPP:
         
 
     def single_game_between_2_nets(self, actor0, actor1):
-        self.state_manager.reset_board()
+        self.state_manager.reset_board(self.board)
         turn = 0
         while not self.state_manager.state_is_final(self.board):
             state = self.state_manager.get_state(self.board)
@@ -20,7 +20,7 @@ class TOPP:
             else:
                 action = actor1.get_action(state)
                 turn = 0
-            self.state_manager.perform_action(action)
+            self.state_manager.perform_action(self.board,action)
         winner = self.state_manager.get_result(self.board)
         return winner #0 eller 1
 

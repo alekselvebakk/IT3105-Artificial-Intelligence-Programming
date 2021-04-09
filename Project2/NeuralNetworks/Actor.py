@@ -35,7 +35,7 @@ class Actor:
         self.verbosity = verbosity
 
         # makes a new NN or reloads from earlier trained model
-        self.model = self.get_net() if not reload_model else keras.models.load_model(reload_name)
+        self.model = self.get_net() if not reload_model else keras.models.load_model(reload_name, custom_objects={ 'cross_entropy': self.cross_entropy })
 
     # TODO: Initialize values: skjer ikke det automatisk? satt dem til 0 nå, men vet ikke om det er det beste
     def get_net(self):  # Not finished version, will TODO: checkout CNN
@@ -55,6 +55,7 @@ class Actor:
     # loss function from Keith, but TODO: what does it mean? and does it work?
     def cross_entropy(self, targets, outputs):
         return tf.reduce_mean(tf.reduce_sum(-1*targets*self.safelog(outputs), axis=1))
+
 
     @staticmethod
     def safelog(tensor, base=0.0001):
