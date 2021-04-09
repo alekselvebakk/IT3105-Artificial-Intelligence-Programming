@@ -29,9 +29,7 @@ class StateManager:
         if board.visualize: board.graph.change_node_color(peghole)
 
     def state_is_final(self, board):
-        print("state is final: ", self.get_state(board))
         state_is_final = self.get_result(board) != 0
-        print(self.get_result(board))
         return state_is_final
 
     def feil_sjekk(self, board):

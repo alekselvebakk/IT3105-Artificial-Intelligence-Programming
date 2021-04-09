@@ -2,6 +2,7 @@ import tensorflow as tf
 from tensorflow import keras
 import numpy as np
 import random
+import time
 
 
 class Actor:
@@ -14,7 +15,11 @@ class Actor:
                  input_size=25+1,
                  reload_model=False,
                  reload_name=None,
-                 minibatch_size=350):
+                 minibatch_size=350,
+                 epochs=200,
+                 batch_size=32,
+                 validation_split = 0.1,
+                 verbosity = 2):
 
         self.alpha = learning_rate
         self.layers = layers
@@ -24,6 +29,10 @@ class Actor:
         self.input_size = input_size  # The state will be playerID + board
         self.output_size = input_size - 1  # Board of actions (minus player)
         self.minibatch_size = minibatch_size
+        self.epochs = epochs
+        self.batch_size = batch_size
+        self.validation_split = validation_split
+        self.verbosity = verbosity
 
         # makes a new NN or reloads from earlier trained model
         self.model = self.get_net() if not reload_model else keras.models.load_model(reload_name)
@@ -48,12 +57,17 @@ class Actor:
         return tf.reduce_mean(tf.reduce_sum(-1*targets*self.safelog(outputs), axis=1))
 
     @staticmethod
-    def safelog(self, tensor, base=0.0001):
+    def safelog(tensor, base=0.0001):
         return tf.math.log(tf.math.maximum(tensor, base))
 
     # TODO: test train method
-    def train(self, inputs, targets, batch_size, epochs):
-        self.model.fit(inputs, targets, batch_size, epochs, verbose=1, validation_split=0.1)
+    def train(self, inputs, targets):
+        self.model.fit( inputs, 
+                        targets, 
+                        batch_size = self.batch_size, 
+                        epochs=self.epochs, 
+                        verbose=self.verbosity, 
+                        validation_split=self.validation_split)
 
     @staticmethod
     def string_to_tensor(string_variable):
@@ -63,7 +77,8 @@ class Actor:
 
     def get_probabilities(self, state):
         state_tensor = self.string_to_tensor(state)
-        prediction = self.model.predict(state_tensor)[0]
+        prediction = self.model(state_tensor).numpy()[0]
+
 
         # Changes the probabilities for illegals moves to 0
         for i in range(1, len(state)):
@@ -105,15 +120,12 @@ class Actor:
         else:
             minibatch = RBUF
 
-        print("minibatch",minibatch)
         inputs = np.zeros((len(minibatch), len(minibatch[0][0])))
         targets = np.zeros((len(minibatch), len(minibatch[0][1])))
         for i in range(len(minibatch)):
             inputs[i] = self.string_to_tensor(minibatch[i][0])
             targets[i] = minibatch[i][1]
-        epochs = 50
-        batch_size = int(len(inputs)/epochs)
-        self.train(inputs, targets, batch_size, epochs-1)
+        self.train(inputs, targets)
         
 
 
