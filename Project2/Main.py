@@ -54,11 +54,11 @@ def main():
             MCTS_tree.update_and_reset_tree(current_state)
             
             for i in range(tree_games):
-                print("vi kommer hit",i)
+                #print("vi kommer hit",i)
                 #Tree simulation
                 state, action, finished = MCTS_tree.tree_simulation(Board_MC, c)
-                print("state:",state)
-                print("finished:",finished)
+                #print("state:",state)
+                #print("finished:",finished)
                 #Updating GameHandler to tree-state
                 state_manager.set_state(Board_MC, state)
 
@@ -68,15 +68,14 @@ def main():
                     while not state_manager.state_is_final(Board_MC):
                         action = actor.get_action(state_manager.get_state(Board_MC))
                         state_manager.perform_action(Board_MC, action)
-                        print(state_manager.state_is_final(Board_MC))
                 
                 #Updating MCTS-Tree
                 z = state_manager.get_result(Board_MC)
                 MCTS_tree.backprop_tree(z)
                 MCTS_tree.update_and_reset_tree(current_state)
                 state_manager.set_state(Board_MC, current_state)
-                print("ferdig etter resetting:",state_manager.state_is_final(Board_MC))
-                print("current_state: ", current_state)
+                #print("ferdig etter resetting:",state_manager.state_is_final(Board_MC))
+                #print("current_state: ", current_state)
 
 
             #Saving distribution to RBUF
