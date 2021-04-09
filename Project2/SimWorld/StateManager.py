@@ -28,12 +28,13 @@ class StateManager:
         peghole = board.table[int(action[0])][int(action[1])]
         peghole.add_peg(board.player)
         self.change_player(board)
-        print(board.get_board_state())
 
         if board.visualize: board.graph.change_node_color(peghole)
 
     def state_is_final(self, board):
+        print("state is final: ", self.get_state(board))
         state_is_final = self.get_result(board) != 0
+        print(self.get_result(board))
         return state_is_final
 
     def get_result(self, board):

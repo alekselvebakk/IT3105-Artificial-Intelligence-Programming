@@ -47,7 +47,7 @@ def main():
         Board_MC = Board(size=config.getint('board', 'size')) #MonteCarlo Board
         MCTS_tree = MCTS(state_manager, Board_A)
 
-        while not state_manager.state_is_final(Board_MC):
+        while not state_manager.state_is_final(Board_A):
             current_state = state_manager.get_state(Board_A)
             print("board state:",current_state)
             state_manager.set_state(Board_MC, current_state)
@@ -57,8 +57,8 @@ def main():
                 print("vi kommer hit",i)
                 #Tree simulation
                 state, action, finished = MCTS_tree.tree_simulation(Board_MC, c)
-                print("state:",state)
-                print("finished:",finished)
+                #print("state:",state)
+                #print("finished:",finished)
                 #Updating GameHandler to tree-state
                 state_manager.set_state(Board_MC, state)
 
@@ -68,7 +68,7 @@ def main():
                     while not state_manager.state_is_final(Board_MC):
                         action = actor.get_action(state_manager.get_state(Board_MC))
                         state_manager.perform_action(Board_MC, action)
-                        print(state_manager.state_is_final(Board_MC))
+                        print("FINAL: ", state_manager.state_is_final(Board_MC))
                 
                 #Updating MCTS-Tree
                 z = state_manager.get_result(Board_MC)
