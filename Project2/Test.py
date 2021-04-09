@@ -1,5 +1,5 @@
-from Project2.SimWorld.Board import Board
-from Project2.SimWorld.StateManager import StateManager
+from SimWorld.Board import Board
+from SimWorld.StateManager import StateManager
 
 def main():
     sm = StateManager()

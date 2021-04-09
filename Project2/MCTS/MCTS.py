@@ -24,9 +24,6 @@ class MCTS:
     
     
     def tree_simulation(self, GameBoard, c):
-
-        self.GameHandler.set_state(GameBoard, self.root)
-
         while not self.GameHandler.state_is_final(GameBoard):
             
             s_t = self.GameHandler.get_state(GameBoard)

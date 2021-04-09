@@ -47,7 +47,7 @@ def main():
         Board_MC = Board(size=config.getint('board', 'size')) #MonteCarlo Board
         MCTS_tree = MCTS(state_manager, Board_A)
 
-        while not state_manager.state_is_final(Board_MC):
+        while not state_manager.state_is_final(Board_A):
             current_state = state_manager.get_state(Board_A)
             print("board state:",current_state)
             state_manager.set_state(Board_MC, current_state)
@@ -73,9 +73,8 @@ def main():
                 z = state_manager.get_result(Board_MC)
                 MCTS_tree.backprop_tree(z)
                 MCTS_tree.update_and_reset_tree(current_state)
-                state_manager.set_state(Board_MC, current_state)
-                #print("ferdig etter resetting:",state_manager.state_is_final(Board_MC))
-                #print("current_state: ", current_state)
+                state_manager.set_state(Board_MC, MCTS_tree.root)
+
 
 
             #Saving distribution to RBUF
