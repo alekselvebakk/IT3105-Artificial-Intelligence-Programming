@@ -16,7 +16,10 @@ class Actor:
                  reload_model=False,
                  reload_name=None,
                  minibatch_size=350,
-                 epochs=200):
+                 epochs=200,
+                 batch_size=32,
+                 validation_split = 0.1,
+                 verbosity = 2):
 
         self.alpha = learning_rate
         self.layers = layers
@@ -27,6 +30,9 @@ class Actor:
         self.output_size = input_size - 1  # Board of actions (minus player)
         self.minibatch_size = minibatch_size
         self.epochs = epochs
+        self.batch_size = batch_size
+        self.validation_split = validation_split
+        self.verbosity = verbosity
 
         # makes a new NN or reloads from earlier trained model
         self.model = self.get_net() if not reload_model else keras.models.load_model(reload_name)
@@ -55,8 +61,13 @@ class Actor:
         return tf.math.log(tf.math.maximum(tensor, base))
 
     # TODO: test train method
-    def train(self, inputs, targets, batch_size, epochs):
-        self.model.fit(inputs, targets, batch_size, epochs, verbose=1, validation_split=0.1)
+    def train(self, inputs, targets):
+        self.model.fit( inputs, 
+                        targets, 
+                        batch_size = self.batch_size, 
+                        epochs=self.epochs, 
+                        verbose=self.verbosity, 
+                        validation_split=self.validation_split)
 
     @staticmethod
     def string_to_tensor(string_variable):
@@ -114,8 +125,7 @@ class Actor:
         for i in range(len(minibatch)):
             inputs[i] = self.string_to_tensor(minibatch[i][0])
             targets[i] = minibatch[i][1]
-        batch_size = int(len(inputs)/self.epochs)
-        self.train(inputs, targets, batch_size, self.epochs-1)
+        self.train(inputs, targets)
         
 
 
