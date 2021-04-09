@@ -5,6 +5,7 @@ from SimWorld.Board import Board
 from SimWorld.StateManager import StateManager
 from configparser import ConfigParser
 import pathlib
+import time
 
 
 def main():
@@ -31,7 +32,8 @@ def main():
                   act=config['actor']['activation'],
                   last_act=config['actor']['last_activation'],
                   input_size=config.getint('board', 'size')*config.getint('board', 'size')+1,
-                  minibatch_size=config.getint('actor', 'minibatch')
+                  minibatch_size=config.getint('actor', 'minibatch'),
+                  epochs=config.getint('actor', 'epochs')
                   )
     c = config.getfloat('MCTS', 'exploration_weight')
     tree_games = config.getint('MCTS', 'tree_games')
@@ -49,32 +51,45 @@ def main():
 
         while not state_manager.state_is_final(Board_A):
             current_state = state_manager.get_state(Board_A)
-            print("board state:",current_state)
             state_manager.set_state(Board_MC, current_state)
             MCTS_tree.update_and_reset_tree(current_state)
             
+            print(MCTS_tree.root)
             for i in range(tree_games):
-                #print("vi kommer hit",i)
+                
                 #Tree simulation
+                #current = time.time()
                 state, action, finished = MCTS_tree.tree_simulation(Board_MC, c)
-                #print("state:",state)
-                #print("finished:",finished)
+                #print((time.time()-current)*1000, " ms brukt på treesim")
+
                 #Updating GameHandler to tree-state
+                #current = time.time()
                 state_manager.set_state(Board_MC, state)
+                #print((time.time()-current)*1000, " ms brukt på state-update")
+
 
                 #Using default policy to get to end state
+                
+                #current = time.time()
                 if not finished: 
                     state_manager.perform_action(Board_MC, action)
                     while not state_manager.state_is_final(Board_MC):
+                         
                         action = actor.get_action(state_manager.get_state(Board_MC))
+                        
                         state_manager.perform_action(Board_MC, action)
-                
+                #print((time.time()-current)*1000, " ms brukt på rollout")
+
+
                 #Updating MCTS-Tree
                 z = state_manager.get_result(Board_MC)
                 MCTS_tree.backprop_tree(z)
+                
+                
                 MCTS_tree.update_and_reset_tree(current_state)
-                state_manager.set_state(Board_MC, MCTS_tree.root)
-
+                
+                
+                state_manager.set_state(Board_MC, MCTS_tree.root)   
 
 
             #Saving distribution to RBUF
@@ -86,11 +101,10 @@ def main():
 
             #Choosing and performing best action
             action = MCTS_tree.get_best_root_action()
-            print("action to be performed: ",action)
             state_manager.perform_action(Board_A, action)
 
         #Train actor after actual game is finished
-        if j > 10:
+        if j > 5:
             print("training starts")  
             actor.train_from_RBUF(RBUF)
         progress = float(j)/number_actual_games *100
