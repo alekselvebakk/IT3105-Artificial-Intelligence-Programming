@@ -129,16 +129,28 @@ def main():
             print(progress)
 
         #Save final net  
-        NeuralNetName = str(pathlib.Path(__file__).parent.absolute()) + "/Saved_Nets/ANET"+str(number_actual_games)
+        NeuralNetName = folder_name+"/ANET"+str(number_actual_games)
         actor.save_net(NeuralNetName)
 
 
     if run_tournament:
-        Tournament = TOPP(number_of_nets, games_between_nets, StateManager(), Board(size=config.getint('board', 'size')))
+        
+        tournament_time = input("What tournament would you like to play?\n")
+        tournament_folder = str(pathlib.Path(str(pathlib.Path(__file__).parent.absolute()))) + "/Saved_Nets/"+tournament_time+"/"
+        config_path = tournament_folder+"config.ini"
+        config = config.read(config_path)
+        
+
+        Tournament = TOPP(  config.getint('TOPP', 'number_of_nets'), 
+                            config.getint('TOPP', 'games_between_nets'), 
+                            StateManager(), 
+                            Board(size=config.getint('board', 'size')))
+
+
         actor_list = []
         for i in range(number_of_nets):
             actor_number = number_actual_games/(number_of_nets)*i
-            actor_name = pathlib.Path(str(pathlib.Path(__file__).parent.absolute()) + "/Saved_Nets/ANET"+str(int(actor_number)))
+            actor_name = pathlib.Path(tournament_folder+"ANET"+str(int(actor_number)))
             actor_list.append(  Actor(learning_rate=config.getfloat('actor','learning_rate'),
                                 layers=ast.literal_eval(config['actor']['hidden_layers']),
                                 opt=config['actor']['optimizer'],
