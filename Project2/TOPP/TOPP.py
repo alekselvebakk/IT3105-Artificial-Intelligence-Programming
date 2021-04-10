@@ -1,11 +1,18 @@
+import pathlib
+import time
+from shutil import copyfile
+
 class TOPP:
 
-    def __init__(self, number_of_nets, games_between_nets, state_manager, board):
+    def __init__(self, number_of_nets, games_between_nets, state_manager, board, tournament_id, save_actors):
         self.number_of_nets = number_of_nets
         self.number_of_wins = [0]*number_of_nets
         self.games_between_nets = games_between_nets
         self.state_manager = state_manager
         self.board = board
+        self.tournament_id = tournament_id
+        self.save_actors = save_actors
+        self.folder_name = str(pathlib.Path(__file__).parent.absolute()) + "/Saved_Nets/" + self.tournament_id
 
     def single_game_between_2_nets(self, actor0, actor1, vis=False):
         self.state_manager.reset_board(self.board)
@@ -55,3 +62,20 @@ class TOPP:
 
         standings = self.number_of_wins 
         return standings
+
+    def save_net(self, actor_critic, game_number, number_actual_games):
+        if self.save_actors:
+            games_between_saving = int(number_actual_games / (self.number_of_nets - 1))
+            final_modulo = game_number / games_between_saving == (self.number_of_nets - 1)
+            saving_time = game_number % games_between_saving == 0
+
+            finished_training = game_number == number_actual_games
+
+            if (saving_time and not final_modulo) or finished_training:
+                # Save net
+                neural_net_name = self.folder_name + "/ANET" + str(game_number)
+                actor_critic.save_net(neural_net_name)
+
+    def save_config(self, config_path):
+        if self.save_actors:
+            copyfile(config_path, self.folder_name + "/config.ini")
