@@ -21,7 +21,7 @@ class TOPP:
                 action = actor1.get_action(state)
                 turn = 0
             self.state_manager.perform_action(self.board,action)
-        winner = self.state_manager.get_result(self.board)
+        winner = self.state_manager.get_result(self.board)-1
         return winner #0 eller 1
 
     def series_between_2_nets(self, actor0, actor1):

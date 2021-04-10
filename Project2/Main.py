@@ -29,12 +29,13 @@ def main():
                   verbosity = config.getint('actor','verbosity')
                   )
     train_actors = config.getboolean('actor','train_actors')
+    save_actors = config.getint('actor', 'save_actors')
 
     #Extract training settings              
     c = config.getfloat('MCTS', 'exploration_weight')
     tree_games = config.getint('MCTS', 'tree_games')
     number_actual_games = config.getint('MCTS', 'actual_games')
-    
+    RBUF = []
 
     #Extract TOPP settings
     games_between_nets = config.getint('TOPP', 'games_between_nets')
@@ -43,14 +44,18 @@ def main():
     training_saving_step = number_actual_games/number_of_nets
     current_step = 0
 
+
+
+    #Board setup
     state_manager = StateManager()
-    RBUF = []
+    Board_A = Board(size=config.getint('board', 'size')) #create actual board
+    Board_MC = Board(size=config.getint('board', 'size')) #MonteCarlo Board
 
     if train_actors:
         #Training Loop
         for j in range(number_actual_games):
-            Board_A = Board(size=config.getint('board', 'size')) #create actual board
-            Board_MC = Board(size=config.getint('board', 'size')) #MonteCarlo Board
+            state_manager.reset_board(Board_A)
+            state_manager.reset_board(Board_MC)
             MCTS_tree = MCTS(state_manager, Board_A)
 
             while not state_manager.state_is_final(Board_A):
@@ -111,10 +116,13 @@ def main():
                 actor.train_from_RBUF(RBUF)
 
             #Save ANET every x games to file
-            if j == current_step:
-                NeuralNetName = str(pathlib.Path(__file__).parent.absolute()) + "/Saved_Nets/ANET"+str(j)
-                actor.save_net(NeuralNetName)
-                current_step = current_step+training_saving_step
+            if save_actors:
+                if j == current_step:
+                    if j==0:
+                        tournament_time = str(int(time.time()))
+                    NeuralNetName = str(pathlib.Path(__file__).parent.absolute()) + "/Saved_Nets/"+tournament_time+"/ANET"+str(j)
+                    actor.save_net(NeuralNetName)
+                    current_step = current_step+training_saving_step
 
 
             #Print progress
