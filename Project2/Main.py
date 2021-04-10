@@ -62,13 +62,15 @@ def main():
             state_manager.reset_board(Board_MC)
             MCTS_tree = MCTS(state_manager, Board_A)
             game_length = 0
+            critic_indices = {}
+
             while not state_manager.state_is_final(Board_A):
                 current_state = state_manager.get_state(Board_A)
                 state_manager.set_state(Board_MC, current_state)
                 MCTS_tree.update_and_reset_tree(current_state)
 
                 use_critic = True #skal settes til en randomizing-funksjon
-                critic_indices = {}
+                
 
                 for i in range(tree_games):
                     
@@ -113,6 +115,8 @@ def main():
                 action = MCTS_tree.get_best_root_action()
                 state_manager.perform_action(Board_A, action)
                 game_length += 1
+            
+            
             for RBUF_index in critic_indices:
                 discount = game_length-1-critic_indices[RBUF_index]
                 RBUF[RBUF_index][1][-1] = state_manager.get_result(Board_A)*discount
