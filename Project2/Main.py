@@ -151,7 +151,7 @@ def main():
         for i in range(number_of_nets):
             actor_number = number_actual_games/(number_of_nets)*i
             actor_name = pathlib.Path(tournament_folder+"ANET"+str(int(actor_number)))
-            actor_list.append(  Actor(learning_rate=config.getfloat('actor','learning_rate'),
+            actor_list.append(  Actor(learning_rate=config.getfloat('actor', 'learning_rate'),
                                 layers=ast.literal_eval(config['actor']['hidden_layers']),
                                 opt=config['actor']['optimizer'],
                                 act=config['actor']['activation'],
@@ -160,8 +160,8 @@ def main():
                                 minibatch_size=config.getint('actor', 'minibatch'),
                                 epochs=config.getint('actor', 'epochs'),
                                 batch_size=config.getint('actor', 'batch_size'),
-                                validation_split=config.getfloat('actor','validation_split'),
-                                verbosity = config.getint('actor','verbosity'),
+                                validation_split=config.getfloat('actor', 'validation_split'),
+                                verbosity=config.getint('actor', 'verbosity'),
                                 reload_model=True,
                                 reload_name=actor_name))
         results = Tournament.run_tournament(actor_list)

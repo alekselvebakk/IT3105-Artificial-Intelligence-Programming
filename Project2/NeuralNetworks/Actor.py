@@ -18,8 +18,8 @@ class Actor:
                  minibatch_size=350,
                  epochs=200,
                  batch_size=32,
-                 validation_split = 0.1,
-                 verbosity = 2):
+                 validation_split=0.1,
+                 verbosity=2):
 
         self.alpha = learning_rate
         self.layers = layers
@@ -35,7 +35,7 @@ class Actor:
         self.verbosity = verbosity
 
         # makes a new NN or reloads from earlier trained model
-        self.model = self.get_net() if not reload_model else keras.models.load_model(reload_name, custom_objects={ 'cross_entropy': self.cross_entropy })
+        self.model = self.get_net() if not reload_model else keras.models.load_model(reload_name, custom_objects={'cross_entropy': self.cross_entropy})
 
     # TODO: Initialize values: skjer ikke det automatisk? satt dem til 0 nå, men vet ikke om det er det beste
     def get_net(self):  # Not finished version, will TODO: checkout CNN
