@@ -5,7 +5,7 @@ import random
 import time
 
 
-class Actor:
+class ActorCritic:
     def __init__(self,
                  learning_rate=0.1,
                  layers=[25, 30, 25],
