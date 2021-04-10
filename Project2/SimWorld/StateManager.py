@@ -30,6 +30,8 @@ class StateManager:
 
     def state_is_final(self, board):
         state_is_final = self.get_result(board) != 0
+        print(state_is_final, ":", self.get_state(board))
+        if not state_is_final and '0' not in self.get_state(board): self.feil_sjekk(board)
         return state_is_final
 
     def feil_sjekk(self, board):

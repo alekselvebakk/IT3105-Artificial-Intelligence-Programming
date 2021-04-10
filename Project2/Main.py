@@ -28,8 +28,8 @@ def main():
                   validation_split=config.getfloat('actor','validation_split'),
                   verbosity = config.getint('actor','verbosity')
                   )
-    train_actors = config.getboolean('actor','train_actors')
-    save_actors = config.getint('actor', 'save_actors')
+    train_actors = config.getboolean('actor', 'train_actors')
+    save_actors = config.getboolean('actor', 'save_actors')
 
     #Extract training settings              
     c = config.getfloat('MCTS', 'exploration_weight')
@@ -78,10 +78,9 @@ def main():
                     #Using default policy to get to end state
                     
                     #current = time.time()
-                    if not finished: 
+                    if not finished:
                         state_manager.perform_action(Board_MC, action)
                         while not state_manager.state_is_final(Board_MC):
-                            
                             action = actor.get_action(state_manager.get_state(Board_MC))
                             
                             state_manager.perform_action(Board_MC, action)

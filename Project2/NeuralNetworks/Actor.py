@@ -80,7 +80,6 @@ class Actor:
         state_tensor = self.string_to_tensor(state)
         prediction = self.model(state_tensor).numpy()[0]
 
-
         # Changes the probabilities for illegals moves to 0
         for i in range(1, len(state)):
             if int(state[i]) != 0:
@@ -88,26 +87,29 @@ class Actor:
 
         # Scaling of the remaining numbers to the sum of 1
         sum = prediction.sum()
-        if sum == 0:
-            sum = 0.00000001
+        if sum == 0: sum = 0.00000001
         prediction = prediction/sum
 
         return prediction
 
-    # TODO: Discuss: should actions be 'calculated' in a game handler? for moduality? Should prob just send probabiities
-    def get_action(self, state, epsilon = 0):
+    def get_action(self, state, epsilon=0):
         decision = random.uniform(0, 1)
-        if decision > epsilon:
-            index = np.argmax(self.get_probabilities(state))
+        probabilities = self.get_probabilities(state)
+        if probabilities.sum() == 0:
+            index = self.get_random_safe_index(state)
+        elif decision > epsilon:
+            index = np.argmax(probabilities)
         else:
-            non_zero_index, = np.nonzero(self.get_probabilities(state))
+            non_zero_index, = np.nonzero(probabilities)
             index = np.random.choice(non_zero_index)
         return self.find_position(index)
 
-    '''def get_greedy_action(self, state):  # TODO: is this needed? could set epsilon = 0 in get_action
-        prob = self.get_probabilities(state)
-        index = np.argmax(prob)
-        return self.find_position(index)'''
+    def get_random_safe_index(self, state):
+        safe_actions = []
+        for i in range(1, len(state)):
+            if state[i] == '0':
+                safe_actions.append(i-1)
+        return np.random.choice(safe_actions)
 
     def find_position(self, index):
         table_root = np.sqrt(self.output_size)
