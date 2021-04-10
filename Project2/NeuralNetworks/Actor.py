@@ -27,7 +27,7 @@ class Actor:
         self.act = act
         self.last_act = last_act
         self.input_size = input_size  # The state will be playerID + board
-        self.output_size = input_size - 1  # Board of actions (minus player)
+        self.output_size = input_size  # Board of actions (minus player plus value)
         self.minibatch_size = minibatch_size
         self.epochs = epochs
         self.batch_size = batch_size
@@ -103,6 +103,11 @@ class Actor:
             non_zero_index, = np.nonzero(probabilities)
             index = np.random.choice(non_zero_index)
         return self.find_position(index)
+
+    def get_critic_value(self, state):
+        state_tensor = self.string_to_tensor(state)
+        value_prediction = self.model(state_tensor).numpy()[0][-1]
+        return value_prediction
 
     def get_random_safe_index(self, state):
         safe_actions = []

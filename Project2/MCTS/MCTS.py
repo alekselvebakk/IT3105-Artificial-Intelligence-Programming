@@ -41,20 +41,23 @@ class MCTS:
         s_finished = self.GameHandler.get_state(GameBoard)
         return s_finished, None, True
 
-    def backprop_tree(self, z):
+    def backprop_tree(self, z, gamma):
+        i = 0
         for state in self.simulation_history:
-            self.tree[state].update_attributes(self.simulation_history[state], z)
+            discount = gamma**(len(self.simulation_history)-1-i)
+            self.tree[state].update_attributes(self.simulation_history[state], z, discount)
+            i += 1
 
     def update_and_reset_tree(self, new_root_state):
         self.simulation_history = dict()
         if not new_root_state == self.root:
             self.root = new_root_state
     
-    def get_root_distribution(self):
+    def get_root_distribution_and_value(self):
         #Getting distribution of all actions
         state = self.root
-        distribution = self.tree[self.root].get_action_distribution()
-        D = [state, distribution]
+        distribution_and_value = self.tree[self.root].get_action_distribution_and_value()
+        D = [state, distribution_and_value]
         return D
 
     def get_best_root_action(self):
