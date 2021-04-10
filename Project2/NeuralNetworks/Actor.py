@@ -104,7 +104,7 @@ class Actor:
             index = np.random.choice(non_zero_index)
         return self.find_position(index)
 
-    def get_value(self, state):
+    def get_critic_value(self, state):
         state_tensor = self.string_to_tensor(state)
         value_prediction = self.model(state_tensor).numpy()[0][-1]
         return value_prediction
