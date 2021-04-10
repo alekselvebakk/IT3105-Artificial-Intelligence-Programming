@@ -7,6 +7,7 @@ from TOPP.TOPP import TOPP
 from configparser import ConfigParser
 import pathlib
 import time
+from shutil import copyfile
 
 
 def main():
@@ -28,7 +29,7 @@ def main():
                   validation_split=config.getfloat('actor','validation_split'),
                   verbosity = config.getint('actor','verbosity')
                   )
-    train_actors = config.getboolean('actor', 'train_actors')
+    train_actors = config.getboolean('actor','train_actors')
     save_actors = config.getboolean('actor', 'save_actors')
 
     #Extract training settings              
@@ -74,33 +75,24 @@ def main():
                     state_manager.set_state(Board_MC, state)
                     #print((time.time()-current)*1000, " ms brukt på state-update")
 
-
                     #Using default policy to get to end state
-                    
                     #current = time.time()
                     if not finished:
                         state_manager.perform_action(Board_MC, action)
                         while not state_manager.state_is_final(Board_MC):
                             action = actor.get_action(state_manager.get_state(Board_MC))
-                            
                             state_manager.perform_action(Board_MC, action)
                     #print((time.time()-current)*1000, " ms brukt på rollout")
-
-
+                    
                     #Updating MCTS-Tree
+                    #current = time.time()
                     z = state_manager.get_result(Board_MC)
                     MCTS_tree.backprop_tree(z)
-                    
-                    
                     MCTS_tree.update_and_reset_tree(current_state)
-                    
-                    
                     state_manager.set_state(Board_MC, MCTS_tree.root)   
-
+                    #print((time.time()-current)*1000, " ms brukt på tre-reset")
 
                 #Saving distribution to RBUF
-
-                
                 D = MCTS_tree.get_root_distribution()
                 RBUF.append(D)
 
@@ -119,8 +111,16 @@ def main():
                 if j == current_step:
                     if j==0:
                         tournament_time = str(int(time.time()))
-                    NeuralNetName = str(pathlib.Path(__file__).parent.absolute()) + "/Saved_Nets/"+tournament_time+"/ANET"+str(j)
-                    actor.save_net(NeuralNetName)
+                        folder_name = str(pathlib.Path(__file__).parent.absolute()) + "/Saved_Nets/"+tournament_time
+                        NeuralNetName = folder_name+"/ANET"+str(j)
+                        actor.save_net(NeuralNetName)
+                        
+                        config_path = str(pathlib.Path(__file__).parent.absolute())+"/config.ini"
+                        copyfile(config_path, folder_name+"/config.ini")
+                    else:
+                        NeuralNetName = folder_name+"/ANET"+str(j)
+                        actor.save_net(NeuralNetName)
+                    
                     current_step = current_step+training_saving_step
 
 
