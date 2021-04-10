@@ -7,7 +7,6 @@ from TOPP.TOPP import TOPP
 from configparser import ConfigParser
 import pathlib
 import time
-from shutil import copyfile
 
 
 def main():
