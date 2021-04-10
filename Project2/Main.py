@@ -32,6 +32,9 @@ def main():
     train_actors = config.getboolean('actor','train_actors')
     save_actors = config.getboolean('actor', 'save_actors')
 
+    #Extract critic settings
+    gamma = config.getfloat('critic','discount_factor')
+
     #Extract training settings              
     c = config.getfloat('MCTS', 'exploration_weight')
     tree_games = config.getint('MCTS', 'tree_games')
@@ -58,11 +61,15 @@ def main():
             state_manager.reset_board(Board_A)
             state_manager.reset_board(Board_MC)
             MCTS_tree = MCTS(state_manager, Board_A)
-
+            game_length = 0
             while not state_manager.state_is_final(Board_A):
                 current_state = state_manager.get_state(Board_A)
                 state_manager.set_state(Board_MC, current_state)
                 MCTS_tree.update_and_reset_tree(current_state)
+
+                use_critic = True #skal settes til en randomizing-funksjon
+                critic_indices = {}
+
                 for i in range(tree_games):
                     
                     #Tree simulation
@@ -75,31 +82,40 @@ def main():
                     state_manager.set_state(Board_MC, state)
                     #print((time.time()-current)*1000, " ms brukt på state-update")
 
-                    #Using default policy to get to end state
-                    #current = time.time()
                     if not finished:
                         state_manager.perform_action(Board_MC, action)
+                    
+                    if use_critic:
+                        state = state_manager.get_state(Board_MC)
+                        z = actor.get_critic_value(state)
+                    else:
                         while not state_manager.state_is_final(Board_MC):
                             action = actor.get_action(state_manager.get_state(Board_MC))
                             state_manager.perform_action(Board_MC, action)
-                    #print((time.time()-current)*1000, " ms brukt på rollout")
-                    
+                        z = state_manager.get_result(Board_MC)
                     #Updating MCTS-Tree
                     #current = time.time()
-                    z = state_manager.get_result(Board_MC)
-                    MCTS_tree.backprop_tree(z)
+                    MCTS_tree.backprop_tree(z, gamma)
                     MCTS_tree.update_and_reset_tree(current_state)
                     state_manager.set_state(Board_MC, MCTS_tree.root)   
                     #print((time.time()-current)*1000, " ms brukt på tre-reset")
 
                 #Saving distribution to RBUF
-                D = MCTS_tree.get_root_distribution()
+                D = MCTS_tree.get_root_distribution_and_value()
                 RBUF.append(D)
+                if use_critic:
+                    RBUF[-1][1][-1] = 0 #Setter value til 0
+                    current_iteration = game_length
+                    critic_indices[len(RBUF)-1]= current_iteration #logging index of critic-based-move
 
 
                 #Choosing and performing best action
                 action = MCTS_tree.get_best_root_action()
                 state_manager.perform_action(Board_A, action)
+                game_length += 1
+            for RBUF_index in critic_indices:
+                discount = game_length-1-critic_indices[RBUF_index]
+                RBUF[RBUF_index][1][-1] = state_manager.get_result(Board_A)*discount
 
             #Train actor after actual game is finished
             if j > 10:
