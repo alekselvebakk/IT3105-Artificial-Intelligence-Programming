@@ -7,6 +7,7 @@ class MCTS_Node:
         self.state = state
         self.player = int(state[0])
         self.N_s = 0
+        self.V_s = 0
         self.N_s_a = dict()
         self.Q_s_a = dict()
 
@@ -31,13 +32,18 @@ class MCTS_Node:
     def increment_N_s_a(self, action):
         self.N_s_a[action] = self.N_s_a[action] + 1
 
+    def update_V_s(self, z):
+        delta = z-self.V_s
+        self.V_s = self.V_s + delta
+
     def update_Q_s_a(self, action, z):
         self.Q_s_a[action] = self.Q_s_a[action] + (z-self.Q_s_a[action])/self.N_s_a[action]
     
-    def update_attributes(self, action, z):
+    def update_attributes(self, action, z, discount):
         self.increment_N_s()
         self.increment_N_s_a(action)
         self.update_Q_s_a(action, z)
+        self.update_V_s(z*discount)
             
 
     def numeric_exploration_score(self, action, c):
@@ -87,11 +93,12 @@ class MCTS_Node:
             self.unexplored_actions.remove(action)
         return action
 
-    def get_action_distribution(self):
-        action_distribution = np.zeros_like(self.actions, dtype = "float")
+    def get_action_distribution_and_value(self):
+        action_distribution_and_value = np.zeros_like(self.actions, dtype = "float")
         for i in range(len(self.actions)):
-            action_distribution[i] = self.N_s_a[self.actions[i]]/self.N_s
-        return action_distribution
+            action_distribution_and_value[i] = self.N_s_a[self.actions[i]]/self.N_s
+        action_distribution_and_value.append(self.V_s)
+        return action_distribution_and_value
     
     def get_most_frequent_action(self):
         action_visits = 0
