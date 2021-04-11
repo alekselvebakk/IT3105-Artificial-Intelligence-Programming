@@ -19,7 +19,6 @@ class TOPP:
         turn = 0
         while not self.state_manager.state_is_final(self.board):
             state = self.state_manager.get_state(self.board)
-            print(state)
             if turn == 0:
                 action = actor0.get_action(state)
                 turn = 1
