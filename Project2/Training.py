@@ -51,7 +51,8 @@ def main():
                 state_manager,
                 Board_A,
                 int(time.time()),
-                config.getboolean('TOPP', 'save_actors')
+                config.getboolean('TOPP', 'save_actors'),
+                str(pathlib.Path(__file__).parent.absolute()) + "/Saved_Nets/"
                 )
     
     #Tree setup

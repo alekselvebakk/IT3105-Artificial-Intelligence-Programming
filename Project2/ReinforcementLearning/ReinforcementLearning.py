@@ -63,8 +63,8 @@ class ReinforcementLearning:
         self.RBUF.append(D)
         if self.use_critic: self.update_critic_indices(self.RBUF)
 
-    def train_actor_critic(self, RBUF, actor_critic):
-        actor_critic.train_from_RBUF(RBUF)
+    def train_actor_critic(self, actor_critic):
+        actor_critic.train_from_RBUF(self.RBUF)
 
     def decay_epsilon(self, zero=False):
         self.epsilon = self.epsilon * self.epsilon_decay if not zero else 0
