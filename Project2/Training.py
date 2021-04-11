@@ -18,55 +18,50 @@ def main():
     config.read(config_path)
 
     # Extract actor settings
-    actor_critic = ActorCritic(learning_rate=config.getfloat('actor', 'learning_rate'),
-                  layers=ast.literal_eval(config['actor']['hidden_layers']),
-                  opt=config['actor']['optimizer'],
-                  act=config['actor']['activation'],
-                  last_act=config['actor']['last_activation'],
+    actor_critic = ActorCritic(learning_rate=config.getfloat('anet', 'learning_rate'),
+                  layers=ast.literal_eval(config['anet']['hidden_layers']),
+                  opt=config['anet']['optimizer'],
+                  act=config['anet']['activation'],
+                  last_act=config['anet']['last_activation'],
                   input_size=config.getint('board', 'size') * config.getint('board', 'size') + 1,
-                  minibatch_size=config.getint('actor', 'minibatch'),
-                  epochs=config.getint('actor', 'epochs'),
-                  batch_size=config.getint('actor', 'batch_size'),
-                  validation_split=config.getfloat('actor', 'validation_split'),
-                  verbosity=config.getint('actor', 'verbosity')
+                  minibatch_size=config.getint('anet', 'minibatch'),
+                  epochs=config.getint('anet', 'epochs'),
+                  batch_size=config.getint('anet', 'batch_size'),
+                  validation_split=config.getfloat('anet', 'validation_split'),
+                  verbosity=config.getint('anet', 'verbosity')
                   )
-    save_actors = config.getboolean('actor', 'save_actors')
 
-    #Extract critic settings
-    gamma = config.getfloat('critic','discount_factor')
 
     # Create RL mondule
-    rl = ReinforcementLearning()
-
-    # Extract training settings
-    c = config.getfloat('MCTS', 'exploration_weight')
-    tree_games = config.getint('MCTS', 'tree_games')
-    number_actual_games = config.getint('MCTS', 'actual_games')
-    RBUF = []
+    rl = ReinforcementLearning( config.getint('RL', 'actual_games'), 
+                                config.getfloat('RL','value_discount_factor'),
+                                config.getfloat('RL','rollout_initial_probability'),
+                                config.getfloat('RL','rollout_final_probability'))
 
     # Board setup
     state_manager = StateManager()
     Board_A = Board(size=config.getint('board', 'size'))  # Actual board
     Board_MC = Board(size=config.getint('board', 'size'))  # MonteCarlo Board
 
-    # Extract TOPP settings
-    topp = TOPP(config.getint('TOPP', 'number_of_nets',
+    # Tournament of Progressive Players Setup
+    topp = TOPP(config.getint('TOPP', 'number_of_nets'),
                 config.getint('TOPP', 'games_between_nets'),
                 state_manager,
                 Board_A,
                 int(time.time()),
-                config.getboolean('actor', 'save_actors')
+                config.getboolean('TOPP', 'save_actors')
                 )
+    
+    #Tree setup
+    MCTS_tree = MCTS(   state_manager, 
+                        Board_A, config.getfloat('MCTS', 'exploration_weight'), 
+                        config.getint('MCTS', 'tree_games'))
+
 
     # Training loop
-    for j in range(number_actual_games):
+    for j in range(rl.number_actual_games):
         state_manager.reset_board(Board_A)
         state_manager.reset_board(Board_MC)
-        MCTS_tree = MCTS(state_manager, Board_A)
-        game_length = 0
-        critic_indices = {}
-        progress = str(float(j) / number_actual_games * 100) + "%"
-
 
         # Alternates starting player every game
         if j % 2 == 1:
@@ -78,43 +73,42 @@ def main():
             state_manager.set_state(Board_MC, current_state)
             MCTS_tree.update_and_reset_tree(current_state)
 
-            use_critic = True # TODO: skal settes til en randomizing-funksjon
+            rl.decide_use_of_critic() # TODO: skal settes til en randomizing-funksjon
 
-            for i in range(tree_games):
+            for i in range(MCTS_tree.number_tree_games):
                 # Tree simulation
-                state, action, finished = MCTS_tree.tree_simulation(Board_MC, c)
+                action, finished = MCTS_tree.tree_simulation(Board_MC)
 
                 # Using default policy to get to end state and returns result of game
-                z = rl.get_simulation_result(state_manager, Board_MC, use_critic, actor_critic, action, finished)
+                z = rl.get_simulation_result(state_manager, Board_MC, actor_critic, action, finished)
                 
                 # Updating MCTS-Tree
-                MCTS_tree.backprop_tree(z, gamma)
+                MCTS_tree.backprop_tree(z, rl.gamma)
                 MCTS_tree.update_and_reset_tree(current_state)
                 state_manager.set_state(Board_MC, MCTS_tree.root)
 
             # Saving distribution to RBUF
             D = MCTS_tree.get_root_distribution_and_value()
-            RBUF.append(D)
-            if use_critic: rl.update_critic_indices(RBUF)
+            rl.add_to_RBUF(D)
 
             # Choosing and performing best action
             action = MCTS_tree.get_best_root_action()
             rl.perform_real_move(state_manager, Board_A, action)
 
         #Parse RBUF
-        rl.update_RBUF_critic_values(state_manager, Board_A, RBUF)
+        rl.update_RBUF_critic_values(state_manager.get_result(Board_A))
 
         # Train actor after finished episode
-        rl.train_actor_critic(RBUF, actor_critic)
+        rl.train_actor_critic(actor_critic)
 
         # Save net every x game to file
-        topp.save_net(actor_critic, j, number_actual_games)
+        topp.save_net(actor_critic, j, rl.number_actual_games)
 
         # Print progress
-        rl.print_progress()
+        rl.print_progress(j)
 
     # Save final net
-    topp.save_net(actor_critic, number_actual_games, number_actual_games)
+    topp.save_net(actor_critic, rl.number_actual_games, rl.number_actual_games)
 
     # Save config-file with information about the actor settings
     topp.save_config(config_path)
