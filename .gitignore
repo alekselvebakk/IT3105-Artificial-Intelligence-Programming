@@ -4,8 +4,4 @@ Project1/SimWorld/__pycache__
 Project2/Saved_Nets/*
 .vscode
 .idea
-Project2/MCTS/__pycache__
-Project2/SimWorld/__pycache__
-Project2/NeuralNetworks/__pycache__
-Project2/TOPP/__pycache__
-Project2/ReinforcementLearning/__pycache__
+__pycache__/

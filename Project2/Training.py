@@ -74,9 +74,8 @@ def main():
             state_manager.change_player(Board_MC)
 
         while not state_manager.state_is_final(Board_A):
-            current_state = state_manager.get_state(Board_A)
-            state_manager.set_state(Board_MC, current_state)
-            MCTS_tree.update_and_reset_tree(current_state)
+            state_manager.set_state(Board_MC, state_manager.get_state(Board_A))
+            MCTS_tree.update_and_reset_tree(Board_A)
 
             rl.decide_use_of_critic() # TODO: skal settes til en randomizing-funksjon
 
@@ -89,7 +88,7 @@ def main():
                 
                 # Updating MCTS-Tree
                 MCTS_tree.backprop_tree(z, rl.gamma, rl.reward[z])
-                MCTS_tree.update_and_reset_tree(current_state)
+                MCTS_tree.update_and_reset_tree(Board_A)
                 state_manager.set_state(Board_MC, MCTS_tree.root)
 
             # Saving distribution to RBUF

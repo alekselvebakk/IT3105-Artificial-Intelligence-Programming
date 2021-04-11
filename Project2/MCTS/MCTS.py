@@ -50,10 +50,12 @@ class MCTS:
             self.tree[state].update_attributes(self.simulation_history[state], z, reward*discount)
             i += 1
 
-    def update_and_reset_tree(self, new_root_state):
+    def update_and_reset_tree(self, board):
         self.simulation_history = dict()
-        if not new_root_state == self.root:
-            self.root = new_root_state
+        if not self.GameHandler.get_state(board) == self.root:
+            self.root = self.GameHandler.get_state(board)
+            if not self.root in self.tree:
+                self.insert_new_node(self.root, self.GameHandler.get_actions(board))
     
     def get_root_distribution_and_value(self):
         #Getting distribution of all actions
