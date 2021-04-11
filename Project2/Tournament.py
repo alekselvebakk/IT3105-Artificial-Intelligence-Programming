@@ -21,31 +21,34 @@ def main():
     number_of_nets = config.getint('TOPP', 'number_of_nets')
     games_between_nets = config.getint('TOPP', 'games_between_nets')
     board_size = config.getint('board', 'size')
-    training_games = config.getint('MCTS', 'actual_games')
+    training_games = config.getint('RL', 'actual_games')
 
     # Extracting Actor settings
-    lr = config.getfloat('actor', 'learning_rate')
-    layers = ast.literal_eval(config['actor']['hidden_layers'])
-    opt = config['actor']['optimizer']
-    act = config['actor']['activation']
-    last_act = config['actor']['last_activation']
+    lr = config.getfloat('anet', 'learning_rate')
+    layers = ast.literal_eval(config['anet']['hidden_layers'])
+    opt = config['anet']['optimizer']
+    act = config['anet']['activation']
+    last_act = config['anet']['last_activation']
     input_size = config.getint('board', 'size') * config.getint('board', 'size') + 1
-    mb_size = config.getint('actor', 'minibatch')
-    epochs = config.getint('actor', 'epochs')
-    b_size = config.getint('actor', 'batch_size')
-    val_split = config.getfloat('actor', 'validation_split')
-    verbose = config.getint('actor', 'verbosity')
+    mb_size = config.getint('anet', 'minibatch')
+    epochs = config.getint('anet', 'epochs')
+    b_size = config.getint('anet', 'batch_size')
+    val_split = config.getfloat('anet', 'validation_split')
+    verbose = config.getint('anet', 'verbosity')
 
     # Creating tournament
     tournament = TOPP(number_of_nets,
                       games_between_nets,
                       StateManager(),
-                      Board(board_size))
+                      Board(board_size),
+                      int(tournament_number),
+                      False,
+                      tournament__path)
 
     # Creating actors with the saved nets from training
     actor_list = []
     for i in range(number_of_nets):
-        actor_number = training_games if i == (number_of_nets - 1) else int(training_games / (number_of_nets - 1) * i)
+        actor_number = training_games if i == (number_of_nets - 1) else int(training_games / (number_of_nets - 1)) * i
         print(actor_number)
         actor_name = pathlib.Path(tournament__path + "ANET" + str(int(actor_number)))
         actor_list.append(ActorCritic(learning_rate=lr, layers=layers, opt=opt, act=act, last_act=last_act,
