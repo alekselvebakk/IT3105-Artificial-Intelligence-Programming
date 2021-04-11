@@ -14,8 +14,8 @@ def main():
     # Reading config-file with the same settings as used in training
     config = ConfigParser()
     tournament__path = str(pathlib.Path(str(pathlib.Path(__file__).parent.absolute()))) + \
-                  "/Saved_Nets/"+tournament_number+"/"
-    config.read(tournament__path+"config.ini")
+                       "/Saved_Nets/" + tournament_number + "/"
+    config.read(tournament__path + "config.ini")
 
     # Extract TOPP settings
     number_of_nets = config.getint('TOPP', 'number_of_nets')
@@ -45,13 +45,13 @@ def main():
     # Creating actors with the saved nets from training
     actor_list = []
     for i in range(number_of_nets):
-        actor_number = training_games if i == (number_of_nets-1) else int(training_games/(number_of_nets-1) * i)
+        actor_number = training_games if i == (number_of_nets - 1) else int(training_games / (number_of_nets - 1) * i)
         print(actor_number)
         actor_name = pathlib.Path(tournament__path + "ANET" + str(int(actor_number)))
         actor_list.append(ActorCritic(learning_rate=lr, layers=layers, opt=opt, act=act, last_act=last_act,
-                                input_size=input_size, minibatch_size=mb_size, epochs=epochs, batch_size=b_size,
-                                validation_split=val_split, verbosity=verbose,
-                                reload_model=True, reload_name=actor_name))
+                                      input_size=input_size, minibatch_size=mb_size, epochs=epochs, batch_size=b_size,
+                                      validation_split=val_split, verbosity=verbose,
+                                      reload_model=True, reload_name=actor_name))
 
     results = tournament.run_tournament(actor_list)
     print(results)
@@ -59,7 +59,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-
-

@@ -37,8 +37,7 @@ class ActorCritic:
         # makes a new NN or reloads from earlier trained model
         self.model = self.get_net() if not reload_model else keras.models.load_model(reload_name, custom_objects={'cross_entropy': self.cross_entropy})
 
-    # TODO: Initialize values: skjer ikke det automatisk? satt dem til 0 nå, men vet ikke om det er det beste
-    def get_net(self):  # Not finished version, will TODO: checkout CNN
+    def get_net(self):
         input = keras.layers.Input(shape=(self.input_size,), name='input_layer')
         x = input
         for i in range(len(self.layers)):
@@ -52,16 +51,13 @@ class ActorCritic:
     def save_net(self, net_name):
         self.model.save(net_name)
 
-    # loss function from Keith, but TODO: what does it mean? and does it work?
+    # Loss function from Keith
     def cross_entropy(self, targets, outputs):
         return tf.reduce_mean(tf.reduce_sum(-1*targets*self.safelog(outputs), axis=1))
 
-
-    @staticmethod
-    def safelog(tensor, base=0.0001):
+    def safelog(self, tensor, base=0.0001):
         return tf.math.log(tf.math.maximum(tensor, base))
 
-    # TODO: test train method
     def train(self, inputs, targets):
         self.model.fit( inputs, 
                         targets, 
@@ -70,8 +66,7 @@ class ActorCritic:
                         verbose=self.verbosity, 
                         validation_split=self.validation_split)
 
-    @staticmethod
-    def string_to_tensor(string_variable):
+    def string_to_tensor(self, string_variable):
         converted_to_list = list(string_variable)
         numpy_variable = np.array([converted_to_list], dtype=int)
         return numpy_variable
@@ -87,7 +82,7 @@ class ActorCritic:
 
         # Scaling of the remaining numbers to the sum of 1
         sum = prediction.sum()
-        if sum == 0: sum = 0.00000001
+        if sum == 0: sum = 0.00000001  # Error handling to avoid dividing by 0
         prediction = prediction/sum
 
         return prediction

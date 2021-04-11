@@ -19,23 +19,22 @@ def main():
 
     # Extract actor settings
     actor_critic = ActorCritic(learning_rate=config.getfloat('actor', 'learning_rate'),
-                  layers=ast.literal_eval(config['actor']['hidden_layers']),
-                  opt=config['actor']['optimizer'],
-                  act=config['actor']['activation'],
-                  last_act=config['actor']['last_activation'],
-                  input_size=config.getint('board', 'size') * config.getint('board', 'size') + 1,
-                  minibatch_size=config.getint('actor', 'minibatch'),
-                  epochs=config.getint('actor', 'epochs'),
-                  batch_size=config.getint('actor', 'batch_size'),
-                  validation_split=config.getfloat('actor', 'validation_split'),
-                  verbosity=config.getint('actor', 'verbosity')
-                  )
-    save_actors = config.getboolean('actor', 'save_actors')
+                               layers=ast.literal_eval(config['actor']['hidden_layers']),
+                               opt=config['actor']['optimizer'],
+                               act=config['actor']['activation'],
+                               last_act=config['actor']['last_activation'],
+                               input_size=config.getint('board', 'size') * config.getint('board', 'size') + 1,
+                               minibatch_size=config.getint('actor', 'minibatch'),
+                               epochs=config.getint('actor', 'epochs'),
+                               batch_size=config.getint('actor', 'batch_size'),
+                               validation_split=config.getfloat('actor', 'validation_split'),
+                               verbosity=config.getint('actor', 'verbosity')
+                               )
 
-    #Extract critic settings
-    gamma = config.getfloat('critic','discount_factor')
+    # Extract critic settings
+    gamma = config.getfloat('critic', 'discount_factor')
 
-    # Create RL mondule
+    # Create RL module
     rl = ReinforcementLearning()
 
     # Extract training settings
@@ -50,7 +49,7 @@ def main():
     Board_MC = Board(size=config.getint('board', 'size'))  # MonteCarlo Board
 
     # Extract TOPP settings
-    topp = TOPP(config.getint('TOPP', 'number_of_nets',
+    topp = TOPP(config.getint('TOPP', 'number_of_nets'),
                 config.getint('TOPP', 'games_between_nets'),
                 state_manager,
                 Board_A,
@@ -63,10 +62,6 @@ def main():
         state_manager.reset_board(Board_A)
         state_manager.reset_board(Board_MC)
         MCTS_tree = MCTS(state_manager, Board_A)
-        game_length = 0
-        critic_indices = {}
-        progress = str(float(j) / number_actual_games * 100) + "%"
-
 
         # Alternates starting player every game
         if j % 2 == 1:
@@ -78,7 +73,7 @@ def main():
             state_manager.set_state(Board_MC, current_state)
             MCTS_tree.update_and_reset_tree(current_state)
 
-            use_critic = True # TODO: skal settes til en randomizing-funksjon
+            use_critic = True
 
             for i in range(tree_games):
                 # Tree simulation
@@ -86,7 +81,7 @@ def main():
 
                 # Using default policy to get to end state and returns result of game
                 z = rl.get_simulation_result(state_manager, Board_MC, use_critic, actor_critic, action, finished)
-                
+
                 # Updating MCTS-Tree
                 MCTS_tree.backprop_tree(z, gamma)
                 MCTS_tree.update_and_reset_tree(current_state)
@@ -101,7 +96,7 @@ def main():
             action = MCTS_tree.get_best_root_action()
             rl.perform_real_move(state_manager, Board_A, action)
 
-        #Parse RBUF
+        # Parse RBUF
         rl.update_RBUF_critic_values(state_manager, Board_A, RBUF)
 
         # Train actor after finished episode
@@ -112,6 +107,9 @@ def main():
 
         # Print progress
         rl.print_progress()
+
+    # Decay epsilon for greedy policy
+    rl.decay_epsilon()
 
     # Save final net
     topp.save_net(actor_critic, number_actual_games, number_actual_games)
