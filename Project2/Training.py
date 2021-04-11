@@ -38,7 +38,9 @@ def main():
                                 config.getfloat('RL','rollout_initial_probability'),
                                 config.getfloat('RL','rollout_final_probability'),
                                 config.getfloat('RL', 'epsilon_initial'),
-                                config.getfloat('RL', 'epsilon_final'))
+                                config.getfloat('RL', 'epsilon_final'),
+                                winning_reward = config.getint('RL', 'reward'),
+                                losing_reward = config.getint('RL', 'losing_reward'))
 
     # Board setup
     state_manager = StateManager()
@@ -58,7 +60,9 @@ def main():
     #Tree setup
     MCTS_tree = MCTS(   state_manager, 
                         Board_A, config.getfloat('MCTS', 'exploration_weight'), 
-                        config.getint('MCTS', 'tree_games'))
+                        config.getint('MCTS', 'tree_games'),
+                        winning_reward = config.getint('RL', 'reward'),
+                        losing_reward = config.getint('RL', 'losing_reward'))
 
 
     # Training loop
@@ -86,7 +90,7 @@ def main():
                 z = rl.get_simulation_result(state_manager, Board_MC, actor_critic, action, finished)
                 
                 # Updating MCTS-Tree
-                MCTS_tree.backprop_tree(z, rl.gamma)
+                MCTS_tree.backprop_tree(z, rl.gamma, rl.reward[z])
                 MCTS_tree.update_and_reset_tree(current_state)
                 state_manager.set_state(Board_MC, MCTS_tree.root)
 

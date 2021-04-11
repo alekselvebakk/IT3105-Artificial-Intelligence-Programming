@@ -3,7 +3,7 @@ from numpy.random import default_rng
 
 
 class ReinforcementLearning:
-    def __init__(self, number_actual_games, value_discount_factor, rollout_init_prob, rollout_final_prob, epsilon, final_epsilon):
+    def __init__(self, number_actual_games, value_discount_factor, rollout_init_prob, rollout_final_prob, epsilon, final_epsilon, winning_reward, losing_reward):
         self.game_length = 0
         self.critic_indices = {}
         self.rollout_probability = 1
@@ -16,6 +16,8 @@ class ReinforcementLearning:
         self.rollout_prob_decay = np.exp((np.log(rollout_final_prob/rollout_init_prob))/number_actual_games)
         self.epsilon = epsilon
         self.epsilon_decay = np.exp((np.log(final_epsilon/epsilon))/number_actual_games)
+
+        self.reward = {1: winning_reward, 0: losing_reward}
 
         #Random Number Generator
         seed = 1337
@@ -49,8 +51,10 @@ class ReinforcementLearning:
         if not result == 0:
             for RBUF_index in self.critic_indices:
                 discount = self.gamma**(self.game_length-1-self.critic_indices[RBUF_index])
-                self.RBUF[RBUF_index][1][-1] = result*discount
-    
+                value = self.reward[result]*discount
+                if not value < 0:
+                    self.RBUF[RBUF_index][1][-1] = value
+                    
     def print_progress(self, training_iteration):
         progress = str(float(training_iteration)/self.number_actual_games *100)+"%"
         print("Progress: "+progress)

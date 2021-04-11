@@ -34,16 +34,19 @@ class MCTS_Node:
 
     def update_V_s(self, z):
         delta = z-self.V_s
-        self.V_s = self.V_s + delta
+        if self.V_s + delta < 0:
+            self.V_s = 0
+        else:
+            self.V_s = selv.V_s + delta
 
     def update_Q_s_a(self, action, z):
         self.Q_s_a[action] = self.Q_s_a[action] + (z-self.Q_s_a[action])/self.N_s_a[action]
     
-    def update_attributes(self, action, z, discount):
+    def update_attributes(self, action, z, reward):
         self.increment_N_s()
         self.increment_N_s_a(action)
         self.update_Q_s_a(action, z)
-        self.update_V_s(z*discount)
+        self.update_V_s(reward)
             
 
     def numeric_exploration_score(self, action, c):
