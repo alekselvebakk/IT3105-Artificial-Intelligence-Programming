@@ -36,7 +36,9 @@ def main():
     rl = ReinforcementLearning( config.getint('RL', 'actual_games'), 
                                 config.getfloat('RL','value_discount_factor'),
                                 config.getfloat('RL','rollout_initial_probability'),
-                                config.getfloat('RL','rollout_final_probability'))
+                                config.getfloat('RL','rollout_final_probability'),
+                                config.getfloat('RL', 'epsilon_initial'),
+                                config.getfloat('RL', 'epsilon_final'))
 
     # Board setup
     state_manager = StateManager()

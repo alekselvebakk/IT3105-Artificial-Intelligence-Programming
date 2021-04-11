@@ -3,7 +3,7 @@ from numpy.random import default_rng
 
 
 class ReinforcementLearning:
-    def __init__(self, number_actual_games, value_discount_factor, rollout_init_prob, rollout_final_prob):
+    def __init__(self, number_actual_games, value_discount_factor, rollout_init_prob, rollout_final_prob, epsilon, final_epsilon):
         self.game_length = 0
         self.critic_indices = {}
         self.rollout_probability = 1
@@ -13,7 +13,9 @@ class ReinforcementLearning:
         self.use_critic = False
 
         self.rollout_prob = rollout_init_prob
-        self.rollout_prob_decay = np.exp((np.log(rollout_final_prob/self.rollout_prob))/self.number_actual_games)
+        self.rollout_prob_decay = np.exp((np.log(rollout_final_prob/rollout_init_prob))/number_actual_games)
+        self.epsilon = epsilon
+        self.epsilon_decay = np.exp((np.log(final_epsilon/epsilon))/number_actual_games)
 
         #Random Number Generator
         seed = 1337
