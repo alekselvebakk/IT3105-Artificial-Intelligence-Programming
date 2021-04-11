@@ -64,7 +64,7 @@ def main():
     for j in range(rl.number_actual_games):
         state_manager.reset_board(Board_A)
         state_manager.reset_board(Board_MC)
-
+        
         # Alternates starting player every game
         if j % 2 == 1:
             state_manager.change_player(Board_A)
@@ -77,7 +77,7 @@ def main():
 
             rl.decide_use_of_critic() # TODO: skal settes til en randomizing-funksjon
 
-            for i in range(MCTS_tree.number_tree_games):
+            for i in range(MCTS_tree.tree_games):
                 # Tree simulation
                 action, finished = MCTS_tree.tree_simulation(Board_MC)
 

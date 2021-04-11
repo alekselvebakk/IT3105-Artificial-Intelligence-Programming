@@ -1,5 +1,4 @@
 import pathlib
-import time
 from shutil import copyfile
 
 class TOPP:
@@ -12,7 +11,7 @@ class TOPP:
         self.board = board
         self.tournament_id = tournament_id
         self.save_actors = save_actors
-        self.folder_name = str(pathlib.Path(__file__).parent.absolute()) + "/Saved_Nets/" + self.tournament_id
+        self.folder_name = str(pathlib.Path(__file__).parent.absolute()) + "/Saved_Nets/" + str(self.tournament_id)
 
     def single_game_between_2_nets(self, actor0, actor1, vis=False):
         self.state_manager.reset_board(self.board)
