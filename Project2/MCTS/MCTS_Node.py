@@ -94,10 +94,10 @@ class MCTS_Node:
         return action
 
     def get_action_distribution_and_value(self):
-        action_distribution_and_value = np.zeros_like(self.actions, dtype = "float")
-        for i in range(len(self.actions)):
+        action_distribution_and_value = np.zeros(len(self.actions)+1, dtype = "float")
+        for i in range(len(self.actions)-1):
             action_distribution_and_value[i] = self.N_s_a[self.actions[i]]/self.N_s
-        action_distribution_and_value.append(self.V_s)
+        action_distribution_and_value[-1] = self.V_s
         return action_distribution_and_value
     
     def get_most_frequent_action(self):

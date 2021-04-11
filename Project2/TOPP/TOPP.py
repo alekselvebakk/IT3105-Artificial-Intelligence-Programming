@@ -3,7 +3,7 @@ from shutil import copyfile
 
 class TOPP:
 
-    def __init__(self, number_of_nets, games_between_nets, state_manager, board, tournament_id, save_actors):
+    def __init__(self, number_of_nets, games_between_nets, state_manager, board, tournament_id, save_actors, savefolder):
         self.number_of_nets = number_of_nets
         self.number_of_wins = [0]*number_of_nets
         self.games_between_nets = games_between_nets
@@ -11,7 +11,7 @@ class TOPP:
         self.board = board
         self.tournament_id = tournament_id
         self.save_actors = save_actors
-        self.folder_name = str(pathlib.Path(__file__).parent.absolute()) + "/Saved_Nets/" + str(self.tournament_id)
+        self.folder_name = savefolder + str(self.tournament_id)
 
     def single_game_between_2_nets(self, actor0, actor1, vis=False):
         self.state_manager.reset_board(self.board)
