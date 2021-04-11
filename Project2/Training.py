@@ -39,8 +39,8 @@ def main():
                                 config.getfloat('RL','rollout_final_probability'),
                                 config.getfloat('RL', 'epsilon_initial'),
                                 config.getfloat('RL', 'epsilon_final'),
-                                winning_reward = config.getint('RL', 'winning_reward'),
-                                losing_reward = config.getint('RL', 'losing_reward'))
+                                config.getfloat('RL', 'percent_before_critic')
+                                )
 
     # Board setup
     state_manager = StateManager()
@@ -67,6 +67,7 @@ def main():
     for j in range(rl.number_actual_games):
         state_manager.reset_board(Board_A)
         state_manager.reset_board(Board_MC)
+
         
         # Alternates starting player every game
         if j % 2 == 1:
@@ -87,7 +88,7 @@ def main():
                 z = rl.get_simulation_result(state_manager, Board_MC, actor_critic, action, finished)
                 
                 # Updating MCTS-Tree
-                MCTS_tree.backprop_tree(z, rl.gamma, rl.reward[z])
+                MCTS_tree.backprop_tree(z, rl.gamma)
                 MCTS_tree.update_and_reset_tree(Board_A)
                 state_manager.set_state(Board_MC, MCTS_tree.root)
 
@@ -108,11 +109,16 @@ def main():
         # Save net every x game to file
         topp.save_net(actor_critic, j, rl.number_actual_games)
 
+        # Decay epsilon for greedy policy 
+        rl.decay_epsilon()
+        
+        # increase chance for use of critic
+        rl.increase_chance_of_critic(j)
+
         # Print progress
         rl.print_progress(j)
 
-    # Decay epsilon for greedy policy
-    rl.decay_epsilon()
+    
 
     # Save final net
     topp.save_net(actor_critic, rl.number_actual_games, rl.number_actual_games)

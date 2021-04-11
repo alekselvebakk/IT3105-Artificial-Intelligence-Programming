@@ -3,21 +3,19 @@ from numpy.random import default_rng
 
 
 class ReinforcementLearning:
-    def __init__(self, number_actual_games, value_discount_factor, rollout_init_prob, rollout_final_prob, epsilon, final_epsilon, winning_reward, losing_reward):
+    def __init__(self, number_actual_games, value_discount_factor, rollout_init_prob, rollout_final_prob, epsilon, final_epsilon, percent_before_critic):
         self.game_length = 0
         self.critic_indices = {}
-        self.rollout_probability = 1
         self.number_actual_games = number_actual_games
         self.gamma = value_discount_factor
         self.RBUF = []
         self.use_critic = False
 
+        self.percent_before_critic = percent_before_critic/100
         self.rollout_prob = rollout_init_prob
-        self.rollout_prob_decay = np.exp((np.log(rollout_final_prob/rollout_init_prob))/number_actual_games)
+        self.rollout_prob_decay = np.exp((np.log(rollout_final_prob/rollout_init_prob))/((1-self.percent_before_critic)*float(number_actual_games)))
         self.epsilon = epsilon
         self.epsilon_decay = np.exp((np.log(final_epsilon/epsilon))/number_actual_games)
-
-        self.reward = {2: winning_reward, 1: losing_reward}
 
         #Random Number Generator
         seed = 1337
@@ -28,8 +26,8 @@ class ReinforcementLearning:
             state_manager.perform_action(board, action)
 
         if self.use_critic:
-                state = state_manager.get_state(board)
-                z = actor_critic.get_critic_value(state)
+            state = state_manager.get_state(board)
+            z = actor_critic.get_critic_value(state)
         else:
             while not state_manager.state_is_final(board):
                 action = actor_critic.get_action(state_manager.get_state(board), self.epsilon)
@@ -51,7 +49,7 @@ class ReinforcementLearning:
         if not result == 0:
             for RBUF_index in self.critic_indices:
                 discount = self.gamma**(self.game_length-1-self.critic_indices[RBUF_index])
-                value = self.reward[result]*discount
+                value = result*discount
                 if not value < 0:
                     self.RBUF[RBUF_index][1][-1] = value
                     
@@ -79,5 +77,8 @@ class ReinforcementLearning:
             self.use_critic = True
         else:
             self.use_critic = False
-        self.rollout_prob = self.rollout_prob*self.rollout_prob_decay
-
+        
+        
+    def increase_chance_of_critic(self, progress):
+        if progress/self.number_actual_games > self.percent_before_critic:
+            self.rollout_prob = self.rollout_prob*self.rollout_prob_decay
