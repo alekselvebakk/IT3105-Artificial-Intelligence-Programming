@@ -37,7 +37,7 @@ class MCTS_Node:
         if self.V_s + delta < 0:
             self.V_s = 0
         else:
-            self.V_s = selv.V_s + delta
+            self.V_s = self.V_s + delta
 
     def update_Q_s_a(self, action, z):
         self.Q_s_a[action] = self.Q_s_a[action] + (z-self.Q_s_a[action])/self.N_s_a[action]

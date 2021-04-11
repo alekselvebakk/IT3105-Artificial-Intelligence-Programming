@@ -17,7 +17,7 @@ class ReinforcementLearning:
         self.epsilon = epsilon
         self.epsilon_decay = np.exp((np.log(final_epsilon/epsilon))/number_actual_games)
 
-        self.reward = {1: winning_reward, 0: losing_reward}
+        self.reward = {2: winning_reward, 1: losing_reward}
 
         #Random Number Generator
         seed = 1337

@@ -34,12 +34,12 @@ def main():
 
     # Create RL mondule
     rl = ReinforcementLearning( config.getint('RL', 'actual_games'), 
-                                config.getfloat('RL','value_discount_factor'),
+                                config.getfloat('RL','reward_discount_factor'),
                                 config.getfloat('RL','rollout_initial_probability'),
                                 config.getfloat('RL','rollout_final_probability'),
                                 config.getfloat('RL', 'epsilon_initial'),
                                 config.getfloat('RL', 'epsilon_final'),
-                                winning_reward = config.getint('RL', 'reward'),
+                                winning_reward = config.getint('RL', 'winning_reward'),
                                 losing_reward = config.getint('RL', 'losing_reward'))
 
     # Board setup
@@ -60,9 +60,7 @@ def main():
     #Tree setup
     MCTS_tree = MCTS(   state_manager, 
                         Board_A, config.getfloat('MCTS', 'exploration_weight'), 
-                        config.getint('MCTS', 'tree_games'),
-                        winning_reward = config.getint('RL', 'reward'),
-                        losing_reward = config.getint('RL', 'losing_reward'))
+                        config.getint('MCTS', 'tree_games'))
 
 
     # Training loop
