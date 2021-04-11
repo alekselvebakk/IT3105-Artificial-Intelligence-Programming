@@ -39,7 +39,6 @@ class MCTS:
             else:
                 action = self.tree[s_t].get_action(self.c)
                 self.simulation_history[s_t] = action
-                print('else, ', action)       
             self.GameHandler.perform_action(GameBoard, action)
 
         return None, True

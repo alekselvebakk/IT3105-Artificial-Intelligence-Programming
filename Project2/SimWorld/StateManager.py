@@ -22,8 +22,6 @@ class StateManager:
         return actions
 
     def perform_action(self, board, action):
-        print(action)
-        print(board.table)
         peghole = board.table[int(action[0])][int(action[1])]
         peghole.add_peg(int(board.player))
         self.change_player(board)

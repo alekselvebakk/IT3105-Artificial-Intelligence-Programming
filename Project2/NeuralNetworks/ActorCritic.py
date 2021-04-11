@@ -89,7 +89,7 @@ class ActorCritic:
 
     def get_action(self, state, epsilon=0):
         decision = random.uniform(0, 1)
-        probabilities = self.get_probabilities(state)
+        probabilities = self.get_probabilities(state)[:-1]
         if probabilities.sum() == 0:
             index = self.get_random_safe_index(state)
         elif decision > epsilon:
@@ -112,7 +112,7 @@ class ActorCritic:
         return np.random.choice(safe_actions)
 
     def find_position(self, index):
-        table_root = np.sqrt(self.output_size)
+        table_root = int(np.sqrt(self.output_size-1))
         row = int(index // table_root)
         col = int(index % table_root)
         return [row, col]
