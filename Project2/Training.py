@@ -83,7 +83,10 @@ def main():
 
             rl.decide_use_of_critic() # TODO: skal settes til en randomizing-funksjon
 
-            for i in range(MCTS_tree.tree_games):
+
+            tree_game_start_time = time.time()
+            i = 0
+            while i < MCTS_tree.tree_games and (time.time()-tree_game_start_time)<1:
                 # Tree simulation
                 action, finished = MCTS_tree.tree_simulation(Board_MC)
 
@@ -102,6 +105,7 @@ def main():
             # Choosing and performing best action
             action = MCTS_tree.get_best_root_action()
             rl.perform_real_move(state_manager, Board_A, action)
+            i += 1
 
         #Parse RBUF
         rl.update_RBUF_critic_values(state_manager.get_result(Board_A))
