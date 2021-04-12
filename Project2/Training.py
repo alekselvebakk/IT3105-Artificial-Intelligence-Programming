@@ -59,17 +59,18 @@ def main():
                 str(pathlib.Path(__file__).parent.absolute()) + "/Saved_Nets/"
                 )
     
-    #Tree setup
-    MCTS_tree = MCTS(   state_manager, 
-                        Board_A, config.getfloat('MCTS', 'exploration_weight'), 
-                        config.getint('MCTS', 'tree_games'))
+    
 
 
     # Training loop
     for j in range(rl.number_actual_games):
         state_manager.reset_board(Board_A)
         state_manager.reset_board(Board_MC)
-
+        
+        #Tree setup
+        MCTS_tree = MCTS(   state_manager, 
+                            Board_A, config.getfloat('MCTS', 'exploration_weight'), 
+                            config.getint('MCTS', 'tree_games'))
         
         # Alternates starting player every game
         if j % 2 == 1:
