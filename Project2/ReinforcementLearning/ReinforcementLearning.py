@@ -3,7 +3,7 @@ from numpy.random import default_rng
 
 
 class ReinforcementLearning:
-    def __init__(self, number_actual_games, value_discount_factor, rollout_init_prob, rollout_final_prob, epsilon, final_epsilon, percent_before_critic):
+    def __init__(self, number_actual_games, value_discount_factor, rollout_init_prob, rollout_final_prob, epsilon, final_epsilon, percent_before_critic, winning_reward, losing_reward):
         self.game_length = 0
         self.critic_indices = {}
         self.number_actual_games = number_actual_games
@@ -16,6 +16,10 @@ class ReinforcementLearning:
         self.rollout_prob_decay = np.exp((np.log(rollout_final_prob/rollout_init_prob))/((1-self.percent_before_critic)*float(number_actual_games)))
         self.epsilon = epsilon
         self.epsilon_decay = np.exp((np.log(final_epsilon/epsilon))/number_actual_games)
+
+
+        self.winning_reward = winning_reward
+        self.losing_reward = losing_reward
 
         #Random Number Generator
         seed = 1337
@@ -32,7 +36,7 @@ class ReinforcementLearning:
             while not state_manager.state_is_final(board):
                 action = actor_critic.get_action(state_manager.get_state(board), self.epsilon)
                 state_manager.perform_action(board, action)
-            z = state_manager.get_result(board)
+            z = self.get_result_score(state_manager.get_result(board))
 
         return z
 
@@ -46,12 +50,10 @@ class ReinforcementLearning:
         self.critic_indices[len(RBUF) - 1] = current_iteration  # logging index of critic-based-move
 
     def update_RBUF_critic_values(self, result):
-        if not result == 0:
-            for RBUF_index in self.critic_indices:
-                discount = self.gamma**(self.game_length-1-self.critic_indices[RBUF_index])
-                value = result*discount
-                if not value < 0:
-                    self.RBUF[RBUF_index][1][-1] = value
+        for RBUF_index in self.critic_indices:
+            #discount = self.gamma**(self.game_length-1-self.critic_indices[RBUF_index])
+            value = self.get_result_score(result)#*discount
+            self.RBUF[RBUF_index][1][-1] = value
                     
     def print_progress(self, training_iteration):
         progress = str(float(training_iteration)/self.number_actual_games *100)+"%"
@@ -82,3 +84,9 @@ class ReinforcementLearning:
     def increase_chance_of_critic(self, progress):
         if progress/self.number_actual_games > self.percent_before_critic:
             self.rollout_prob = self.rollout_prob*self.rollout_prob_decay
+
+    def get_result_score(self, result):
+        if result == 1:
+            return self.losing_reward
+        elif result == 2:
+            return self.winning_reward
