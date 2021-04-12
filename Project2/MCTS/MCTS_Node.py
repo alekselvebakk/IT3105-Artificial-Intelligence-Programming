@@ -42,23 +42,16 @@ class MCTS_Node:
         self.E_t_a[action] += z
     
     def update_V_s(self, z):
-        self.V_s = self.E_t/self.N_s
-
-        """delta = z-self.V_s
-        self.V_s = self.V_s + delta/self.N_s"""
+        delta = z-self.V_s
+        self.V_s += delta/self.N_s
 
     def update_Q_s_a(self, action, z):
-        self.Q_s_a[action] = self.E_t_a[action]/self.N_s_a[action]
-
-        """
         delta = z-self.Q_s_a[action]
-        self.Q_s_a[action] = self.Q_s_a[action]+delta/self.N_s_a[action]"""
+        self.Q_s_a[action] += delta/self.N_s_a[action]
     
     def update_attributes(self, action, z):
         self.increment_N_s()
         self.increment_N_s_a(action)
-        self.update_E_t_a(action, z)
-        self.update_E_t(z)
         self.update_Q_s_a(action, z)
         self.update_V_s(z)
             
@@ -81,7 +74,7 @@ class MCTS_Node:
 
     def get_minimizing_action(self, c):
         min_score = 10000
-        argmin = 0
+        argmin = next(iter(self.available_actions))
         for i in self.available_actions:
             current_score = self.score_for_minimizing(self.actions[i], c)
             if current_score < min_score:
@@ -91,12 +84,14 @@ class MCTS_Node:
 
     def get_maximixing_action(self, c):
         max_score = 0
-        argmax = 0
+        argmax = next(iter(self.available_actions))
         for i in self.available_actions:
             current_score = self.score_for_maximizing(self.actions[i], c)
             if current_score > max_score:
                 max_score = current_score
                 argmax = i
+        if self.actions[argmax] == False:
+            print("argmax: ",argmax)
         return self.actions[argmax]
 
     def get_action(self, c):
@@ -107,7 +102,11 @@ class MCTS_Node:
                 action = self.get_maximixing_action(c)
             if action == False:
                 print("calculated",action)
-                print(self.available_actions)      
+                print("available:",self.available_actions)
+                print("available-lengde:",len(self.available_actions))
+                print("state:",self.state)
+                print("actions",self.actions)
+                print("actionslengde",len(self.actions))
         else:
             action = random.choice(self.unexplored_actions)
             self.unexplored_actions.remove(action)
