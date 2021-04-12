@@ -131,16 +131,16 @@ def main():
         rl.print_progress(j)
 
 
-    # Show last game
-    if see_last_game():
-        state_manager.show_board(Board_A)
-        state_manager.show_animation(Board_A)
-
     # Save final net
     topp.save_net(actor_critic, rl.number_actual_games, rl.number_actual_games)
 
     # Save config-file with information about the actor settings
     topp.save_config(config_path)
+
+    # Show last game
+    if see_last_game:
+        state_manager.show_board(Board_A)
+        state_manager.show_animation(Board_A)
 
 
 if __name__ == '__main__':
