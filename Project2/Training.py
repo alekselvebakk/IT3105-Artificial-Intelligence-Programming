@@ -39,7 +39,9 @@ def main():
                                 config.getfloat('RL','rollout_final_probability'),
                                 config.getfloat('RL', 'epsilon_initial'),
                                 config.getfloat('RL', 'epsilon_final'),
-                                config.getfloat('RL', 'percent_before_critic')
+                                config.getfloat('RL', 'percent_before_critic'),
+                                config.getfloat('RL', 'winning_reward'),
+                                config.getfloat('RL', 'losing_reward')
                                 )
 
     # Board setup

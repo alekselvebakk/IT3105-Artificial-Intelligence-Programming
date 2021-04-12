@@ -10,6 +10,8 @@ class MCTS_Node:
         self.V_s = 0
         self.N_s_a = dict()
         self.Q_s_a = dict()
+        self.E_t = 0
+        self.E_t_a = dict()
 
         self.actions = actions
         #makes this as a lookup-table to store indices of actions that can be done
@@ -22,6 +24,7 @@ class MCTS_Node:
         for x in range(len(self.actions)):
             self.N_s_a[self.actions[x]] = 0
             self.Q_s_a[self.actions[x]] = 0
+            self.E_t_a[self.actions[x]] = 0
             if self.actions[x] != False:
                 self.unexplored_actions.append(self.actions[x])
                 self.available_actions[x] = self.actions[x]
@@ -32,21 +35,32 @@ class MCTS_Node:
     def increment_N_s_a(self, action):
         self.N_s_a[action] = self.N_s_a[action] + 1
 
+    def update_E_t(self, z):
+        self.E_t += z
+
+    def update_E_t_a(self, action, z):
+        self.E_t_a[action] += z
+    
     def update_V_s(self, z):
-        delta = z-self.V_s
-        if self.V_s + delta < 0:
-            self.V_s = 0
-        else:
-            self.V_s = self.V_s + delta
+        self.V_s = self.E_t/self.N_s
+
+        """delta = z-self.V_s
+        self.V_s = self.V_s + delta/self.N_s"""
 
     def update_Q_s_a(self, action, z):
-        self.Q_s_a[action] = self.Q_s_a[action] + (z-self.Q_s_a[action])/self.N_s_a[action]
+        self.Q_s_a[action] = self.E_t_a[action]/self.N_s_a[action]
+
+        """
+        delta = z-self.Q_s_a[action]
+        self.Q_s_a[action] = self.Q_s_a[action]+delta/self.N_s_a[action]"""
     
-    def update_attributes(self, action, z, discount):
+    def update_attributes(self, action, z):
         self.increment_N_s()
         self.increment_N_s_a(action)
+        self.update_E_t_a(action, z)
+        self.update_E_t(z)
         self.update_Q_s_a(action, z)
-        self.update_V_s(z*discount)
+        self.update_V_s(z)
             
 
     def numeric_exploration_score(self, action, c):

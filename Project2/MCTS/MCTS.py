@@ -46,8 +46,8 @@ class MCTS:
     def backprop_tree(self, z, gamma):
         i = 0
         for state in self.simulation_history:
-            discount = gamma**(len(self.simulation_history)-1-i)
-            self.tree[state].update_attributes(self.simulation_history[state], z, discount)
+            #discount = 1#gamma**(len(self.simulation_history)-1-i)
+            self.tree[state].update_attributes(self.simulation_history[state], z)
             i += 1
 
     def update_and_reset_tree(self, board):
