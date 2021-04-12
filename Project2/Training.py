@@ -28,7 +28,8 @@ def main():
                   epochs=config.getint('anet', 'epochs'),
                   batch_size=config.getint('anet', 'batch_size'),
                   validation_split=config.getfloat('anet', 'validation_split'),
-                  verbosity=config.getint('anet', 'verbosity')
+                  verbosity=config.getint('anet', 'verbosity'),
+                  net_with_critic = config.getboolean('anet', 'net_with_critic')
                   )
 
 
@@ -41,9 +42,10 @@ def main():
                                 config.getfloat('RL', 'epsilon_final'),
                                 config.getfloat('RL', 'percent_before_critic'),
                                 config.getfloat('RL', 'winning_reward'),
-                                config.getfloat('RL', 'losing_reward')
+                                config.getfloat('RL', 'losing_reward'),
+                                net_with_critic = config.getboolean('anet', 'net_with_critic')
                                 )
-
+    
     # Board setup
     see_last_game = config.getboolean('board', 'see_last_game')
     state_manager = StateManager()
@@ -80,20 +82,19 @@ def main():
         if j % 2 == 1:
             state_manager.change_player(Board_A)
             state_manager.change_player(Board_MC)
-
         while not state_manager.state_is_final(Board_A):
             state_manager.set_state(Board_MC, state_manager.get_state(Board_A))
             MCTS_tree.update_and_reset_tree(Board_A)
 
             rl.decide_use_of_critic() # TODO: skal settes til en randomizing-funksjon
-
+            
 
             tree_game_start_time = time.time()
             i = 0
             while i < MCTS_tree.tree_games and (time.time()-tree_game_start_time)<1:
                 # Tree simulation
                 action, finished = MCTS_tree.tree_simulation(Board_MC)
-
+                
                 # Using default policy to get to end state and returns result of game
                 z = rl.get_simulation_result(state_manager, Board_MC, actor_critic, action, finished)
                 
@@ -105,7 +106,7 @@ def main():
             
             print(i)
             # Saving distribution to RBUF
-            D = MCTS_tree.get_root_distribution_and_value()
+            D = MCTS_tree.get_RBUF_data(rl.net_with_critic)
             rl.add_to_RBUF(D)
 
             # Choosing and performing best action

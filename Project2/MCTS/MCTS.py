@@ -62,6 +62,19 @@ class MCTS:
         distribution_and_value = self.tree[self.root].get_action_distribution_and_value()
         D = [state, distribution_and_value]
         return D
+    
+    def get_root_distribution(self):
+        state = self.root
+        distribution_and_value = self.tree[self.root].get_action_distribution()
+        D = [state, distribution_and_value]
+        return D
+
+    def get_RBUF_data(self, net_with_critic):
+        if net_with_critic:
+            return self.get_root_distribution_and_value()
+        else:
+            return self.get_root_distribution()
+
 
     def get_best_root_action(self):
         action = self.tree[self.root].get_most_frequent_action()

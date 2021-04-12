@@ -35,6 +35,7 @@ def main():
     b_size = config.getint('anet', 'batch_size')
     val_split = config.getfloat('anet', 'validation_split')
     verbose = config.getint('anet', 'verbosity')
+    net_with_critic = config.getboolean('anet','net_with_critic')
 
     # Creating tournament
     tournament = TOPP(number_of_nets,
@@ -53,7 +54,8 @@ def main():
         actor_list.append(ActorCritic(learning_rate=lr, layers=layers, opt=opt, act=act, last_act=last_act,
                                       input_size=input_size, minibatch_size=mb_size, epochs=epochs, batch_size=b_size,
                                       validation_split=val_split, verbosity=verbose,
-                                      reload_model=True, reload_name=actor_name))
+                                      reload_model=True, reload_name=actor_name, 
+                                      net_with_critic = net_with_critic))
 
     show_game_between = ast.literal_eval(config['TOPP']['show_games_between'])
     results = tournament.run_tournament(actor_list, show_game_between)

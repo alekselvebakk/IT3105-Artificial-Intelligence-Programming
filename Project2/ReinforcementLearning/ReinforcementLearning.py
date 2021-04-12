@@ -3,7 +3,17 @@ from numpy.random import default_rng
 
 
 class ReinforcementLearning:
-    def __init__(self, number_actual_games, value_discount_factor, rollout_init_prob, rollout_final_prob, epsilon, final_epsilon, percent_before_critic, winning_reward, losing_reward):
+    def __init__(   self, 
+                    number_actual_games, 
+                    value_discount_factor, 
+                    rollout_init_prob, 
+                    rollout_final_prob, 
+                    epsilon, 
+                    final_epsilon, 
+                    percent_before_critic, 
+                    winning_reward, 
+                    losing_reward,
+                    net_with_critic=True):
         self.game_length = 0
         self.critic_indices = {}
         self.number_actual_games = number_actual_games
@@ -11,12 +21,19 @@ class ReinforcementLearning:
         self.RBUF = []
         self.use_critic = False
 
+        
+        self.net_with_critic = net_with_critic
         self.percent_before_critic = percent_before_critic/100
         self.rollout_prob = rollout_init_prob
-        self.rollout_prob_decay = np.exp((np.log(rollout_final_prob/rollout_init_prob))/((1-self.percent_before_critic)*float(number_actual_games)))
+        if self.net_with_critic:
+            self.rollout_prob_decay = np.exp((np.log(rollout_final_prob/rollout_init_prob))/((1-self.percent_before_critic)*float(number_actual_games)))
+        else:
+            self.rollout_prob_decay = 1
         self.epsilon = epsilon
-        self.epsilon_decay = np.exp((np.log(final_epsilon/epsilon))/number_actual_games)
-
+        if not epsilon == 0:
+            self.epsilon_decay = np.exp((np.log(final_epsilon/epsilon))/number_actual_games)
+        else:
+            self.epsilon_decay = 0
 
         self.winning_reward = winning_reward
         self.losing_reward = losing_reward
@@ -28,7 +45,6 @@ class ReinforcementLearning:
     def get_simulation_result(self, state_manager, board, actor_critic, action, finished):
         if not finished:
             state_manager.perform_action(board, action)
-
         if self.use_critic:
             state = state_manager.get_state(board)
             z = actor_critic.get_critic_value(state)
@@ -50,11 +66,12 @@ class ReinforcementLearning:
         self.critic_indices[len(RBUF) - 1] = current_iteration  # logging index of critic-based-move
 
     def update_RBUF_critic_values(self, result):
-        for RBUF_index in self.critic_indices:
-            discount = self.gamma**(self.game_length-1-self.critic_indices[RBUF_index])
-            value = self.get_result_score(result)*discount
-            self.RBUF[RBUF_index][1][-1] = value
-                    
+        if self.net_with_critic:
+            for RBUF_index in self.critic_indices:
+                discount = self.gamma**(self.game_length-1-self.critic_indices[RBUF_index])
+                value = self.get_result_score(result)*discount
+                self.RBUF[RBUF_index][1][-1] = value
+                   
     def print_progress(self, training_iteration):
         progress = str(float(training_iteration)/self.number_actual_games *100)+"%"
         print("Progress: "+progress)
@@ -65,7 +82,7 @@ class ReinforcementLearning:
 
     def add_to_RBUF(self, D):
         self.RBUF.append(D)
-        if self.use_critic: self.update_critic_indices(self.RBUF)
+        if self.use_critic and self.net_with_critic: self.update_critic_indices(self.RBUF)
 
     def train_actor_critic(self, actor_critic):
         actor_critic.train_from_RBUF(self.RBUF)
@@ -75,7 +92,7 @@ class ReinforcementLearning:
         
     def decide_use_of_critic(self):
         decision = self.rng.uniform(0, 1)
-        if decision > self.rollout_prob:
+        if decision > self.rollout_prob and self.net_with_critic:
             self.use_critic = True
         else:
             self.use_critic = False

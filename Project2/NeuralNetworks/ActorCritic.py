@@ -19,7 +19,8 @@ class ActorCritic:
                  epochs=200,
                  batch_size=32,
                  validation_split=0.1,
-                 verbosity=2):
+                 verbosity=2,
+                 net_with_critic = True):
 
         self.alpha = learning_rate
         self.layers = layers
@@ -27,7 +28,11 @@ class ActorCritic:
         self.act = act
         self.last_act = last_act
         self.input_size = input_size  # The state will be playerID + board
-        self.output_size = input_size  # Board of actions (minus player plus value)
+        self.net_with_critic = net_with_critic
+        if net_with_critic:
+            self.output_size = input_size  # Board of actions (minus player plus value)
+        else:
+            self.output_size = input_size-1 # Board of actions (minus player)
         self.minibatch_size = minibatch_size
         self.epochs = epochs
         self.batch_size = batch_size
@@ -89,7 +94,10 @@ class ActorCritic:
 
     def get_action(self, state, epsilon=0):
         decision = random.uniform(0, 1)
-        probabilities = self.get_probabilities(state)[:-1]
+        if self.net_with_critic:
+            probabilities = self.get_probabilities(state)[:-1]
+        else:
+            probabilities = self.get_probabilities(state)
         if probabilities.sum() == 0:
             index = self.get_random_safe_index(state)
         elif decision > epsilon:
@@ -100,8 +108,11 @@ class ActorCritic:
         return self.find_position(index)
 
     def get_critic_value(self, state):
-        state_tensor = self.string_to_tensor(state)
-        value_prediction = self.model(state_tensor).numpy()[0][-1]
+        if self.net_with_critic:
+            state_tensor = self.string_to_tensor(state)
+            value_prediction = self.model(state_tensor).numpy()[0][-1]
+        else:
+            value_prediction = 0
         return value_prediction
 
     def get_random_safe_index(self, state):
@@ -112,7 +123,7 @@ class ActorCritic:
         return np.random.choice(safe_actions)
 
     def find_position(self, index):
-        table_root = int(np.sqrt(self.output_size-1))
+        table_root = int(np.sqrt(self.output_size-1)) if self.net_with_critic else int(np.sqrt(self.output_size))
         row = int(index // table_root)
         col = int(index % table_root)
         return [row, col]

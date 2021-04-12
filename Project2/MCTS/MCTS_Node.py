@@ -90,8 +90,6 @@ class MCTS_Node:
             if current_score > max_score:
                 max_score = current_score
                 argmax = i
-        if self.actions[argmax] == False:
-            print("argmax: ",argmax)
         return self.actions[argmax]
 
     def get_action(self, c):
@@ -100,13 +98,6 @@ class MCTS_Node:
                 action = self.get_minimizing_action(c)
             elif self.player == 2:
                 action = self.get_maximixing_action(c)
-            if action == False:
-                print("calculated",action)
-                print("available:",self.available_actions)
-                print("available-lengde:",len(self.available_actions))
-                print("state:",self.state)
-                print("actions",self.actions)
-                print("actionslengde",len(self.actions))
         else:
             action = random.choice(self.unexplored_actions)
             self.unexplored_actions.remove(action)
@@ -119,7 +110,13 @@ class MCTS_Node:
             action_distribution_and_value[i] = self.N_s_a[self.actions[i]]/self.N_s
         action_distribution_and_value[-1] = self.V_s
         return action_distribution_and_value
-    
+
+    def get_action_distribution(self):
+        action_distribution = np.zeros(len(self.actions), dtype = "float")
+        for i in range(len(self.actions)):
+            action_distribution[i] = self.N_s_a[self.actions[i]]/self.N_s
+        return action_distribution
+
     def get_most_frequent_action(self):
         action_visits = 0
         for i in range(len(self.actions)):
