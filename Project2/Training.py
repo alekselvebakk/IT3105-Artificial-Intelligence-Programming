@@ -60,10 +60,7 @@ def main():
                 str(pathlib.Path(__file__).parent.absolute()) + "/Saved_Nets/"
                 )
     
-    #Tree setup
-    MCTS_tree = MCTS(   state_manager, 
-                        Board_A, config.getfloat('MCTS', 'exploration_weight'), 
-                        config.getint('MCTS', 'tree_games'))
+    
 
 
     # Training loop
@@ -73,6 +70,11 @@ def main():
 
         if see_last_game and j == rl.number_actual_games-1:
             Board_A.start_visualisation('last_game.gif')
+        
+        #Tree setup
+        MCTS_tree = MCTS(   state_manager, 
+                            Board_A, config.getfloat('MCTS', 'exploration_weight'), 
+                            config.getint('MCTS', 'tree_games'))
         
         # Alternates starting player every game
         if j % 2 == 1:
@@ -85,7 +87,10 @@ def main():
 
             rl.decide_use_of_critic() # TODO: skal settes til en randomizing-funksjon
 
-            for i in range(MCTS_tree.tree_games):
+
+            tree_game_start_time = time.time()
+            i = 0
+            while i < MCTS_tree.tree_games and (time.time()-tree_game_start_time)<1:
                 # Tree simulation
                 action, finished = MCTS_tree.tree_simulation(Board_MC)
 
@@ -93,10 +98,12 @@ def main():
                 z = rl.get_simulation_result(state_manager, Board_MC, actor_critic, action, finished)
                 
                 # Updating MCTS-Tree
-                MCTS_tree.backprop_tree(z, rl.gamma)
+                MCTS_tree.backprop_tree(z)
                 MCTS_tree.update_and_reset_tree(Board_A)
                 state_manager.set_state(Board_MC, MCTS_tree.root)
-
+                i += 1
+            
+            print(i)
             # Saving distribution to RBUF
             D = MCTS_tree.get_root_distribution_and_value()
             rl.add_to_RBUF(D)

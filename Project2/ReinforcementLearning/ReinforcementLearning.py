@@ -51,8 +51,8 @@ class ReinforcementLearning:
 
     def update_RBUF_critic_values(self, result):
         for RBUF_index in self.critic_indices:
-            #discount = self.gamma**(self.game_length-1-self.critic_indices[RBUF_index])
-            value = self.get_result_score(result)#*discount
+            discount = self.gamma**(self.game_length-1-self.critic_indices[RBUF_index])
+            value = self.get_result_score(result)*discount
             self.RBUF[RBUF_index][1][-1] = value
                     
     def print_progress(self, training_iteration):
