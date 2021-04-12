@@ -28,7 +28,7 @@ class MCTS_Node:
             if self.actions[x] != False:
                 self.unexplored_actions.append(self.actions[x])
                 self.available_actions[x] = self.actions[x]
-    
+
     def increment_N_s(self):
         self.N_s = self.N_s + 1
     
@@ -104,10 +104,14 @@ class MCTS_Node:
             if self.player == 1:
                 action = self.get_minimizing_action(c)
             elif self.player == 2:
-                action = self.get_maximixing_action(c)        
+                action = self.get_maximixing_action(c)
+            if action == False:
+                print("calculated",action)
+                print(self.available_actions)      
         else:
             action = random.choice(self.unexplored_actions)
             self.unexplored_actions.remove(action)
+        
         return action
 
     def get_action_distribution_and_value(self):
