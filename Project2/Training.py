@@ -97,7 +97,9 @@ def main():
                 MCTS_tree.backprop_tree(z)
                 MCTS_tree.update_and_reset_tree(Board_A)
                 state_manager.set_state(Board_MC, MCTS_tree.root)
-
+                i += 1
+            
+            print(i)
             # Saving distribution to RBUF
             D = MCTS_tree.get_root_distribution_and_value()
             rl.add_to_RBUF(D)
@@ -105,7 +107,6 @@ def main():
             # Choosing and performing best action
             action = MCTS_tree.get_best_root_action()
             rl.perform_real_move(state_manager, Board_A, action)
-            i += 1
 
         #Parse RBUF
         rl.update_RBUF_critic_values(state_manager.get_result(Board_A))
