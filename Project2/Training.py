@@ -90,7 +90,7 @@ def main():
                 z = rl.get_simulation_result(state_manager, Board_MC, actor_critic, action, finished)
                 
                 # Updating MCTS-Tree
-                MCTS_tree.backprop_tree(z, rl.gamma)
+                MCTS_tree.backprop_tree(z)
                 MCTS_tree.update_and_reset_tree(Board_A)
                 state_manager.set_state(Board_MC, MCTS_tree.root)
 
