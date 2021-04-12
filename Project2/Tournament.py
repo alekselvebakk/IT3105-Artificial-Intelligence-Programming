@@ -55,7 +55,8 @@ def main():
                                       validation_split=val_split, verbosity=verbose,
                                       reload_model=True, reload_name=actor_name))
 
-    results = tournament.run_tournament(actor_list)
+    show_game_between = ast.literal_eval(config['TOPP']['show_games_between'])
+    results = tournament.run_tournament(actor_list, show_game_between)
     print(results)
 
 

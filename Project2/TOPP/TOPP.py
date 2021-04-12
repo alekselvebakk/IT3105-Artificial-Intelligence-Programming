@@ -13,34 +13,34 @@ class TOPP:
         self.save_actors = save_actors
         self.folder_name = savefolder + str(self.tournament_id)
 
-    def single_game_between_2_nets(self, actor0, actor1, vis=False):
+    def single_game_between_2_nets(self, actor0, actor1, name, animate=False):
         self.state_manager.reset_board(self.board)
-        if vis: self.board.start_visualisation()
+        if animate: self.board.start_visualisation(name+".gif")
         turn = 0
         while not self.state_manager.state_is_final(self.board):
             state = self.state_manager.get_state(self.board)
             if turn == 0:
-                action = actor0.get_action(state)
+                action = actor0.get_action(state, epsilon=0)
                 turn = 1
             else:
-                action = actor1.get_action(state)
+                action = actor1.get_action(state, epsilon=0)
                 turn = 0
             self.state_manager.perform_action(self.board, action)
         winner = self.state_manager.get_result(self.board)-1
-        if vis:
+        if animate:
             self.board.graph.show_graph_animation()
             self.board.stop_visualization()
         return winner #0 eller 1
 
-    def series_between_2_nets(self, actor0, actor1, vis=False):
+    def series_between_2_nets(self, actor0, actor1, name, animate=False):
         player0_wins = 0
         player1_wins = 0
         for i in range(self.games_between_nets):
-            ja = True if vis and i == 5 else False
+            animate_game = True if animate and i == 0 else False
             if i % 2 == 0:
-                winner = self.single_game_between_2_nets(actor0, actor1, ja)
+                winner = self.single_game_between_2_nets(actor0, actor1, name, animate_game)
             else:
-                winner = self.single_game_between_2_nets(actor1, actor0, ja)^1
+                winner = self.single_game_between_2_nets(actor1, actor0, name, animate_game)^1
             
             if winner == 0:
                 player0_wins += 1
@@ -48,13 +48,13 @@ class TOPP:
                 player1_wins += 1
         return [player0_wins, player1_wins]
 
-    def run_tournament(self, actors):
+    def run_tournament(self, actors, show_games_between):
         self.number_of_wins = [0]*self.number_of_nets
 
         for i in range(len(actors)):
             for j in range(i+1,len(actors)):
-                vis = True if i == 1 and j == 4 else False
-                winner_array = self.series_between_2_nets(actors[i], actors[j], vis)
+                animate = True if str(i)+str(j) in show_games_between else False
+                winner_array = self.series_between_2_nets(actors[i], actors[j], str(i)+str(j), animate)
                 self.number_of_wins[i] += winner_array[0]
                 self.number_of_wins[j] += winner_array[1]
 

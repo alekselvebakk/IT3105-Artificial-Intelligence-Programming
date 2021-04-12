@@ -45,6 +45,7 @@ def main():
                                 )
 
     # Board setup
+    see_last_game = config.getboolean('board', 'see_last_game')
     state_manager = StateManager()
     Board_A = Board(size=config.getint('board', 'size'))  # Actual board
     Board_MC = Board(size=config.getint('board', 'size'))  # MonteCarlo Board
@@ -70,6 +71,8 @@ def main():
         state_manager.reset_board(Board_A)
         state_manager.reset_board(Board_MC)
 
+        if see_last_game and j == rl.number_actual_games-1:
+            Board_A.start_visualisation('last_game.gif')
         
         # Alternates starting player every game
         if j % 2 == 1:
@@ -120,7 +123,11 @@ def main():
         # Print progress
         rl.print_progress(j)
 
-    
+
+    # Show last game
+    if see_last_game():
+        state_manager.show_board(Board_A)
+        state_manager.show_animation(Board_A)
 
     # Save final net
     topp.save_net(actor_critic, rl.number_actual_games, rl.number_actual_games)

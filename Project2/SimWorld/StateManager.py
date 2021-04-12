@@ -101,6 +101,9 @@ class StateManager:
         if board.visualize: board.graph.show_graph_animation()
         else: print("This board do not have an animated gif of the game.")
 
+    def show_board(self, board):
+        if board.visualize: board.graph.draw_graph()
+
     def reset_board(self, board):
         board.reset_board()
         if board.visualize: board.graph.reset_board()

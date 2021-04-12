@@ -60,9 +60,9 @@ class Board:
                 peghole.filled = 0
         self.set_player(1)
 
-    def start_visualisation(self):
+    def start_visualisation(self, name='board.gif'):
         self.visualize = True
-        self.graph = BoardVisualization(self.table, 1000, self.gif_name)
+        self.graph = BoardVisualization(self.table, 1000, name)
 
     def stop_visualization(self):
         self.visualize = False
