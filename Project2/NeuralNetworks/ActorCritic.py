@@ -15,7 +15,6 @@ class ActorCritic:
                  input_size=25+1,
                  reload_model=False,
                  reload_name=None,
-                 minibatch_size=350,
                  epochs=200,
                  batch_size=32,
                  validation_split=0.1,
@@ -33,7 +32,6 @@ class ActorCritic:
             self.output_size = input_size  # Board of actions (minus player plus value)
         else:
             self.output_size = input_size-1 # Board of actions (minus player)
-        self.minibatch_size = minibatch_size
         self.epochs = epochs
         self.batch_size = batch_size
         self.validation_split = validation_split
@@ -128,18 +126,7 @@ class ActorCritic:
         col = int(index % table_root)
         return [row, col]
 
-    def train_from_RBUF(self, RBUF):
-        if self.minibatch_size <= len(RBUF):
-            minibatch = random.sample(RBUF, self.minibatch_size)
-        else:
-            minibatch = RBUF
 
-        inputs = np.zeros((len(minibatch), len(minibatch[0][0])))
-        targets = np.zeros((len(minibatch), len(minibatch[0][1])))
-        for i in range(len(minibatch)):
-            inputs[i] = self.string_to_tensor(minibatch[i][0])
-            targets[i] = minibatch[i][1]
-        self.train(inputs, targets)
         
 
 

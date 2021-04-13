@@ -27,7 +27,6 @@ def main():
                                 act=config['anet']['activation'],
                                 last_act=config['anet']['last_activation'],
                                 input_size=config.getint('board', 'size') * config.getint('board', 'size') + 1,
-                                minibatch_size=config.getint('anet', 'minibatch'),
                                 epochs=config.getint('anet', 'epochs'),
                                 batch_size=config.getint('anet', 'batch_size'),
                                 validation_split=config.getfloat('anet', 'validation_split'),

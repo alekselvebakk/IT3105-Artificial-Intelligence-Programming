@@ -30,7 +30,6 @@ def main():
     act = config['anet']['activation']
     last_act = config['anet']['last_activation']
     input_size = config.getint('board', 'size') * config.getint('board', 'size') + 1
-    mb_size = config.getint('anet', 'minibatch')
     epochs = config.getint('anet', 'epochs')
     b_size = config.getint('anet', 'batch_size')
     val_split = config.getfloat('anet', 'validation_split')
@@ -52,7 +51,7 @@ def main():
         actor_number = training_games if i == (number_of_nets - 1) else int(training_games / (number_of_nets - 1)) * i
         actor_name = pathlib.Path(tournament__path + "ANET" + str(int(actor_number)))
         actor_list.append(ActorCritic(learning_rate=lr, layers=layers, opt=opt, act=act, last_act=last_act,
-                                      input_size=input_size, minibatch_size=mb_size, epochs=epochs, batch_size=b_size,
+                                      input_size=input_size, epochs=epochs, batch_size=b_size,
                                       validation_split=val_split, verbosity=verbose,
                                       reload_model=True, reload_name=actor_name, 
                                       net_with_critic = net_with_critic))

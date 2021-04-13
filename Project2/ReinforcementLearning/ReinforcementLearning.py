@@ -1,5 +1,6 @@
 import numpy as np
 from numpy.random import default_rng
+import random
 
 
 class ReinforcementLearning:
@@ -13,15 +14,18 @@ class ReinforcementLearning:
                     percent_before_critic, 
                     winning_reward, 
                     losing_reward,
-                    net_with_critic=True):
+                    net_with_critic=True,
+                    minibatch_size = 25,
+                    increasing_prob_data = True):
         self.game_length = 0
         self.critic_indices = {}
         self.number_actual_games = number_actual_games
         self.gamma = value_discount_factor
         self.RBUF = []
         self.use_critic = False
+        self.minibatch_size = minibatch_size
+        self.increasing_prob_data = increasing_prob_data
 
-        
         self.net_with_critic = net_with_critic
         self.percent_before_critic = percent_before_critic/100
         self.rollout_prob = rollout_init_prob
@@ -76,16 +80,37 @@ class ReinforcementLearning:
         progress = str(float(training_iteration)/self.number_actual_games *100)+"%"
         print("Progress: "+progress)
     
-    
-    def train_actor_critic(self, actor_critic):
-        actor_critic.train_from_RBUF(self.RBUF)
 
     def add_to_RBUF(self, D):
         self.RBUF.append(D)
         if self.use_critic and self.net_with_critic: self.update_critic_indices(self.RBUF)
 
+    
     def train_actor_critic(self, actor_critic):
-        actor_critic.train_from_RBUF(self.RBUF)
+        if self.minibatch_size <= len(self.RBUF):
+            indices = np.array(list(range(0, len(self.RBUF))))
+            if self.increasing_prob_data:
+                index_dist = indices+1
+                index_dist = index_dist/index_dist.sum()
+                index_dist[-1] += 1 - index_dist.sum()
+                minibatch = np.random.choice(   indices, 
+                                                size = self.minibatch_size, 
+                                                p = index_dist, 
+                                                replace = False)
+            else:
+                minibatch = random.sample(indices, self.minibatch_size)
+        else:
+            minibatch = np.array(list(range(0, len(self.RBUF))))
+
+        inputs = np.zeros((len(minibatch), len(self.RBUF[0][0])))
+        targets = np.zeros((len(minibatch), len(self.RBUF[0][1])))
+        print('RBUF len:', len(self.RBUF), 'minibatch: ', minibatch)
+        for i in range(len(minibatch)):
+            rbuf_index = minibatch[i]
+            inputs[i] = actor_critic.string_to_tensor(self.RBUF[rbuf_index][0])
+            targets[i] = self.RBUF[rbuf_index][1]
+        actor_critic.train(inputs, targets)
+    
 
     def decay_epsilon(self, zero=False):
         self.epsilon = self.epsilon * self.epsilon_decay if not zero else 0
