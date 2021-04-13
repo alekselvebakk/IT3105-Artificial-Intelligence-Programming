@@ -1,7 +1,7 @@
 from MCTS.MCTS_Node import MCTS_Node
 
 class MCTS:
-    def __init__(self, GameHandler, GameBoard, exploration_weight, tree_games):
+    def __init__(self, GameHandler, GameBoard, exploration_weight, tree_games, time_for_rollouts = 1):
         #Setting root state
         self.root = GameHandler.get_state(GameBoard)
 
@@ -20,6 +20,7 @@ class MCTS:
         #Setting constants
         self.c = exploration_weight
         self.tree_games = tree_games
+        self.time_for_rollouts = time_for_rollouts
 
     def insert_new_node(self, state, actions):
         new_node = MCTS_Node(state, actions)

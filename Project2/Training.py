@@ -76,7 +76,8 @@ def main():
         #Tree setup
         MCTS_tree = MCTS(   state_manager, 
                             Board_A, config.getfloat('MCTS', 'exploration_weight'), 
-                            config.getint('MCTS', 'tree_games'))
+                            config.getint('MCTS', 'tree_games'),
+                            time_for_rollouts = config.getfloat('MCTS','time_limit'))
         
         # Alternates starting player every game
         if j % 2 == 1:
@@ -91,7 +92,7 @@ def main():
 
             tree_game_start_time = time.time()
             i = 0
-            while i < MCTS_tree.tree_games and (time.time()-tree_game_start_time)<1:
+            while i < MCTS_tree.tree_games and (time.time()-tree_game_start_time)<MCTS_tree.time_for_rollouts:
                 # Tree simulation
                 action, finished = MCTS_tree.tree_simulation(Board_MC)
                 
