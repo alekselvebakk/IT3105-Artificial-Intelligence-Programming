@@ -21,10 +21,10 @@ class TOPP:
         while not self.state_manager.state_is_final(self.board):
             state = self.state_manager.get_state(self.board)
             if turn == 0:
-                action = actor0.get_action(state, epsilon=0)
+                action = actor0.get_action(state, epsilon=0.2)
                 turn = 1
             else:
-                action = actor1.get_action(state, epsilon=0)
+                action = actor1.get_action(state, epsilon=0.2)
                 turn = 0
             self.state_manager.perform_action(self.board, action)
         winner = self.state_manager.get_result(self.board)-1
@@ -86,15 +86,15 @@ class TOPP:
                 for j in range(self.number_of_nets):
                     line.append(str(j)+'\t\t')
             else:
-                space = '\t\t' if len(str(int(self.number_of_wins[i-1][i-1]))) == 1 else '\t'
+                space = '\t' #if len(str(int(self.number_of_wins[i-1][i-1]))) == 1 else '\t'
 
-                line = [str(i-1), 'W: '+str(int(self.number_of_wins[i-1][i-1]))+space+'WR: '+str(round(win_rate[i-1][i-1],3))+'\t']
+                line = [str(i-1), 'W: '+str(int(self.number_of_wins[i-1][i-1]))+space+'WR: '+str(round(win_rate[i-1][i-1],2))+'\t']
                 for j in range(self.number_of_nets):
                     if i-1 == j:
                         line.append('-\t\t')
                     else:
-                        space = '\t\t' if len(str(int(self.number_of_wins[i-1][j]))) == 1 else '\t'
-                        line.append('W: '+str(int(self.number_of_wins[i-1][j]))+space+'WR: '+str(round(win_rate[i-1][j],3))+'\t')
+                        space = '\t' #if len(str(int(self.number_of_wins[i-1][j]))) == 1 else '\t'
+                        line.append('W: '+str(int(self.number_of_wins[i-1][j]))+space+'WR: '+str(round(win_rate[i-1][j],2))+'\t')
             p.append(line)
         return p
 
