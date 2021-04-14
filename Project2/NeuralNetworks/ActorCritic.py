@@ -63,11 +63,7 @@ class ActorCritic:
 
     def train(self, inputs, targets):
         self.model.fit( inputs, 
-                        targets, 
-                        batch_size = self.batch_size, 
-                        epochs=self.epochs, 
-                        verbose=self.verbosity, 
-                        validation_split=self.validation_split)
+                        targets)
 
     def string_to_tensor(self, string_variable):
         converted_to_list = list(string_variable)
