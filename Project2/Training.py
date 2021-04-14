@@ -116,6 +116,10 @@ def main():
             
             print(i)
             # Saving distribution to RBUF
+            print("-----N_s_a------")
+            print(MCTS_tree.tree[MCTS_tree.root].N_s_a)
+            print("-----Q_s_a------")
+            print(MCTS_tree.tree[MCTS_tree.root].Q_s_a)
             D = MCTS_tree.get_RBUF_data(rl.net_with_critic)
             rl.add_to_RBUF(D, j)
 

@@ -7,8 +7,9 @@ class MCTS:
 
         #Copying GameHandler into object memory, setting its state and getting its action possibilities
         self.GameHandler = GameHandler
-        actions = self.GameHandler.get_actions(GameBoard)
         
+        actions = self.GameHandler.get_actions(GameBoard)
+        print(actions)
         #Initializing root node for tree
         root_node = MCTS_Node(self.root, actions)
         
