@@ -104,8 +104,6 @@ class ReinforcementLearning:
                 weights = np.array(self.RBUF_weight)
                 index_dist = weights/weights.sum()
                 index_dist[-1] += 1 - index_dist.sum()
-                print("weights:",len(weights))
-                print("indices",len(indices))
                 minibatch = np.random.choice(   indices, 
                                                 size = self.minibatch_size, 
                                                 p = index_dist, 
@@ -117,7 +115,7 @@ class ReinforcementLearning:
 
         inputs = np.zeros((len(minibatch), len(self.RBUF[0][0])))
         targets = np.zeros((len(minibatch), len(self.RBUF[0][1])))
-        print('RBUF len:', len(self.RBUF), 'minibatch: ', minibatch)
+        print('RBUF len:', len(self.RBUF), ', minibatch-length: ', len(minibatch))
         for i in range(len(minibatch)):
             rbuf_index = minibatch[i]
             inputs[i] = actor_critic.string_to_tensor(self.RBUF[rbuf_index][0])
