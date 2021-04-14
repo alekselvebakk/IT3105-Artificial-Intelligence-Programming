@@ -88,7 +88,7 @@ class ReinforcementLearning:
 
     def add_to_RBUF(self, D, current_progress):
         self.RBUF.append(D)
-        self.RBUF_weight.append(current_progress)
+        self.RBUF_weight.append(current_progress+1)
         if self.use_critic and self.net_with_critic: self.update_critic_indices(self.RBUF)
         if self.RBUF_trimming:
             if len(self.RBUF)>self.RBUF_max_size:
@@ -104,6 +104,8 @@ class ReinforcementLearning:
                 weights = np.array(self.RBUF_weight)
                 index_dist = weights/weights.sum()
                 index_dist[-1] += 1 - index_dist.sum()
+                print("weights:",len(weights))
+                print("indices",len(indices))
                 minibatch = np.random.choice(   indices, 
                                                 size = self.minibatch_size, 
                                                 p = index_dist, 

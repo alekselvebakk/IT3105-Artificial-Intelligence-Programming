@@ -117,7 +117,7 @@ def main():
             print(i)
             # Saving distribution to RBUF
             D = MCTS_tree.get_RBUF_data(rl.net_with_critic)
-            rl.add_to_RBUF(D)
+            rl.add_to_RBUF(D, j)
 
             # Choosing and performing best action
             action = MCTS_tree.get_best_root_action()
