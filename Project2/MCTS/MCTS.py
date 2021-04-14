@@ -9,7 +9,6 @@ class MCTS:
         self.GameHandler = GameHandler
         
         actions = self.GameHandler.get_actions(GameBoard)
-        print(actions)
         #Initializing root node for tree
         root_node = MCTS_Node(self.root, actions)
         
@@ -56,7 +55,6 @@ class MCTS:
         self.simulation_history = dict()
         if not self.GameHandler.get_state(board) == self.root:
             self.root = self.GameHandler.get_state(board)
-            print("noden vi nå har satt opp er i treet:", self.root in self.tree)
         
         
     
