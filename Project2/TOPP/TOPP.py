@@ -88,13 +88,13 @@ class TOPP:
             else:
                 space = '\t' #if len(str(int(self.number_of_wins[i-1][i-1]))) == 1 else '\t'
 
-                line = [str(i-1), 'W: '+str(int(self.number_of_wins[i-1][i-1]))+space+'WR: '+str(round(win_rate[i-1][i-1],2))+'\t']
+                line = [str(i-1), 'W: '+str(int(self.number_of_wins[i-1][i-1]))+space+'WR: '+str(int(win_rate[i-1][i-1]*100))+' %\t']
                 for j in range(self.number_of_nets):
                     if i-1 == j:
                         line.append('-\t\t')
                     else:
                         space = '\t' #if len(str(int(self.number_of_wins[i-1][j]))) == 1 else '\t'
-                        line.append('W: '+str(int(self.number_of_wins[i-1][j]))+space+'WR: '+str(round(win_rate[i-1][j],2))+'\t')
+                        line.append('W: '+str(int(self.number_of_wins[i-1][j]))+space+'WR: '+str(int(win_rate[i-1][j]*100))+' %\t')
             p.append(line)
         return p
 
