@@ -48,7 +48,7 @@ def main():
                                 )
     
     # Board setup
-    see_last_game = config.getboolean('board', 'see_last_game')
+    see_game = ast.literal_eval(config['board']['see_game'])
     state_manager = StateManager()
     Board_A = Board(size=config.getint('board', 'size'))  # Actual board
     Board_MC = Board(size=config.getint('board', 'size'))  # MonteCarlo Board
@@ -71,8 +71,8 @@ def main():
         state_manager.reset_board(Board_A)
         state_manager.reset_board(Board_MC)
 
-        if see_last_game and j == rl.number_actual_games-1:
-            Board_A.start_visualisation('last_game.gif')
+        if j in see_game:
+            Board_A.start_visualisation('game_episode_'+str(j)+'.gif')
         
         #Tree setup
         MCTS_tree = MCTS(   state_manager, 
@@ -133,17 +133,16 @@ def main():
         # Print progress
         rl.print_progress(j)
 
+        # Shows game if it is in see_game
+        if j in see_game:
+            state_manager.show_animation(Board_A)
+            Board_A.stop_visualization()
 
     # Save final net
     topp.save_net(actor_critic, rl.number_actual_games, rl.number_actual_games)
 
     # Save config-file with information about the actor settings
     topp.save_config(config_path)
-
-    # Show last game
-    if see_last_game:
-        state_manager.show_board(Board_A)
-        state_manager.show_animation(Board_A)
 
 
 if __name__ == '__main__':

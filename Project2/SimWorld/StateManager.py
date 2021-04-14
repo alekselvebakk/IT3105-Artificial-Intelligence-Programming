@@ -108,6 +108,9 @@ class StateManager:
         board.reset_board()
         if board.visualize: board.graph.reset_board()
 
+    def reset_animation(self, board):
+        if board.visualize: board.graph.reset_board()
+
 
 
 
