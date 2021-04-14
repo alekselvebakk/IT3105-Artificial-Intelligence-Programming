@@ -28,7 +28,7 @@ class MCTS_Node:
             if self.actions[x] != False:
                 self.unexplored_actions.append(self.actions[x])
                 self.available_actions[x] = self.actions[x]
-
+                
     def increment_N_s(self):
         self.N_s = self.N_s + 1
     

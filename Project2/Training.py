@@ -76,29 +76,29 @@ def main():
         if j in see_game:
             Board_A.start_visualisation('game_episode_'+str(j)+'.gif')
         
-        #Tree setup
-        MCTS_tree = MCTS(   state_manager, 
-                            Board_A, config.getfloat('MCTS', 'exploration_weight'), 
-                            config.getint('MCTS', 'tree_games'),
-                            time_for_rollouts = config.getfloat('MCTS','time_limit'))
+        
         
         # Alternates starting player every game
         if j % 2 == 1:
             state_manager.change_player(Board_A)
             state_manager.change_player(Board_MC)
+
+        #Tree setup
+        MCTS_tree = MCTS(   state_manager, 
+                            Board_A, config.getfloat('MCTS', 'exploration_weight'), 
+                            config.getint('MCTS', 'tree_games'),
+                            time_for_rollouts = config.getfloat('MCTS','time_limit'))
+                            
         if j == 0:
             #Save first untrained actor
             topp.save_net(actor_critic, j, rl.number_actual_games)
             # Save config-file with information about the actor settings
             topp.save_config(config_path)
-        foer = len(MCTS_tree.tree[MCTS_tree.root].N_s_a)
+        
 
         while not state_manager.state_is_final(Board_A):
             state_manager.set_state(Board_MC, state_manager.get_state(Board_A))
             MCTS_tree.update_and_reset_tree(Board_A)
-
-            if len(MCTS_tree.tree[MCTS_tree.root].N_s_a) != foer:
-                print("til hævlet")
             rl.decide_use_of_critic()
             
             
@@ -116,32 +116,14 @@ def main():
                 MCTS_tree.update_and_reset_tree(Board_A)
                 state_manager.set_state(Board_MC, MCTS_tree.root)
                 i += 1
-            print("treet:")
-            print(MCTS_tree.tree.keys())
             print(i)
             # Saving distribution to RBUF
-            print('----actions-----')
-            print(MCTS_tree.tree[MCTS_tree.root].actions)
-            print("-----N_s_a------")
-            print(MCTS_tree.tree[MCTS_tree.root].N_s_a)
             D = MCTS_tree.get_RBUF_data(rl.net_with_critic)
             rl.add_to_RBUF(D, j)
 
             # Choosing and performing best action
-            print("først har vi denne staten på board_A: ",state_manager.get_state(Board_A))
-            print("og vi har denne staten på board_MC:   ",state_manager.get_state(Board_MC))
-            print("Board_MC og Board_A sin state er lik:", state_manager.get_state(Board_A) == state_manager.get_state(Board_MC))
             action = MCTS_tree.get_best_root_action()
-            print("actionen som ble valgt er:", action)
             rl.perform_real_move(state_manager, Board_A, action)
-            print("i treet har den blitt valgt så mange ganger:", MCTS_tree.tree[MCTS_tree.root].N_s_a[action])
-            print("den har en verdi på: ", MCTS_tree.tree[MCTS_tree.root].Q_s_a[action])
-            print("i board_a  førte denne actionen til: ",state_manager.get_state(Board_A))
-            state_manager.perform_action(Board_MC, action)
-            print("i board_mc førte denne actionen til: ",state_manager.get_state(Board_MC))
-            print("fikk vi lik state når vi gjorde action på board_mc?", state_manager.get_state(Board_A) == state_manager.get_state(Board_MC))
-            print("er denne staten i treet?", state_manager.get_state(Board_A) in MCTS_tree.tree)
-            foer = len(MCTS_tree.tree[MCTS_tree.root].N_s_a)
         #Parse RBUF
         rl.update_RBUF_critic_values(state_manager.get_result(Board_A))
 

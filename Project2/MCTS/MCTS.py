@@ -53,14 +53,12 @@ class MCTS:
             i += 1
 
     def update_and_reset_tree(self, board):
-        if not self.GameHandler.get_state(board) == self.root:
-            print("vi endrer root fra", self.root)
-            self.root = self.GameHandler.get_state(board)
-            print("til:",self.root)
-            """if not self.root in self.tree:
-                self.insert_new_node(self.root, self.GameHandler.get_actions(board))"""
-        
         self.simulation_history = dict()
+        if not self.GameHandler.get_state(board) == self.root:
+            self.root = self.GameHandler.get_state(board)
+            print("noden vi nå har satt opp er i treet:", self.root in self.tree)
+        
+        
     
     def get_root_distribution_and_value(self):
         #Getting distribution of all actions
