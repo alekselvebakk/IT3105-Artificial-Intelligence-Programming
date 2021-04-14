@@ -84,6 +84,9 @@ def main():
         if j % 2 == 1:
             state_manager.change_player(Board_A)
             state_manager.change_player(Board_MC)
+        if j == 0:
+            topp.save_net(actor_critic, j, rl.number_actual_games)
+
         while not state_manager.state_is_final(Board_A):
             state_manager.set_state(Board_MC, state_manager.get_state(Board_A))
             MCTS_tree.update_and_reset_tree(Board_A)
@@ -122,7 +125,8 @@ def main():
         rl.train_actor_critic(actor_critic)
 
         # Save net every x game to file
-        topp.save_net(actor_critic, j, rl.number_actual_games)
+        if j != 0:
+            topp.save_net(actor_critic, j, rl.number_actual_games)
 
         # Decay epsilon for greedy policy 
         rl.decay_epsilon()
