@@ -29,6 +29,7 @@ class MCTS:
     
     
     def tree_simulation(self, GameBoard):
+        
         while not self.GameHandler.state_is_final(GameBoard):
             
             s_t = self.GameHandler.get_state(GameBoard)
@@ -42,7 +43,7 @@ class MCTS:
                 action = self.tree[s_t].get_action(self.c)
                 self.simulation_history[s_t] = action
             self.GameHandler.perform_action(GameBoard, action)
-
+        
         return None, True
 
     def backprop_tree(self, z):
@@ -52,11 +53,14 @@ class MCTS:
             i += 1
 
     def update_and_reset_tree(self, board):
-        self.simulation_history = dict()
         if not self.GameHandler.get_state(board) == self.root:
+            print("vi endrer root fra", self.root)
             self.root = self.GameHandler.get_state(board)
-            if not self.root in self.tree:
-                self.insert_new_node(self.root, self.GameHandler.get_actions(board))
+            print("til:",self.root)
+            """if not self.root in self.tree:
+                self.insert_new_node(self.root, self.GameHandler.get_actions(board))"""
+        
+        self.simulation_history = dict()
     
     def get_root_distribution_and_value(self):
         #Getting distribution of all actions

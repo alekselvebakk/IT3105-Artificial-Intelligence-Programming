@@ -91,20 +91,23 @@ def main():
             topp.save_net(actor_critic, j, rl.number_actual_games)
             # Save config-file with information about the actor settings
             topp.save_config(config_path)
+        foer = len(MCTS_tree.tree[MCTS_tree.root].N_s_a)
 
         while not state_manager.state_is_final(Board_A):
             state_manager.set_state(Board_MC, state_manager.get_state(Board_A))
             MCTS_tree.update_and_reset_tree(Board_A)
 
-            rl.decide_use_of_critic() # TODO: skal settes til en randomizing-funksjon
+            if len(MCTS_tree.tree[MCTS_tree.root].N_s_a) != foer:
+                print("til hævlet")
+            rl.decide_use_of_critic()
             
-
+            
             tree_game_start_time = time.time()
             i = 0
+            
             while i < MCTS_tree.tree_games and (time.time()-tree_game_start_time)<MCTS_tree.time_for_rollouts:
                 # Tree simulation
                 action, finished = MCTS_tree.tree_simulation(Board_MC)
-                
                 # Using default policy to get to end state and returns result of game
                 z = rl.get_simulation_result(state_manager, Board_MC, actor_critic, action, finished)
                 
@@ -113,20 +116,32 @@ def main():
                 MCTS_tree.update_and_reset_tree(Board_A)
                 state_manager.set_state(Board_MC, MCTS_tree.root)
                 i += 1
-            
+            print("treet:")
+            print(MCTS_tree.tree.keys())
             print(i)
             # Saving distribution to RBUF
+            print('----actions-----')
+            print(MCTS_tree.tree[MCTS_tree.root].actions)
             print("-----N_s_a------")
             print(MCTS_tree.tree[MCTS_tree.root].N_s_a)
-            print("-----Q_s_a------")
-            print(MCTS_tree.tree[MCTS_tree.root].Q_s_a)
             D = MCTS_tree.get_RBUF_data(rl.net_with_critic)
             rl.add_to_RBUF(D, j)
 
             # Choosing and performing best action
+            print("først har vi denne staten på board_A: ",state_manager.get_state(Board_A))
+            print("og vi har denne staten på board_MC:   ",state_manager.get_state(Board_MC))
+            print("Board_MC og Board_A sin state er lik:", state_manager.get_state(Board_A) == state_manager.get_state(Board_MC))
             action = MCTS_tree.get_best_root_action()
+            print("actionen som ble valgt er:", action)
             rl.perform_real_move(state_manager, Board_A, action)
-
+            print("i treet har den blitt valgt så mange ganger:", MCTS_tree.tree[MCTS_tree.root].N_s_a[action])
+            print("den har en verdi på: ", MCTS_tree.tree[MCTS_tree.root].Q_s_a[action])
+            print("i board_a  førte denne actionen til: ",state_manager.get_state(Board_A))
+            state_manager.perform_action(Board_MC, action)
+            print("i board_mc førte denne actionen til: ",state_manager.get_state(Board_MC))
+            print("fikk vi lik state når vi gjorde action på board_mc?", state_manager.get_state(Board_A) == state_manager.get_state(Board_MC))
+            print("er denne staten i treet?", state_manager.get_state(Board_A) in MCTS_tree.tree)
+            foer = len(MCTS_tree.tree[MCTS_tree.root].N_s_a)
         #Parse RBUF
         rl.update_RBUF_critic_values(state_manager.get_result(Board_A))
 
