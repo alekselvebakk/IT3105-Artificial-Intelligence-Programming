@@ -46,7 +46,7 @@ class Board:
         return str(self.player)+state
 
     def set_player(self, player):
-        self.player = player
+        self.player = int(player)
 
     def update_board(self, state):
         for i in range(len(state)):
