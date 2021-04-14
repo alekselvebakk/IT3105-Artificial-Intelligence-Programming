@@ -57,8 +57,8 @@ def main():
                                       net_with_critic = net_with_critic))
 
     show_game_between = ast.literal_eval(config['TOPP']['show_games_between'])
-    results = tournament.run_tournament(actor_list, show_game_between)
-    print(results)
+    tournament.run_tournament(actor_list, show_game_between)
+    tournament.print_standings()
 
 
 if __name__ == '__main__':

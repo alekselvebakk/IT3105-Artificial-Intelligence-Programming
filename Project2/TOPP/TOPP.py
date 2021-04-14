@@ -1,5 +1,6 @@
 import pathlib
 from shutil import copyfile
+import numpy as np
 
 class TOPP:
 
@@ -49,17 +50,51 @@ class TOPP:
         return [player0_wins, player1_wins]
 
     def run_tournament(self, actors, show_games_between):
-        self.number_of_wins = [0]*self.number_of_nets
-
+        self.number_of_wins = np.zeros((self.number_of_nets, self.number_of_nets))
         for i in range(len(actors)):
-            for j in range(i+1,len(actors)):
+            for j in range(i+1, len(actors)):
                 animate = True if str(i)+str(j) in show_games_between else False
                 winner_array = self.series_between_2_nets(actors[i], actors[j], str(i)+str(j), animate)
-                self.number_of_wins[i] += winner_array[0]
-                self.number_of_wins[j] += winner_array[1]
+                self.number_of_wins[i][j] += winner_array[0]
+                self.number_of_wins[i][i] += winner_array[0]
+                self.number_of_wins[j][i] += winner_array[1]
+                self.number_of_wins[j][j] += winner_array[1]
 
-        standings = self.number_of_wins 
-        return standings
+    def calculate_win_rate(self):
+        win_rate = self.number_of_wins/self.games_between_nets
+        for i in range(self.number_of_nets):
+            win_rate[i][i] = self.number_of_wins[i][i]/((self.number_of_nets-1)*self.games_between_nets)
+        return win_rate
+
+    def print_standings(self):
+        print_table = self.matrix_for_print()
+        
+        s = [[str(e) for e in row] for row in print_table]
+        lens = [max(map(len, col)) for col in zip(*s)]
+        fmt = '\t'.join('{{:{}}}'.format(x) for x in lens)
+        table = [fmt.format(*row) for row in s]
+        print('\n'.join(table))
+
+    
+    def matrix_for_print(self):
+        p = []
+        win_rate = self.calculate_win_rate()
+        for i in range(self.number_of_nets+1):
+            line = []
+            if i == 0:
+                line = ['', 'Total win and win rate\t\t\t']
+                for j in range(self.number_of_nets):
+                    line.append(str(j)+'\t\t\t')
+            else:
+                line = [str(i-1), 'Win: '+str(self.number_of_wins[i-1][i-1])+'\tWin rate: '+str(win_rate[i-1][i-1])+'\t\t']
+                for j in range(self.number_of_nets):
+                    if i-1 == j:
+                        line.append('-\t\t\t')
+                    else:
+                        line.append('Win: '+str(self.number_of_wins[i-1][j])+'\tWin rate: '+str(win_rate[i-1][j])+'\t\t')
+            p.append(line)
+        return p
+
 
     def save_net(self, actor_critic, game_number, number_actual_games):
         if self.save_actors:
