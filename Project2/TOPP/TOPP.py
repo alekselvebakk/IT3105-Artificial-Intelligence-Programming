@@ -82,16 +82,19 @@ class TOPP:
         for i in range(self.number_of_nets+1):
             line = []
             if i == 0:
-                line = ['', 'Total win and win rate\t\t\t']
+                line = ['', 'Total win and win rate\t\t']
                 for j in range(self.number_of_nets):
-                    line.append(str(j)+'\t\t\t')
+                    line.append(str(j)+'\t\t')
             else:
-                line = [str(i-1), 'Win: '+str(self.number_of_wins[i-1][i-1])+'\tWin rate: '+str(win_rate[i-1][i-1])+'\t\t']
+                space = '\t\t' if len(str(int(self.number_of_wins[i-1][i-1]))) == 1 else '\t'
+
+                line = [str(i-1), 'Wins: '+str(int(self.number_of_wins[i-1][i-1]))+space+'Win rate: '+str(win_rate[i-1][i-1])+'\t']
                 for j in range(self.number_of_nets):
                     if i-1 == j:
-                        line.append('-\t\t\t')
+                        line.append('-\t\t')
                     else:
-                        line.append('Win: '+str(self.number_of_wins[i-1][j])+'\tWin rate: '+str(win_rate[i-1][j])+'\t\t')
+                        space = '\t\t' if len(str(int(self.number_of_wins[i-1][j]))) == 1 else '\t'
+                        line.append('Wins: '+str(int(self.number_of_wins[i-1][j]))+space+'Win rate: '+str(win_rate[i-1][j])+'\t')
             p.append(line)
         return p
 
