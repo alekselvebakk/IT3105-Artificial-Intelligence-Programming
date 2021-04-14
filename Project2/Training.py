@@ -44,7 +44,9 @@ def main():
                                 config.getfloat('RL', 'losing_reward'),
                                 net_with_critic = config.getboolean('anet', 'net_with_critic'),
                                 minibatch_size=config.getint('RL', 'minibatch'),
-                                increasing_prob_data = config.getboolean('RL','increasing_prob_data')
+                                increasing_prob_data = config.getboolean('RL','increasing_prob_data'),
+                                RBUF_max_size = config.getint('RL', 'RBUF_trimmed_max_size'),
+                                RBUF_trimming = config.getboolean('RL', 'RBUF_trimming')
                                 )
     
     # Board setup
@@ -84,6 +86,12 @@ def main():
         if j % 2 == 1:
             state_manager.change_player(Board_A)
             state_manager.change_player(Board_MC)
+        if j == 0:
+            #Save first untrained actor
+            topp.save_net(actor_critic, j, rl.number_actual_games)
+            # Save config-file with information about the actor settings
+            topp.save_config(config_path)
+
         while not state_manager.state_is_final(Board_A):
             state_manager.set_state(Board_MC, state_manager.get_state(Board_A))
             MCTS_tree.update_and_reset_tree(Board_A)
@@ -109,7 +117,7 @@ def main():
             print(i)
             # Saving distribution to RBUF
             D = MCTS_tree.get_RBUF_data(rl.net_with_critic)
-            rl.add_to_RBUF(D)
+            rl.add_to_RBUF(D, j)
 
             # Choosing and performing best action
             action = MCTS_tree.get_best_root_action()
@@ -122,7 +130,8 @@ def main():
         rl.train_actor_critic(actor_critic)
 
         # Save net every x game to file
-        topp.save_net(actor_critic, j, rl.number_actual_games)
+        if j != 0:
+            topp.save_net(actor_critic, j, rl.number_actual_games)
 
         # Decay epsilon for greedy policy 
         rl.decay_epsilon()
@@ -141,8 +150,6 @@ def main():
     # Save final net
     topp.save_net(actor_critic, rl.number_actual_games, rl.number_actual_games)
 
-    # Save config-file with information about the actor settings
-    topp.save_config(config_path)
 
 
 if __name__ == '__main__':
