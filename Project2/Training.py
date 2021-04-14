@@ -44,7 +44,9 @@ def main():
                                 config.getfloat('RL', 'losing_reward'),
                                 net_with_critic = config.getboolean('anet', 'net_with_critic'),
                                 minibatch_size=config.getint('RL', 'minibatch'),
-                                increasing_prob_data = config.getboolean('RL','increasing_prob_data')
+                                increasing_prob_data = config.getboolean('RL','increasing_prob_data'),
+                                RBUF_max_size = config.getint('RL', 'RBUF_trimmed_max_size'),
+                                RBUF_trimming = config.getboolean('RL', 'RBUF_trimming')
                                 )
     
     # Board setup
@@ -85,7 +87,10 @@ def main():
             state_manager.change_player(Board_A)
             state_manager.change_player(Board_MC)
         if j == 0:
+            #Save first untrained actor
             topp.save_net(actor_critic, j, rl.number_actual_games)
+            # Save config-file with information about the actor settings
+            topp.save_config(config_path)
 
         while not state_manager.state_is_final(Board_A):
             state_manager.set_state(Board_MC, state_manager.get_state(Board_A))
@@ -141,8 +146,6 @@ def main():
     # Save final net
     topp.save_net(actor_critic, rl.number_actual_games, rl.number_actual_games)
 
-    # Save config-file with information about the actor settings
-    topp.save_config(config_path)
 
     # Show last game
     if see_last_game:

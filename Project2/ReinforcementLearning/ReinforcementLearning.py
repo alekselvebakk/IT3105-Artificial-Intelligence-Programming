@@ -16,7 +16,9 @@ class ReinforcementLearning:
                     losing_reward,
                     net_with_critic=True,
                     minibatch_size = 25,
-                    increasing_prob_data = True):
+                    increasing_prob_data = True,
+                    RBUF_max_size = 750,
+                    RBUF_trimming = True):
         self.game_length = 0
         self.critic_indices = {}
         self.number_actual_games = number_actual_games
@@ -25,6 +27,9 @@ class ReinforcementLearning:
         self.use_critic = False
         self.minibatch_size = minibatch_size
         self.increasing_prob_data = increasing_prob_data
+        self.RBUF_max_size = RBUF_max_size
+        self.RBUF_weight = []
+        self.RBUF_trimming = RBUF_trimming
 
         self.net_with_critic = net_with_critic
         self.percent_before_critic = percent_before_critic/100
@@ -81,17 +86,23 @@ class ReinforcementLearning:
         print("Progress: "+progress)
     
 
-    def add_to_RBUF(self, D):
+    def add_to_RBUF(self, D, current_progress):
         self.RBUF.append(D)
+        self.RBUF_weight.append(current_progress)
         if self.use_critic and self.net_with_critic: self.update_critic_indices(self.RBUF)
+        if self.RBUF_trimming:
+            if len(self.RBUF)>self.RBUF_max_size:
+                self.RBUF.pop(0)
+                self.RBUF_weight.pop(0)
 
     
     def train_actor_critic(self, actor_critic):
         if self.minibatch_size <= len(self.RBUF):
-            indices = np.array(list(range(0, len(self.RBUF))))
+            indices = np.array(list(range(len(self.RBUF))))
             if self.increasing_prob_data:
-                index_dist = indices+1
-                index_dist = index_dist/index_dist.sum()
+                #index_dist = indices+1
+                weights = np.array(self.RBUF_weight)
+                index_dist = weights/weights.sum()
                 index_dist[-1] += 1 - index_dist.sum()
                 minibatch = np.random.choice(   indices, 
                                                 size = self.minibatch_size, 
