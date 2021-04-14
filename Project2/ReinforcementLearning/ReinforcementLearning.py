@@ -98,7 +98,7 @@ class ReinforcementLearning:
                                                 p = index_dist, 
                                                 replace = False)
             else:
-                minibatch = random.sample(indices, self.minibatch_size)
+                minibatch = random.sample(list(indices), self.minibatch_size)
         else:
             minibatch = np.array(list(range(0, len(self.RBUF))))
 
