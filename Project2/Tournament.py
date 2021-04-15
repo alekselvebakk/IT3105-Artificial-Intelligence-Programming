@@ -9,7 +9,15 @@ import ast
 
 
 def main():
-    tournament_number = input("What tournament would you like to play?\n")
+
+    config = ConfigParser()
+    config_path = str(pathlib.Path(__file__).parent.absolute()) + "/config.ini"
+    config.read(config_path)
+
+    tournament_number = str(config.getint('TOPP','tournament_id'))
+    games_between_nets = config.getint('TOPP', 'games_between_nets')
+
+
 
     # Reading config-file with the same settings as used in training
     config = ConfigParser()
@@ -19,7 +27,6 @@ def main():
 
     # Extract TOPP settings
     number_of_nets = config.getint('TOPP', 'number_of_nets')
-    games_between_nets = config.getint('TOPP', 'games_between_nets')
     board_size = config.getint('board', 'size')
     training_games = config.getint('RL', 'actual_games')
 
