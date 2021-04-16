@@ -63,12 +63,23 @@ class ActorCritic:
 
     def train(self, inputs, targets):
         if self.batch_size == 0:
-            self.model.fit( inputs, 
-                            targets)
+            if self.epochs == 1:
+                self.model.fit( inputs, 
+                                targets)
+            else:
+                self.model.fit( inputs, 
+                                targets, epochs = self.epochs)
         else:
-            self.model.fit( inputs,
-                            targets,
-                            batch_size = self.batch_size)
+            if self.epochs == 1:
+                self.model.fit( inputs,
+                                targets,
+                                batch_size = self.batch_size)
+            else:
+                self.model.fit( inputs,
+                                targets,
+                                batch_size = self.batch_size, 
+                                epochs = self.epochs)
+            
 
     def string_to_tensor(self, string_variable):
         converted_to_list = list(string_variable)
