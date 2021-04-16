@@ -62,8 +62,13 @@ class ActorCritic:
         return tf.math.log(tf.math.maximum(tensor, base))
 
     def train(self, inputs, targets):
-        self.model.fit( inputs, 
-                        targets)
+        if self.batch_size == 0:
+            self.model.fit( inputs, 
+                            targets)
+        else:
+            self.model.fit( inputs,
+                            targets,
+                            batch_size = self.batch_size)
 
     def string_to_tensor(self, string_variable):
         converted_to_list = list(string_variable)
