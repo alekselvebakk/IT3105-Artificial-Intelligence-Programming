@@ -62,19 +62,21 @@ class ActorCritic:
         return tf.math.log(tf.math.maximum(tensor, base))
 
     def train(self, inputs, targets):
-        number_of_training_samples = int((1-self.validation_split)*float(len(inputs[:][0])))
+        """number_of_training_samples = int((1-self.validation_split)*float(len(inputs[:,0])))
         if number_of_training_samples <= self.epochs:
             self.model.fit( inputs,
                             targets,
                             epochs = number_of_training_samples,
                             batch_size = self.batch_size,
-                            validation_split = self.validation_split)
-        else:
-            self.model.fit( inputs,
-                            targets,
-                            epochs = self.epochs,
-                            batch_size = self.batch_size,
-                            validation_split = self.validation_split)
+                            validation_split = self.validation_split,
+                            verbose = self.verbosity)
+        else:"""
+        self.model.fit( inputs,
+                        targets,
+                        epochs = self.epochs,
+                        batch_size = self.batch_size,
+                        validation_split = self.validation_split,
+                        verbose = self.verbosity)
             
 
     def string_to_tensor(self, string_variable):
