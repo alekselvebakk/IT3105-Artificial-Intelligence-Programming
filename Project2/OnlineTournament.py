@@ -4,7 +4,6 @@ from configparser import ConfigParser
 import pathlib
 import ast
 
-
 def main():
     config = ConfigParser()
     config_path = str(pathlib.Path(__file__).parent.absolute()) + "/config.ini"
@@ -15,7 +14,7 @@ def main():
     verbose = config.getboolean('OHT','verbose')
 
     path = str(pathlib.Path(__file__).parent.absolute()) + \
-                       "/Saved_Nets/" + neural_net_id+"/"
+                       "/Hall_of_Fame/" + neural_net_id+"/"
     config.read(path+"config.ini")
 
 
