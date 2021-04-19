@@ -40,7 +40,7 @@ def main():
     # TEST
         actor_number = config['AdvancedTraining']['preloaded_actor_number']
         actor_path = str(pathlib.Path(str(pathlib.Path(__file__).parent.absolute()))) + \
-                        "/Hall_of_fame/"+preloaded_actor_id+"/ANET"+actor_number
+                        "/Hall_of_Fame/"+preloaded_actor_id+"/ANET"+actor_number
 
         actor_critic = ActorCritic(learning_rate=config.getfloat('anet', 'learning_rate'),
                     layers=ast.literal_eval(config['anet']['hidden_layers']),
