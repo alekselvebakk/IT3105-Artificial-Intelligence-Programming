@@ -157,19 +157,19 @@ def main():
             
             tree_game_start_time = time.time()
             i = 0
-            '''Choosing only one actor to paly at the time:
+            #Choosing only one actor to play at the time:
             actors = opponents + [actor_critic] 
-            current_actor = random.choice(actors)'''
+            current_opponent = random.choice(actors)
 
             #Choosing an opponent to play agians:
-            opponent = random.choice(opponents)
+            #opponent = random.choice(opponents)
 
             
             while i < MCTS_tree.tree_games and (time.time()-tree_game_start_time)<MCTS_tree.time_for_rollouts:
                 # Tree simulation
                 action, finished = MCTS_tree.tree_simulation(Board_MC)
                 # Using default policy to get to end state and returns result of game
-                z = rl.get_simulation_results_with_opponent(state_manager, Board_MC, actor_critic, opponent, current_player, action, finished)
+                z = rl.get_simulation_results_with_opponent(state_manager, Board_MC, actor_critic, current_opponent, current_player, action, finished)
                 
                 # Updating MCTS-Tree
                 MCTS_tree.backprop_tree(z)
