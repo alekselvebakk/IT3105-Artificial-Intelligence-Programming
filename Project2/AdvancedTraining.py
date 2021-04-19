@@ -11,6 +11,7 @@ import ast
 import pathlib
 import time
 import os
+import random
 
 
 def main():
@@ -18,7 +19,7 @@ def main():
     config_path = str(pathlib.Path(__file__).parent.absolute()) + "/config.ini"
     config.read(config_path)
 
-    preloaded_actor_id = config['anet']['preloaded_actor_id']
+    preloaded_actor_id = config['AdvancedTraining']['preloaded_actor_id']
 
 
     # Extract actor settings
@@ -37,25 +38,24 @@ def main():
                     )
     else:
     # TEST
-        actor_number = config['anet']['preloaded_actor_number']
-        actor_path = tournament__path = str(pathlib.Path(str(pathlib.Path(__file__).parent.absolute()))) + \
-                        "/Saved_Nets/"+preloaded_actor_id+"/ANET"+actor_number
+        actor_number = config['AdvancedTraining']['preloaded_actor_number']
+        actor_path = str(pathlib.Path(str(pathlib.Path(__file__).parent.absolute()))) + \
+                        "/Hall_of_fame/"+preloaded_actor_id+"/ANET"+actor_number
 
         actor_critic = ActorCritic(learning_rate=config.getfloat('anet', 'learning_rate'),
                     layers=ast.literal_eval(config['anet']['hidden_layers']),
                     opt=config['anet']['optimizer'],
                     act=config['anet']['activation'],
                     last_act=config['anet']['last_activation'],
-                    input_size=config.getint('board', 'size') * config.getint('board', 'size') + 1,
+                    input_size=config.getint('board', 'size') * config.getint('board', 'size')+1,
                     epochs=config.getint('anet', 'epochs'),
                     batch_size=config.getint('anet', 'batch_size'),
                     validation_split=config.getfloat('anet', 'validation_split'),
                     verbosity=config.getint('anet', 'verbosity'),
-                    net_with_critic = config.getboolean('anet', 'net_with_critic'),
-                    reload_model = True,
-                    reload_name = actor_path
+                    net_with_critic=config.getboolean('anet', 'net_with_critic'),
+                    reload_model=True,
+                    reload_name=actor_path
                     )
-
 
     # Create RL mondule
     rl = ReinforcementLearning( config.getint('RL', 'actual_games'), 
@@ -92,49 +92,49 @@ def main():
     
     Hall_of_Fame_path = str(pathlib.Path(__file__).parent.absolute())+"/Hall_of_Fame"
     opponent_folders = next(os.walk(Hall_of_Fame_path))[1]
+    print(opponent_folders)
     opponents = []
+    net_number = ast.literal_eval(config['AdvancedTraining']['net_number'])
 
     for i in range(len(opponent_folders)):
-        actor_specific_config  = ConfigParser()
-        current_folder = Hall_of_Fame_path+"/"+opponent_folders[i]
-        actor_specific_config.read(current_folder+"/settings.ini")
+        print(i)
+        if i != 2:
+            actor_specific_config = ConfigParser()
+            current_folder = Hall_of_Fame_path+"/"+opponent_folders[i]
+            actor_specific_config.read(current_folder+"/config.ini")
 
-        actor_number = actor_specific_config['anet']['preloaded_actor_number']
-        actor_path = tournament__path = str(pathlib.Path(str(pathlib.Path(__file__).parent.absolute()))) + \
-                        "/Saved_Nets/"+preloaded_actor_id+"/ANET"+actor_number
+            actor_path = current_folder+"/ANET"+str(net_number[i])
 
-        actor_critic = ActorCritic(learning_rate=config.getfloat('anet', 'learning_rate'),
-                    layers=ast.literal_eval(config['anet']['hidden_layers']),
-                    opt=config['anet']['optimizer'],
-                    act=config['anet']['activation'],
-                    last_act=config['anet']['last_activation'],
-                    input_size=config.getint('board', 'size') * config.getint('board', 'size') + 1,
-                    epochs=config.getint('anet', 'epochs'),
-                    batch_size=config.getint('anet', 'batch_size'),
-                    validation_split=config.getfloat('anet', 'validation_split'),
-                    verbosity=config.getint('anet', 'verbosity'),
-                    net_with_critic = config.getboolean('anet', 'net_with_critic'),
-                    reload_model = True,
-                    reload_name = actor_path
-                    )
-
-
+            opponents.append(ActorCritic(learning_rate=actor_specific_config.getfloat('anet', 'learning_rate'),
+                        layers=ast.literal_eval(actor_specific_config['anet']['hidden_layers']),
+                        opt=actor_specific_config['anet']['optimizer'],
+                        act=actor_specific_config['anet']['activation'],
+                        last_act=actor_specific_config['anet']['last_activation'],
+                        input_size=actor_specific_config.getint('board', 'size') * config.getint('board', 'size') + 1,
+                        epochs=actor_specific_config.getint('anet', 'epochs'),
+                        batch_size=actor_specific_config.getint('anet', 'batch_size'),
+                        validation_split=actor_specific_config.getfloat('anet', 'validation_split'),
+                        verbosity=actor_specific_config.getint('anet', 'verbosity'),
+                        net_with_critic=actor_specific_config.getboolean('anet', 'net_with_critic'),
+                        reload_model=True,
+                        reload_name=actor_path
+                        ))
 
 
     # Training loop
     for j in range(rl.number_actual_games):
         state_manager.reset_board(Board_A)
         state_manager.reset_board(Board_MC)
+        current_player = 1
 
         if j in see_game:
             Board_A.start_visualisation('game_episode_'+str(j)+'.gif')
-        
-        
         
         # Alternates starting player every game
         if j % 2 == 1:
             state_manager.change_player(Board_A)
             state_manager.change_player(Board_MC)
+            current_player = 2
 
         #Tree setup
         MCTS_tree = MCTS(   state_manager, 
@@ -157,12 +157,19 @@ def main():
             
             tree_game_start_time = time.time()
             i = 0
+            '''Choosing only one actor to paly at the time:
+            actors = opponents + [actor_critic] 
+            current_actor = random.choice(actors)'''
+
+            #Choosing an opponent to play agians:
+            opponent = random.choice(opponents)
+
             
             while i < MCTS_tree.tree_games and (time.time()-tree_game_start_time)<MCTS_tree.time_for_rollouts:
                 # Tree simulation
                 action, finished = MCTS_tree.tree_simulation(Board_MC)
                 # Using default policy to get to end state and returns result of game
-                z = rl.get_simulation_result(state_manager, Board_MC, actor_critic, action, finished)
+                z = rl.get_simulation_results_with_opponent(state_manager, Board_MC, actor_critic, opponent, current_player, action, finished)
                 
                 # Updating MCTS-Tree
                 MCTS_tree.backprop_tree(z)

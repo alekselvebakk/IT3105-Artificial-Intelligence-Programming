@@ -65,6 +65,19 @@ class ReinforcementLearning:
 
         return z
 
+    def get_simulation_results_with_opponent(self, state_manager, board, actor_critic, opponent, player, action, finished):
+        if not finished:
+            state_manager.perform_action(board, action)
+        while not state_manager.state_is_final(board):
+            if state_manager.get_player(board) == player:
+                action = actor_critic.get_action(state_manager.get_state(board), self.epsilon)
+            else:
+                action = opponent.get_action(state_manager.get_state(board), self.epsilon)
+            state_manager.perform_action(board, action)
+        z = self.get_result_score(state_manager.get_result(board))
+
+        return z
+
     def perform_real_move(self, state_manager, board, action):
         state_manager.perform_action(board, action)
         self.game_length += 1

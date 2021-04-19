@@ -11,6 +11,9 @@ class StateManager:
         player = 1 if board.player == 2 else 2
         board.set_player(player)
 
+    def get_player(self, board):
+        return board.player
+
     def get_actions(self, board):
         actions = [0]*(board.size*board.size)
         for row in board.table:
