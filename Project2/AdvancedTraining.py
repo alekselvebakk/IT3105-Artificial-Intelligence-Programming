@@ -98,7 +98,7 @@ def main():
 
     for i in range(len(opponent_folders)):
         print(i)
-        if i != 2:
+        if opponent_folders[i] != preloaded_actor_id:
             actor_specific_config = ConfigParser()
             current_folder = Hall_of_Fame_path+"/"+opponent_folders[i]
             actor_specific_config.read(current_folder+"/config.ini")
