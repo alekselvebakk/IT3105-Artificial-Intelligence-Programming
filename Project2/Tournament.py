@@ -14,7 +14,7 @@ def main():
     config_path = str(pathlib.Path(__file__).parent.absolute()) + "/config.ini"
     config.read(config_path)
 
-    tournament_number = str(config.getint('TOPP','tournament_id'))
+    tournament_number = config['TOPP']['tournament_id']
     games_between_nets = config.getint('TOPP', 'games_between_nets')
 
 
