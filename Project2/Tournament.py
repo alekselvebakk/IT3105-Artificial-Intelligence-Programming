@@ -48,7 +48,7 @@ def main():
                       games_between_nets,
                       StateManager(),
                       Board(board_size),
-                      int(tournament_number),
+                      tournament_number,
                       False,
                       tournament__path)
 
