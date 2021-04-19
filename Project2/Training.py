@@ -18,7 +18,7 @@ def main():
     config.read(config_path)
 
     # Extract actor settings
-    '''actor_critic = ActorCritic(learning_rate=config.getfloat('anet', 'learning_rate'),
+    actor_critic = ActorCritic(learning_rate=config.getfloat('anet', 'learning_rate'),
                   layers=ast.literal_eval(config['anet']['hidden_layers']),
                   opt=config['anet']['optimizer'],
                   act=config['anet']['activation'],
@@ -29,10 +29,10 @@ def main():
                   validation_split=config.getfloat('anet', 'validation_split'),
                   verbosity=config.getint('anet', 'verbosity'),
                   net_with_critic = config.getboolean('anet', 'net_with_critic')
-                  )'''
+                  )
 
     # TEST
-
+    """
     actor_path = tournament__path = str(pathlib.Path(str(pathlib.Path(__file__).parent.absolute()))) + \
                        "/Hall_of_Fame/1618678619/ANET400"
 
@@ -49,7 +49,7 @@ def main():
                   net_with_critic = config.getboolean('anet', 'net_with_critic'),
                   reload_model = True,
                   reload_name = actor_path
-                  )
+                  )"""
 
 
     # Create RL mondule
