@@ -93,8 +93,10 @@ def main():
     Hall_of_Fame_path = str(pathlib.Path(__file__).parent.absolute())+"/Hall_of_Fame"
     opponent_folders = next(os.walk(Hall_of_Fame_path))[1]
     print(opponent_folders)
+    opponent_folders.sort()
     opponents = []
     net_number = ast.literal_eval(config['AdvancedTraining']['net_number'])
+    print(opponent_folders)
 
     for i in range(len(opponent_folders)):
         print(i)
