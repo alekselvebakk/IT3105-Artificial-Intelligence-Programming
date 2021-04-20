@@ -21,6 +21,7 @@ def main():
     preloaded_actor_id = config['anet']['preloaded_actor_id']
 
     if not preloaded_actor_id:
+        print('yay')
         actor_critic = ActorCritic(learning_rate=config.getfloat('anet', 'learning_rate'),
                     layers=ast.literal_eval(config['anet']['hidden_layers']),
                     opt=config['anet']['optimizer'],
