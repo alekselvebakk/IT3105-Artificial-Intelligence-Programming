@@ -40,7 +40,7 @@ def main():
     # TEST
         actor_number = config['AdvancedTraining']['preloaded_actor_number']
         actor_path = str(pathlib.Path(str(pathlib.Path(__file__).parent.absolute()))) + \
-                        "/Hall_of_fame/"+preloaded_actor_id+"/ANET"+actor_number
+                        "/Hall_of_Fame/"+preloaded_actor_id+"/ANET"+actor_number
 
         actor_critic = ActorCritic(learning_rate=config.getfloat('anet', 'learning_rate'),
                     layers=ast.literal_eval(config['anet']['hidden_layers']),
@@ -98,7 +98,7 @@ def main():
 
     for i in range(len(opponent_folders)):
         print(i)
-        if i != 2:
+        if opponent_folders[i] != preloaded_actor_id:
             actor_specific_config = ConfigParser()
             current_folder = Hall_of_Fame_path+"/"+opponent_folders[i]
             actor_specific_config.read(current_folder+"/config.ini")
@@ -157,19 +157,19 @@ def main():
             
             tree_game_start_time = time.time()
             i = 0
-            '''Choosing only one actor to paly at the time:
+            #Choosing only one actor to play at the time:
             actors = opponents + [actor_critic] 
-            current_actor = random.choice(actors)'''
+            current_opponent = random.choice(actors)
 
             #Choosing an opponent to play agians:
-            opponent = random.choice(opponents)
+            #opponent = random.choice(opponents)
 
             
             while i < MCTS_tree.tree_games and (time.time()-tree_game_start_time)<MCTS_tree.time_for_rollouts:
                 # Tree simulation
                 action, finished = MCTS_tree.tree_simulation(Board_MC)
                 # Using default policy to get to end state and returns result of game
-                z = rl.get_simulation_results_with_opponent(state_manager, Board_MC, actor_critic, opponent, current_player, action, finished)
+                z = rl.get_simulation_results_with_opponent(state_manager, Board_MC, actor_critic, current_opponent, current_player, action, finished)
                 
                 # Updating MCTS-Tree
                 MCTS_tree.backprop_tree(z)
