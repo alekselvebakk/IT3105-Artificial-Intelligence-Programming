@@ -1,7 +1,7 @@
 from MCTS.MCTS_Node import MCTS_Node
 
 class MCTS:
-    def __init__(self, GameHandler, GameBoard, exploration_weight, tree_games, time_for_rollouts = 1):
+    def __init__(self, GameHandler, GameBoard, exploration_weight, tree_games, time_for_rollouts = 1, stochastic_root_choice = False):
         #Setting root state
         self.root = GameHandler.get_state(GameBoard)
 
@@ -21,6 +21,7 @@ class MCTS:
         self.c = exploration_weight
         self.tree_games = tree_games
         self.time_for_rollouts = time_for_rollouts
+        self.stochastic_root_choice = stochastic_root_choice
 
     def insert_new_node(self, state, actions):
         new_node = MCTS_Node(state, actions)
@@ -67,8 +68,8 @@ class MCTS:
     
     def get_root_distribution(self):
         state = self.root
-        distribution_and_value = self.tree[self.root].get_action_distribution()
-        D = [state, distribution_and_value]
+        distribution = self.tree[self.root].get_action_distribution()
+        D = [state, distribution]
         return D
 
     def get_RBUF_data(self, net_with_critic):
@@ -79,5 +80,8 @@ class MCTS:
 
 
     def get_best_root_action(self):
-        action = self.tree[self.root].get_most_frequent_action()
+        if self.stochastic_root_choice:
+            action = self.tree[self.root].get_weighted_random_action()
+        else:
+            action = self.tree[self.root].get_most_frequent_action()
         return action

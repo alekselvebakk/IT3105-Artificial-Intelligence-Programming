@@ -124,3 +124,13 @@ class MCTS_Node:
                 best_action = self.actions[i]
                 action_visits = self.N_s_a[self.actions[i]]
         return best_action
+    
+    def get_weighted_random_action(self):
+        distribution = self.get_action_distribution()
+        print(distribution)
+        action = random.choices(self.actions,weights = distribution, k= 1)
+        action = action[0]
+        while not action in self.available_actions.values():
+            print(action in self.available_actions)
+            action = random.choices(self.actions,weights = distribution, k= 1)
+        return action
