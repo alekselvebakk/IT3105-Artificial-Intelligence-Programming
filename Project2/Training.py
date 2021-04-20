@@ -18,38 +18,41 @@ def main():
     config.read(config_path)
 
     # Extract actor settings
-    actor_critic = ActorCritic(learning_rate=config.getfloat('anet', 'learning_rate'),
-                  layers=ast.literal_eval(config['anet']['hidden_layers']),
-                  opt=config['anet']['optimizer'],
-                  act=config['anet']['activation'],
-                  last_act=config['anet']['last_activation'],
-                  input_size=config.getint('board', 'size') * config.getint('board', 'size') + 1,
-                  epochs=config.getint('anet', 'epochs'),
-                  batch_size=config.getint('anet', 'batch_size'),
-                  validation_split=config.getfloat('anet', 'validation_split'),
-                  verbosity=config.getint('anet', 'verbosity'),
-                  net_with_critic = config.getboolean('anet', 'net_with_critic')
-                  )
+    preloaded_actor_id = config['anet']['preloaded_actor_id']
 
+    if not preloaded_actor_id:
+        actor_critic = ActorCritic(learning_rate=config.getfloat('anet', 'learning_rate'),
+                    layers=ast.literal_eval(config['anet']['hidden_layers']),
+                    opt=config['anet']['optimizer'],
+                    act=config['anet']['activation'],
+                    last_act=config['anet']['last_activation'],
+                    input_size=config.getint('board', 'size') * config.getint('board', 'size') + 1,
+                    epochs=config.getint('anet', 'epochs'),
+                    batch_size=config.getint('anet', 'batch_size'),
+                    validation_split=config.getfloat('anet', 'validation_split'),
+                    verbosity=config.getint('anet', 'verbosity'),
+                    net_with_critic = config.getboolean('anet', 'net_with_critic')
+                    )
+    else:
     # TEST
-    """
-    actor_path = tournament__path = str(pathlib.Path(str(pathlib.Path(__file__).parent.absolute()))) + \
-                       "/Hall_of_Fame/1618678619/ANET400"
+        actor_number = config['anet']['preloaded_actor_number']
+        actor_path = str(pathlib.Path(str(pathlib.Path(__file__).parent.absolute()))) + \
+                        "/Hall_of_Fame/"+preloaded_actor_id+"/ANET"+actor_number
 
-    actor_critic = ActorCritic(learning_rate=config.getfloat('anet', 'learning_rate'),
-                  layers=ast.literal_eval(config['anet']['hidden_layers']),
-                  opt=config['anet']['optimizer'],
-                  act=config['anet']['activation'],
-                  last_act=config['anet']['last_activation'],
-                  input_size=config.getint('board', 'size') * config.getint('board', 'size') + 1,
-                  epochs=config.getint('anet', 'epochs'),
-                  batch_size=config.getint('anet', 'batch_size'),
-                  validation_split=config.getfloat('anet', 'validation_split'),
-                  verbosity=config.getint('anet', 'verbosity'),
-                  net_with_critic = config.getboolean('anet', 'net_with_critic'),
-                  reload_model = True,
-                  reload_name = actor_path
-                  )"""
+        actor_critic = ActorCritic(learning_rate=config.getfloat('anet', 'learning_rate'),
+                    layers=ast.literal_eval(config['anet']['hidden_layers']),
+                    opt=config['anet']['optimizer'],
+                    act=config['anet']['activation'],
+                    last_act=config['anet']['last_activation'],
+                    input_size=config.getint('board', 'size') * config.getint('board', 'size')+1,
+                    epochs=config.getint('anet', 'epochs'),
+                    batch_size=config.getint('anet', 'batch_size'),
+                    validation_split=config.getfloat('anet', 'validation_split'),
+                    verbosity=config.getint('anet', 'verbosity'),
+                    net_with_critic=config.getboolean('anet', 'net_with_critic'),
+                    reload_model=True,
+                    reload_name=actor_path
+                    )
 
 
     # Create RL mondule
@@ -80,7 +83,7 @@ def main():
                 config.getint('TOPP', 'games_between_nets'),
                 state_manager,
                 Board_A,
-                int(time.time()),
+                str(int(time.time())),
                 config.getboolean('TOPP', 'save_actors'),
                 str(pathlib.Path(__file__).parent.absolute()) + "/Saved_Nets/"
                 )
