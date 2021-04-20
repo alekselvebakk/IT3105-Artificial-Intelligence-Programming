@@ -127,7 +127,10 @@ class MCTS_Node:
     
     def get_weighted_random_action(self):
         distribution = self.get_action_distribution()
+        print(distribution)
         action = random.choices(self.actions,weights = distribution, k= 1)
-        while action == False:
+        action = action[0]
+        while not action in self.available_actions.values():
+            print(action in self.available_actions)
             action = random.choices(self.actions,weights = distribution, k= 1)
         return action
