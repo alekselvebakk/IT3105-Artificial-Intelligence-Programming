@@ -20,7 +20,7 @@ def main():
 
     config = ConfigParser()
     actor0_folder = str(pathlib.Path(str(pathlib.Path(__file__).parent.absolute()))) + \
-                       "/Hall_of_Fame/" + actor0_id + "/"
+                       "/DuelingChamber/" + actor0_id + "/"
     config.read(actor0_folder+"config.ini")
 
     actor0 = ActorCritic(   learning_rate=config.getfloat('anet', 'learning_rate'),
@@ -40,7 +40,7 @@ def main():
     
     config = ConfigParser()
     actor1_folder = str(pathlib.Path(str(pathlib.Path(__file__).parent.absolute()))) + \
-                       "/Hall_of_Fame/" + actor1_id + "/"
+                       "/DuelingChamber/" + actor1_id + "/"
     config.read(actor1_folder+"config.ini")
 
     actor1 = ActorCritic(   learning_rate=config.getfloat('anet', 'learning_rate'),
