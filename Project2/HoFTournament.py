@@ -53,6 +53,7 @@ def main():
                       config_path) #filler setting
 
     tournament.run_tournament(players,[])
+    print(player_folders)
     tournament.print_standings()
 
 if __name__ == '__main__':
