@@ -110,7 +110,8 @@ def main():
         MCTS_tree = MCTS(   state_manager, 
                             Board_A, config.getfloat('MCTS', 'exploration_weight'), 
                             config.getint('MCTS', 'tree_games'),
-                            time_for_rollouts = config.getfloat('MCTS','time_limit'))
+                            time_for_rollouts = config.getfloat('MCTS','time_limit'),
+                            stochastic_root_choice = config.getboolean('MCTS', 'stochastic_root_choice'))
                             
         if j == 0:
             #Save first untrained actor
