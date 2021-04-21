@@ -32,7 +32,8 @@ def main():
                     batch_size=config.getint('anet', 'batch_size'),
                     validation_split=config.getfloat('anet', 'validation_split'),
                     verbosity=config.getint('anet', 'verbosity'),
-                    net_with_critic = config.getboolean('anet', 'net_with_critic')
+                    net_with_critic = config.getboolean('anet', 'net_with_critic'),
+                    stochastic_actions=config.getboolean('anet', 'stochastic_actions')
                     )
     else:
     # TEST
