@@ -19,7 +19,8 @@ class ActorCritic:
                  batch_size=32,
                  validation_split=0.1,
                  verbosity=2,
-                 net_with_critic = True):
+                 net_with_critic = True,
+                 stochastic_actions=False):
 
         self.alpha = learning_rate
         self.layers = layers
@@ -36,6 +37,7 @@ class ActorCritic:
         self.batch_size = batch_size
         self.validation_split = validation_split
         self.verbosity = verbosity
+        self.stochastic_actions = stochastic_actions
 
         # makes a new NN or reloads from earlier trained model
         self.model = self.get_net() if not reload_model else keras.models.load_model(reload_name, custom_objects={'cross_entropy': self.cross_entropy})
@@ -108,12 +110,21 @@ class ActorCritic:
             probabilities = self.get_probabilities(state)
         if probabilities.sum() == 0:
             index = self.get_random_safe_index(state)
+        elif self.stochastic_actions:
+            index = self.get_stochastic_index(state)
         elif decision > epsilon:
             index = np.argmax(probabilities)
         else:
             non_zero_index, = np.nonzero(probabilities)
             index = np.random.choice(non_zero_index)
         return self.find_position(index)
+
+    def get_stochastic_index(self, state):
+        prediction = self.get_probabilities(state)
+        indices = np.array(list(range(len(state-1))))
+        index = random.choices(indices, weights=prediction)
+        return index
+
 
     def get_critic_value(self, state):
         if self.net_with_critic:
@@ -135,6 +146,7 @@ class ActorCritic:
         row = int(index // table_root)
         col = int(index % table_root)
         return [row, col]
+
 
 
         
