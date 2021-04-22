@@ -39,7 +39,7 @@ def main():
     # TEST
         actor_number = config['anet']['preloaded_actor_number']
         actor_path = str(pathlib.Path(str(pathlib.Path(__file__).parent.absolute()))) + \
-                        "/DuelingChamber/"+preloaded_actor_id+"/ANET"+actor_number
+                        "/DuelingChamber2/"+preloaded_actor_id+"/ANET"+actor_number
 
         actor_critic = ActorCritic(learning_rate=config.getfloat('anet', 'learning_rate'),
                     layers=ast.literal_eval(config['anet']['hidden_layers']),
