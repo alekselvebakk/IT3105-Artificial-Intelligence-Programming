@@ -6,6 +6,9 @@ class BasicClientActor(BasicClientActorAbs):
     def __init__(self, actor_critic,IP_address=None, verbose=True):
         self.series_id = -1
         self.actor_critic = actor_critic
+        self.series_stats = []
+        self.game_counter = 0
+        self.series_counter = 0
         BasicClientActorAbs.__init__(self, IP_address, verbose=verbose)
 
     def handle_get_action(self, state):
@@ -40,6 +43,7 @@ class BasicClientActor(BasicClientActorAbs):
         self.player_map = player_map
         self.num_games = num_games
         self.game_params = game_params
+        print("Series nr:", self.series_counter)
 
     def handle_game_start(self, start_player):
         """
@@ -47,6 +51,7 @@ class BasicClientActor(BasicClientActorAbs):
         :return
         """
         self.starting_player = start_player
+        print("Game number: ",self.game_counter)
 
     def handle_game_over(self, winner, end_state):
         """
@@ -70,6 +75,7 @@ class BasicClientActor(BasicClientActorAbs):
             print('We lost :(')
         print('Winner: ' + str(winner))
         print('End state: ' + str(end_state))
+        self.game_counter += 1
 
     def handle_series_over(self, stats):
         """
@@ -86,6 +92,8 @@ class BasicClientActor(BasicClientActorAbs):
         #############################
         print("Series ended, these are the stats:")
         print(str(stats))
+        self.series_stats.append(stats)
+        self.series_counter += 1
 
 
     def handle_tournament_over(self, score):
@@ -102,6 +110,8 @@ class BasicClientActor(BasicClientActorAbs):
         #
         #############################
         print("Tournament over. Your score was: " + str(score))
+        print("the different series went as following:")
+        print(self.series_stats)
 
     def handle_illegal_action(self, state, illegal_action):
         """
