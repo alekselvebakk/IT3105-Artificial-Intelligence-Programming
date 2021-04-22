@@ -17,7 +17,7 @@ def main():
     games_played = config.getint('HoFTournament','games_played')
     net_number = ast.literal_eval(config['HoFTournament']['net_number'])
 
-    Hall_of_Fame_path = str(pathlib.Path(__file__).parent.absolute())+"/DuelingChamber"
+    Hall_of_Fame_path = str(pathlib.Path(__file__).parent.absolute())+"/DuelingChamber2"
     player_folders = next(os.walk(Hall_of_Fame_path))[1]
     player_folders.sort()
     players = []
