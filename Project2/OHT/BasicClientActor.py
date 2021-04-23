@@ -22,7 +22,7 @@ class BasicClientActor(BasicClientActorAbs):
         then you will see a 2 here throughout the entire series, whereas player 1 will see a 1.
         :return: Your actor's selected action as a tuple (row, column)
         """
-        if self.series_counter % 2 == 1:
+        if int(self.series_counter) % 2 == 1:
             actor_move = self.actor_critic_1.get_action(state)
         else:
             actor_move = self.actor_critic_0.get_action(state)
