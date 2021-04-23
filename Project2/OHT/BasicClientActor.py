@@ -3,9 +3,10 @@ from OHT.BasicClientActorAbs import BasicClientActorAbs
 
 class BasicClientActor(BasicClientActorAbs):
 
-    def __init__(self, actor_critic,IP_address=None, verbose=True):
+    def __init__(self, actor_critic_0, actor_critic_1, IP_address=None, verbose=True):
         self.series_id = -1
-        self.actor_critic = actor_critic
+        self.actor_critic_0 = actor_critic_0
+        self.actor_critic_1 = actor_critic_1
         self.series_stats = []
         self.game_counter = 0
         self.series_counter = 0
@@ -21,9 +22,10 @@ class BasicClientActor(BasicClientActorAbs):
         then you will see a 2 here throughout the entire series, whereas player 1 will see a 1.
         :return: Your actor's selected action as a tuple (row, column)
         """
-        
-
-        actor_move = self.actor_critic.get_action(state)
+        if self.series_counter % 2 == 1:
+            actor_move = self.actor_critic_1.get_action(state)
+        else:
+            actor_move = self.actor_critic_0.get_action(state)
         next_move = (int(actor_move[0]), int(actor_move[1]))
         return next_move
 
